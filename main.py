@@ -1,28 +1,22 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt6 import QtWidgets
+from PyQt6 import QtWidgets, uic
+from PyQt6.QtGui import QIcon
+from qt_material import apply_stylesheet
+from MainWindow import Ui_MainWindow
 import sys
 
-def on_clicked():
-    print("clicked")
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self, *args, obj=None, **kwargs):
+        super(MainWindow, self).__init__(*args, **kwargs)
+        self.setupUi(self)
 
 
-def main():
-    app = QApplication(sys.argv)
-    win = QMainWindow()
-    win.setGeometry(100, 200, 300, 300)
-    win.setWindowTitle("PyQt GUI")
+app = QtWidgets.QApplication(sys.argv)
 
-    text = QLabel(win)
-    text.setText('Test String')
-    text.move(50,50)
+apply_stylesheet(app, theme='dark_teal.xml')
 
-    btn1 = QtWidgets.QPushButton(win)
-    btn1.setText("Click me!")
-    btn1.clicked.connect(on_clicked)
-
-    win.show()
-
-    sys.exit(app.exec())
-
-main()
-   
+window = MainWindow()
+window.setWindowIcon(QIcon("UEB_icon.png"))
+window.setWindowTitle("UEB Tester")
+window.show()
+app.exec()
