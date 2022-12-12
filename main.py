@@ -10,10 +10,6 @@ app = QtWidgets.QApplication(sys.argv)
 
 apply_stylesheet(app, theme='dark_cyan.xml')
 
-gui0 = gui.MainWindow()
-gui0.showGUI()
-
-com = communication.Communication()
-com.getComPorts()
-
+gui_main = gui.MainWindow()
+gui_main.showGUI()
 app.exec()

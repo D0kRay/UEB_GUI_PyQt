@@ -13,6 +13,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     hour = [1,2,3,4,5,6,7,8,9,10]
     temperature = [30,32,34,32,33,31,29,32,35,45]
+    savePath = ""
 
     comport = communication.Communication()
 
@@ -26,10 +27,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.saveunder_Button.clicked.connect(self.saveFileDialog)
         self.refreshComPort_Button.clicked.connect(self.refreshComPortComboBox)
 
-    def saveFileDialog(self):
-        fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","All Files (*);;Text Files (*.csv)")
-        if fileName:
-            print(fileName)
 
     def showGUI(self):
         window = self
@@ -37,6 +34,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window.setWindowTitle("UEB")
         window.plotWidget_UEB_status_upper.plot(self.hour, self.temperature)
         window.show()
+
+
+    def saveFileDialog(self):
+        fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","All Files (*);;Text Files (*.csv)")
+        if fileName:
+            self.savePath = fileName
+            print(fileName)
 
         
     def refreshComPortComboBox(self):
