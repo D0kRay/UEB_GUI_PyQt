@@ -26,6 +26,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.saveunder_Button.clicked.connect(self.saveFileDialog)
         self.refreshComPort_Button.clicked.connect(self.refreshComPortComboBox)
+        self.exit_Button.clicked.connect(self.exitButtonClicked)
 
 
     def showGUI(self):
@@ -47,3 +48,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # portlist = self.comport.getComPorts()
         self.comPort_comboBox.addItems(self.comport.getComPorts())
         self.comPort_comboBox.setCurrentText("Comport")
+
+    def exitButtonClicked(self):
+        self.close()
+        
