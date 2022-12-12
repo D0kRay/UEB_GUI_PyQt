@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1151</width>
+    <width>1189</width>
     <height>699</height>
    </rect>
   </property>
@@ -40,39 +40,18 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="7" column="0">
-        <widget class="QLineEdit" name="lineEdit_20"/>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLineEdit" name="lineEdit_21"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLineEdit" name="lineEdit_16"/>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLineEdit" name="lineEdit_18"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLineEdit" name="lineEdit_13"/>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLineEdit" name="lineEdit_17"/>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLineEdit" name="lineEdit_19"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLineEdit" name="lineEdit_14"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLineEdit" name="lineEdit_15"/>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="label_39">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <item row="4" column="1">
+        <widget class="QLabel" name="label_43">
          <property name="text">
           <string>TextLabel</string>
          </property>
         </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLineEdit" name="lineEdit_17"/>
        </item>
        <item row="7" column="1">
         <widget class="QLabel" name="label_40">
@@ -81,8 +60,14 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
-        <widget class="QLabel" name="label_41">
+       <item row="5" column="0">
+        <widget class="QLineEdit" name="lineEdit_18"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="lineEdit_13"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_46">
          <property name="text">
           <string>TextLabel</string>
          </property>
@@ -95,29 +80,31 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="label_43">
+       <item row="1" column="0">
+        <widget class="QLineEdit" name="lineEdit_14"/>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLabel" name="label_39">
          <property name="text">
           <string>TextLabel</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="label_44">
+       <item row="3" column="0">
+        <widget class="QLineEdit" name="lineEdit_16"/>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLabel" name="label_41">
          <property name="text">
           <string>TextLabel</string>
          </property>
         </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLineEdit" name="lineEdit_15"/>
        </item>
        <item row="2" column="1">
         <widget class="QLabel" name="label_45">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_46">
          <property name="text">
           <string>TextLabel</string>
          </property>
@@ -130,6 +117,29 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="label_44">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLineEdit" name="lineEdit_20"/>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLineEdit" name="lineEdit_21"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLineEdit" name="lineEdit_19"/>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_16">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="gridLayoutWidget_6">
@@ -137,11 +147,36 @@
        <rect>
         <x>370</x>
         <y>0</y>
-        <width>160</width>
-        <height>80</height>
+        <width>561</width>
+        <height>271</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_6"/>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="PlotWidget" name="widget" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="gridLayoutWidget_8">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>270</y>
+        <width>561</width>
+        <height>271</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="PlotWidget" name="widget_2" native="true"/>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
@@ -1014,8 +1049,123 @@ DOS mismatch threshold</string>
     </widget>
     <widget class="QWidget" name="tab_5">
      <attribute name="title">
-      <string>Seite</string>
+      <string>ADC Einstellungen</string>
      </attribute>
+     <widget class="QWidget" name="gridLayoutWidget_7">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>481</width>
+        <height>551</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <item row="2" column="0">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_18"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QCheckBox" name="checkBox_8">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QCheckBox" name="checkBox_7">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="label_52">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_17"/>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="label_51">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="checkBox_6">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="checkBox_5">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_54">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLabel" name="label_53">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="label_48">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_49">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_19"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="label_50">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QPushButton" name="pushButton_14">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QPushButton" name="pushButton_15">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
@@ -1129,13 +1279,21 @@ DOS mismatch threshold</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1151</width>
+     <width>1189</width>
      <height>26</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

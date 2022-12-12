@@ -1,6 +1,8 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtGui import QIcon
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
 from qt_material import apply_stylesheet
 from ui_MainWindow import Ui_MainWindow
 import sys
