@@ -156,7 +156,7 @@
         <number>10</number>
        </property>
        <item row="0" column="0">
-        <widget class="PlotWidget" name="widget" native="true"/>
+        <widget class="PlotWidget" name="plotWidget_UEB_status_upper" native="true"/>
        </item>
       </layout>
      </widget>
@@ -174,7 +174,7 @@
         <number>10</number>
        </property>
        <item row="0" column="0">
-        <widget class="PlotWidget" name="widget_2" native="true"/>
+        <widget class="PlotWidget" name="plotWidget_UEB_status_lower" native="true"/>
        </item>
       </layout>
      </widget>
@@ -1179,7 +1179,7 @@ DOS mismatch threshold</string>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="exit_Button">
        <property name="text">
         <string>Exit</string>
        </property>
@@ -1193,28 +1193,28 @@ DOS mismatch threshold</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="saveunder_Button">
        <property name="text">
         <string>Speichern unter</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="reset_Button">
        <property name="text">
         <string>Reset</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="default_Button">
        <property name="text">
         <string>Default</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_6">
+      <widget class="QPushButton" name="stop_Button">
        <property name="text">
         <string>STOP</string>
        </property>
@@ -1228,7 +1228,7 @@ DOS mismatch threshold</string>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="comPort_comboBox"/>
      </item>
      <item>
       <widget class="QLabel" name="label">
@@ -1238,14 +1238,14 @@ DOS mismatch threshold</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QPushButton" name="refreshComPort_Button">
        <property name="text">
         <string>Refresh</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_10">
+      <widget class="QPushButton" name="connectComPort_Button">
        <property name="text">
         <string>Connect</string>
        </property>
