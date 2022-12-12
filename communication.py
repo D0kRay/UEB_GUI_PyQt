@@ -13,7 +13,7 @@ class Communication:
 
         
     def getComPorts(self):
-        self.ports = serial.tools.list_ports.comports()
+        self.ports = self.serial_handler.tools.list_ports.comports()
 
         for port, desc, hwid in sorted(self.ports):
             print("{}: {} [{}]".format(port, desc, hwid))
