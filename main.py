@@ -8,7 +8,7 @@ from qt_material import apply_stylesheet
 
 app = QtWidgets.QApplication(sys.argv)
 
-apply_stylesheet(app, theme='dark_cyan.xml')
+# apply_stylesheet(app, theme='dark_cyan.xml')
 
 gui_main = gui.MainWindow()
 gui_main.showGUI()
