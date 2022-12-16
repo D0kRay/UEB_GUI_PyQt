@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1189</width>
+    <width>1199</width>
     <height>699</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -481,7 +481,17 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>4.826000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.038000000000000</double>
+         </property>
+        </widget>
        </item>
        <item row="11" column="0">
         <widget class="QRadioButton" name="radioButton_8">
@@ -491,7 +501,17 @@
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_5"/>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>4.826000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.038000000000000</double>
+         </property>
+        </widget>
        </item>
        <item row="8" column="1" colspan="2">
         <widget class="QLabel" name="label_6">
@@ -525,7 +545,17 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>4.826000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.038000000000000</double>
+         </property>
+        </widget>
        </item>
        <item row="4" column="1" colspan="2">
         <widget class="QLabel" name="label_4">
@@ -542,17 +572,46 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_4"/>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>4.826000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.038000000000000</double>
+         </property>
+        </widget>
        </item>
        <item row="8" column="0">
         <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
          <property name="decimals">
-          <number>5</number>
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>9.016999999999999</double>
+         </property>
+         <property name="singleStep">
+          <double>0.071000000000000</double>
          </property>
         </widget>
        </item>
        <item row="9" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_8"/>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_8">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="minimum">
+          <double>2000.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>20000.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>250.000000000000000</double>
+         </property>
+        </widget>
        </item>
        <item row="15" column="0" colspan="3">
         <spacer name="verticalSpacer_2">
@@ -585,7 +644,17 @@
         </widget>
        </item>
        <item row="7" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_6"/>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>9.016999999999999</double>
+         </property>
+         <property name="singleStep">
+          <double>0.071000000000000</double>
+         </property>
+        </widget>
        </item>
        <item row="5" column="1" colspan="2">
         <widget class="QLabel" name="label_5">
@@ -622,7 +691,17 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+         <property name="decimals">
+          <number>3</number>
+         </property>
+         <property name="maximum">
+          <double>4.826000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.038000000000000</double>
+         </property>
+        </widget>
        </item>
        <item row="1" column="2">
         <widget class="QPushButton" name="pushButton_8">
@@ -679,6 +758,9 @@
        </property>
        <item row="7" column="1">
         <widget class="QLineEdit" name="lineEdit_7">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string>0,0000°</string>
          </property>
@@ -696,6 +778,9 @@
        </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="lineEdit_2">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string>0,0000V</string>
          </property>
@@ -703,6 +788,9 @@
        </item>
        <item row="10" column="1">
         <widget class="QLineEdit" name="lineEdit_10">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string/>
          </property>
@@ -717,6 +805,9 @@
           </sizepolicy>
          </property>
          <property name="frame">
+          <bool>true</bool>
+         </property>
+         <property name="readOnly">
           <bool>true</bool>
          </property>
          <property name="placeholderText">
@@ -859,6 +950,9 @@ hr { height: 1px; border-width: 0; }
        </item>
        <item row="3" column="1">
         <widget class="QLineEdit" name="lineEdit_3">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string>0,0000V</string>
          </property>
@@ -892,6 +986,9 @@ hr { height: 1px; border-width: 0; }
        </item>
        <item row="8" column="1">
         <widget class="QLineEdit" name="lineEdit_8">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string>0,0000kHz</string>
          </property>
@@ -926,6 +1023,9 @@ DOS overrange threshold</string>
        </item>
        <item row="9" column="1">
         <widget class="QLineEdit" name="lineEdit_9">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string/>
          </property>
@@ -933,6 +1033,9 @@ DOS overrange threshold</string>
        </item>
        <item row="12" column="1">
         <widget class="QLineEdit" name="lineEdit_12">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string/>
          </property>
@@ -972,6 +1075,9 @@ DOS overrange threshold</string>
        </item>
        <item row="5" column="1">
         <widget class="QLineEdit" name="lineEdit_5">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string>0,0000V</string>
          </property>
@@ -1042,6 +1148,9 @@ DOS mismatch threshold</string>
        </item>
        <item row="11" column="1">
         <widget class="QLineEdit" name="lineEdit_11">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string/>
          </property>
@@ -1081,6 +1190,9 @@ DOS mismatch threshold</string>
        </item>
        <item row="4" column="1">
         <widget class="QLineEdit" name="lineEdit_4">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="placeholderText">
           <string>0,0000V</string>
          </property>
@@ -1093,6 +1205,9 @@ DOS mismatch threshold</string>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
          <property name="placeholderText">
           <string>0,0000°</string>
@@ -1346,7 +1461,7 @@ DOS mismatch threshold</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1189</width>
+     <width>1199</width>
      <height>30</height>
     </rect>
    </property>
