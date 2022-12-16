@@ -265,30 +265,6 @@
        <property name="leftMargin">
         <number>10</number>
        </property>
-       <item row="13" column="0">
-        <widget class="QDoubleSpinBox" name="softstartD_SpinBox_UEB">
-         <property name="maximum">
-          <double>9999.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="0">
-        <widget class="QCheckBox" name="softstart_checkBox_UEB">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="0">
-        <widget class="QCheckBox" name="dritteHarm_checkBox_UEB">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QDoubleSpinBox" name="ausgangSp_SpinBox_UEB"/>
-       </item>
        <item row="0" column="0" colspan="3">
         <widget class="QLabel" name="label_38">
          <property name="sizePolicy">
@@ -302,34 +278,14 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QDoubleSpinBox" name="frequenz_SpinBox_UEB">
-         <property name="maximum">
-          <double>99999.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QDoubleSpinBox" name="versorgSp_SpinBox_UEB"/>
-       </item>
-       <item row="16" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_16"/>
-       </item>
-       <item row="15" column="0">
-        <widget class="QDoubleSpinBox" name="pwmFrq_SpinBox_UEB">
-         <property name="maximum">
-          <double>99999.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="17" column="0">
-        <widget class="QPushButton" name="einstLesen_pushButton_UEB">
+       <item row="11" column="0">
+        <widget class="QCheckBox" name="softstart_checkBox_UEB">
          <property name="text">
-          <string>Einstellungen lesen</string>
+          <string/>
          </property>
         </widget>
        </item>
-       <item row="17" column="2">
+       <item row="19" column="2">
         <widget class="QPushButton" name="einst_Schreiben_pushButton_UEB">
          <property name="text">
           <string>Einstellungen schreiben</string>
@@ -343,17 +299,10 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
-        <widget class="QLabel" name="label_36">
-         <property name="text">
-          <string>Versorgungsspannung (V)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QLabel" name="label_35">
-         <property name="text">
-          <string>Ausgangsspannung (V)</string>
+       <item row="13" column="0">
+        <widget class="QDoubleSpinBox" name="softstartD_SpinBox_UEB">
+         <property name="maximum">
+          <double>9999.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -364,6 +313,16 @@
          </property>
         </widget>
        </item>
+       <item row="17" column="0">
+        <widget class="QRadioButton" name="rightturn_radioButton_UEB">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QDoubleSpinBox" name="ausgangSp_SpinBox_UEB"/>
+       </item>
        <item row="13" column="1">
         <widget class="QLabel" name="label_33">
          <property name="text">
@@ -371,10 +330,58 @@
          </property>
         </widget>
        </item>
+       <item row="16" column="0">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_16"/>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLabel" name="label_35">
+         <property name="text">
+          <string>Ausgangsspannung (V)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QDoubleSpinBox" name="versorgSp_SpinBox_UEB"/>
+       </item>
+       <item row="9" column="1">
+        <widget class="QLabel" name="label_36">
+         <property name="text">
+          <string>Versorgungsspannung (V)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="0">
+        <widget class="QDoubleSpinBox" name="pwmFrq_SpinBox_UEB">
+         <property name="maximum">
+          <double>99999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="0">
+        <widget class="QCheckBox" name="dritteHarm_checkBox_UEB">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QDoubleSpinBox" name="frequenz_SpinBox_UEB">
+         <property name="maximum">
+          <double>99999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
        <item row="14" column="1">
         <widget class="QLabel" name="label_32">
          <property name="text">
           <string>Dritte Harmonische</string>
+         </property>
+        </widget>
+       </item>
+       <item row="19" column="0">
+        <widget class="QPushButton" name="einstLesen_pushButton_UEB">
+         <property name="text">
+          <string>Einstellungen lesen</string>
          </property>
         </widget>
        </item>
@@ -389,6 +396,27 @@
         <widget class="QLabel" name="label_30">
          <property name="text">
           <string>nicht benutzt</string>
+         </property>
+        </widget>
+       </item>
+       <item row="18" column="0">
+        <widget class="QRadioButton" name="leftturn_radioButton_UEB">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="17" column="1">
+        <widget class="QLabel" name="label_27">
+         <property name="text">
+          <string>Rechtslauf</string>
+         </property>
+        </widget>
+       </item>
+       <item row="18" column="1">
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Linkslauf</string>
          </property>
         </widget>
        </item>
@@ -1319,7 +1347,7 @@ DOS mismatch threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1189</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>

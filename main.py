@@ -7,7 +7,7 @@ from PyQt6.QtGui import QIcon
 from qt_material import apply_stylesheet
 
 app = QtWidgets.QApplication(sys.argv)
-
+ 
 # apply_stylesheet(app, theme='dark_cyan.xml')
 
 gui_main = gui.MainWindow()

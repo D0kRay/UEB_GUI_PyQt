@@ -2,20 +2,22 @@ import sys
 import serial
 import serial.tools.list_ports
 import threading
-import scpi_commands
 import time
 
 from serial import Serial
+from scpi_commands import scpi_commands
 
 
 class Communication:
 
     ser = Serial
     t = threading
+    scpi_commands = scpi_commands
     
     def __init__(self):
         self.thread_run = False
         self.ser = Serial(None, 115200, timeout = 0)
+        self.scpi_commands = scpi_commands()
         
     def getComPorts(self):
         self.ports = serial.tools.list_ports.comports()
@@ -51,25 +53,22 @@ class Communication:
     def threadreadSerial(self):
         while self.thread_run:
             data = self.ser.readline()
-            data_decoded = data.decode('utf8')
-            print(data_decoded + "tt")
+            data_decoded = data.decode('ascii')
+            print(data_decoded)
 
             
     def writeCommand(self, command):
-        command = command + scpi_commands.CARRIAGE_RETURN
+        # command = command + scpi_commands.CARRIAGE_RETURN
         bytestring = command.encode('ascii')
         self.ser.write(bytestring)
 
     def readSettings(self):
-        self.writeCommand(scpi_commands.UEBREADY)
+        self.writeCommand(self.scpi_commands.getUEBsettings())
         time.sleep(0.2)
         data = self.ser.readline()
         data_decoded = data.decode('ascii')
         return data_decoded
 
-    def writeSettings(self, settingslist):
-        for i in range(len(settingslist)):
-            self.writeCommand(settingslist[i])
 
    
     

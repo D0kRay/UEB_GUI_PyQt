@@ -8,6 +8,7 @@ from qt_material import apply_stylesheet
 from ui_MainWindow import Ui_MainWindow
 from ueb_config import ueb_config
 from communication import Communication
+from scpi_commands import scpi_commands
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -16,13 +17,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     temperature = [30,32,34,32,33,31,29,32,35,45]
     savePath = ""
 
-    comport = Communication()
+    communication = Communication()
     ueb_config = ueb_config()
     ueb_config_list = list
+    scpi_commands = scpi_commands
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        
+        self.scpi_commands = scpi_commands()
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
         self.setupUi(self)
@@ -52,8 +54,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
     def refreshComPortComboBox(self):
         # portlist = self.comport.getComPorts()
-        self.comPort_comboBox.addItems(self.comport.getComPorts())
-        self.comPort_comboBox.setCurrentText("Comport")
+        self.comPort_comboBox.clear()
+        self.comPort_comboBox.addItems(self.communication.getComPorts())
+        # self.comPort_comboBox.setCurrentText("Comport")
 
     def exitButtonClicked(self):
         
@@ -65,9 +68,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def connectButtonClicked(self):
         comport = self.comPort_comboBox.currentText()
         if(len(comport) != 0):
-            if(self.comport.setComPort(comport)):
+            if(self.communication.setComPort(comport)):
                 print("Comport SET" + comport)
-                settings = self.comport.readSettings()
+                settings = self.communication.readSettings()
                 # print(settings)
                 self.ueb_config_list = self.getUEB_SettingVars(settings)
                 self.setUEB_Config(self.ueb_config_list)
@@ -78,14 +81,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def readUEB_SettingsButtonClicked(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            settings = self.comport.readSettings()
+            settings = self.communication.readSettings()
             self.ueb_config_list = self.getUEB_SettingVars(settings)
             self.setUEB_Config(self.ueb_config_list)
             self.setUEB_Config_Tab()
 
     def writeUEB_SettingsButtonClicked(self):
-            # self.comport.writeCommand(settingslist)
-            print("Settings Write")
+            self.sendUEBConfigTab()
 
     def getUEB_SettingVars(self, settingsstring):
         parameters = settingsstring.split(";")
@@ -113,9 +115,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.frequenz_SpinBox_UEB.setValue(float(self.ueb_config.frequency))
         self.versorgSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Reference))
         self.ausgangSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Bridge))
-        self.softstart_checkBox_UEB.setChecked(bool(self.ueb_config.enableSoftstarter))
+        self.softstart_checkBox_UEB.setChecked(bool(int(self.ueb_config.enableSoftstarter)))
         self.softstartD_SpinBox_UEB.setValue(float(self.ueb_config.softstartDuration))
-        self.dritteHarm_checkBox_UEB.setChecked(bool(self.ueb_config.thridHarmonic))
+        self.dritteHarm_checkBox_UEB.setChecked(bool(int(self.ueb_config.thridHarmonic)))
+        if(bool(int(self.ueb_config.rotationDirection))):
+            self.rightturn_radioButton_UEB.setChecked(True)
+            self.leftturn_radioButton_UEB.setChecked(False)
+        else:
+            self.leftturn_radioButton_UEB.setChecked(True)
+            self.rightturn_radioButton_UEB.setChecked(False)
         # self.pwmFrq_SpinBox_UEB
 
+    def sendUEBConfigTab(self):
+        # if(self.rightturn_radioButton_UEB.isChecked()):
+        #     self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.rightturn_radioButton_UEB.isChecked()))
+        # else:
+        #     self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.leftturn_radioButton_UEB.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.rightturn_radioButton_UEB.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setUEBThridHarmonic(self.dritteHarm_checkBox_UEB.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setUEBSoftstartEnable(self.softstart_checkBox_UEB.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setUEBSoftstartDuration(self.softstartD_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBVBridge(self.versorgSp_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
 
