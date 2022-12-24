@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -455,14 +455,14 @@
         <number>0</number>
        </property>
        <item row="12" column="0" colspan="3">
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="Hysteresis_checkBox_Resolver">
          <property name="text">
           <string>Enabled Hysteresis</string>
          </property>
         </widget>
        </item>
        <item row="14" column="2">
-        <widget class="QPushButton" name="pushButton_7">
+        <widget class="QPushButton" name="writeSetting_pushButton_Resolver">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -481,7 +481,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox">
+        <widget class="QDoubleSpinBox" name="LOS_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -494,14 +494,14 @@
         </widget>
        </item>
        <item row="11" column="0">
-        <widget class="QRadioButton" name="radioButton_8">
+        <widget class="QRadioButton" name="PhaseLock44radioButton_Resolver">
          <property name="text">
           <string>±44°</string>
          </property>
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+        <widget class="QDoubleSpinBox" name="DOSResetMin_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -528,7 +528,7 @@
         </widget>
        </item>
        <item row="14" column="0">
-        <widget class="QComboBox" name="comboBox_4"/>
+        <widget class="QComboBox" name="RDCRes_comboBox_Resolver"/>
        </item>
        <item row="10" column="1" rowspan="2" colspan="2">
         <widget class="QLabel" name="label_11">
@@ -545,7 +545,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+        <widget class="QDoubleSpinBox" name="DOS_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -572,7 +572,7 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+        <widget class="QDoubleSpinBox" name="DOSResetMax_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -585,7 +585,7 @@
         </widget>
        </item>
        <item row="8" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
+        <widget class="QDoubleSpinBox" name="LOTLow_doubleSpinBox_Resolver_2">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -598,7 +598,7 @@
         </widget>
        </item>
        <item row="9" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_8">
+        <widget class="QDoubleSpinBox" name="Excitation_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -644,7 +644,7 @@
         </widget>
        </item>
        <item row="7" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
+        <widget class="QDoubleSpinBox" name="LOTHigh_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -678,20 +678,20 @@
         </widget>
        </item>
        <item row="13" column="0">
-        <widget class="QComboBox" name="comboBox_3"/>
+        <widget class="QComboBox" name="EncoderRes_comboBox_Resolver"/>
        </item>
        <item row="1" column="0">
-        <widget class="QComboBox" name="comboBox_2"/>
+        <widget class="QComboBox" name="template_comboBox_Resolver"/>
        </item>
        <item row="10" column="0">
-        <widget class="QRadioButton" name="radioButton_9">
+        <widget class="QRadioButton" name="PhaseLock360_radioButton_Resolver">
          <property name="text">
           <string>360°</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+        <widget class="QDoubleSpinBox" name="DOSMismatch_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -757,7 +757,7 @@
         <number>10</number>
        </property>
        <item row="7" column="1">
-        <widget class="QLineEdit" name="lineEdit_7">
+        <widget class="QLineEdit" name="LOTLow_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -777,7 +777,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEdit_2">
+        <widget class="QLineEdit" name="DOS_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -787,7 +787,7 @@
         </widget>
        </item>
        <item row="10" column="1">
-        <widget class="QLineEdit" name="lineEdit_10">
+        <widget class="QLineEdit" name="Hysteresis_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -797,7 +797,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit">
+        <widget class="QLineEdit" name="LOS_lineEdit_Resolver">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -949,7 +949,7 @@ hr { height: 1px; border-width: 0; }
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEdit_3">
+        <widget class="QLineEdit" name="DOS_Mismatch_lineEdit__Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -985,7 +985,7 @@ hr { height: 1px; border-width: 0; }
         </widget>
        </item>
        <item row="8" column="1">
-        <widget class="QLineEdit" name="lineEdit_8">
+        <widget class="QLineEdit" name="Excitation_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -1022,7 +1022,7 @@ DOS overrange threshold</string>
         </widget>
        </item>
        <item row="9" column="1">
-        <widget class="QLineEdit" name="lineEdit_9">
+        <widget class="QLineEdit" name="PhaseLock_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -1032,7 +1032,7 @@ DOS overrange threshold</string>
         </widget>
        </item>
        <item row="12" column="1">
-        <widget class="QLineEdit" name="lineEdit_12">
+        <widget class="QLineEdit" name="RDCRes_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -1074,7 +1074,7 @@ DOS overrange threshold</string>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLineEdit" name="lineEdit_5">
+        <widget class="QLineEdit" name="DOSResetMin_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -1147,7 +1147,7 @@ DOS mismatch threshold</string>
         </spacer>
        </item>
        <item row="11" column="1">
-        <widget class="QLineEdit" name="lineEdit_11">
+        <widget class="QLineEdit" name="EncoderRes_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -1189,7 +1189,7 @@ DOS mismatch threshold</string>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QLineEdit" name="lineEdit_4">
+        <widget class="QLineEdit" name="DOSResetMax_lineEdit_Resolver">
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -1199,7 +1199,7 @@ DOS mismatch threshold</string>
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QLineEdit" name="lineEdit_6">
+        <widget class="QLineEdit" name="LOTHigh_lineEdit_Resolver">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
