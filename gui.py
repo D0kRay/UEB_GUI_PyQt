@@ -37,6 +37,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.connectComPort_Button.clicked.connect(self.connectButtonClicked)
         self.einstLesen_pushButton_UEB.clicked.connect(self.readUEB_SettingsButtonClicked)
         self.einst_Schreiben_pushButton_UEB.clicked.connect(self.writeUEB_SettingsButtonClicked)
+        self.startButton_UEB_status.clicked.connect(self.startMotor)
 
 
     def showGUI(self):
@@ -61,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.comPort_comboBox.setCurrentText("Comport")
 
     def exitButtonClicked(self):
-        
+        self.communication.stop_event()
         self.close()
         
     def stopButtonClicked(self):
@@ -69,29 +70,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def connectButtonClicked(self):
         comport = self.comPort_comboBox.currentText()
-        if(len(comport) != 0):
-            if(self.communication.setComPort(comport)):
-                print("Comport SET" + comport)
-                settings = self.communication.readSettings()
-                # print(settings)
-                self.ueb_config_list = self.getUEB_SettingVars(settings)
-                self.setUEB_Config(self.ueb_config_list)
-                self.setUEB_Config_Tab()
-                self.connectComPort_Button.setText("Disconnect")
-            else:
-                self.connectComPort_Button.setText("Connect")
+        if("Connect" in self.connectComPort_Button.text()):
+            if(len(comport) != 0):
+                if(self.communication.setComPort(comport)):
+                    print("Comport SET" + comport)
+                    settings = self.communication.readSettings()
+                    # print(settings)
+                    self.ueb_config_list = self.getUEB_SettingVars(settings)
+                    self.setUEB_Config(self.ueb_config_list)
+                    self.setUEB_Config_Tab()
+                    self.connectComPort_Button.setText("Disconnect")
+                else:
+                    self.connectComPort_Button.setText("Connect")
+        else:
+            self.communication.stop_event()
+            self.connectComPort_Button.setText("Connect")
 
     def readUEB_SettingsButtonClicked(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
+            self.communication.stop_event()
             settings = self.communication.readSettings()
             self.ueb_config_list = self.getUEB_SettingVars(settings)
             self.setUEB_Config(self.ueb_config_list)
             self.setUEB_Config_Tab()
 
     def writeUEB_SettingsButtonClicked(self):
-            self.sendUEBConfigTab()
+        self.communication.stop_event()
+        self.sendUEBConfigTab()
 
     def getUEB_SettingVars(self, settingsstring):
+        self.communication.stop_event()
         parameters = settingsstring.split(";")
         for i in range(len(parameters)):
             temp = parameters[i].split("=")
@@ -140,4 +148,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBVBridge(self.versorgSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
+
+    def startMotor(self):
+        self.communication.writeCommand("DT\r")
+        self.communication.readSerialRead()
+
+    def stopMotor(self):
+        self.communication.writeCommand("DT\r")
+        self.communication.readSerialRead()
 
