@@ -1,14 +1,14 @@
 import sys
-import serial
-import serial.tools.list_ports
 import threading
 import time
-
-from serial import Serial
-from scpi_commands import scpi_commands
-from threading import Thread
-from threading import Event
 from queue import Queue
+from threading import Event, Thread
+
+import serial
+import serial.tools.list_ports
+from serial import Serial
+
+from scpi_commands import scpi_commands
 
 
 class Communication:
@@ -67,8 +67,6 @@ class Communication:
             if(serialobj.is_open and serialobj.in_waiting > 0):
                 buffer = (serialobj.read(serialobj.in_waiting))
                 queue.put(buffer)
-                # print(buffer)
-                # serialobj.flushInput()
         print('Thread stopped')
 
     def stopThread(self):

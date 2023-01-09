@@ -40,6 +40,7 @@ class scpi_commands():
         self.ENCODER = "ENCOD"
         self.RDC = "RDC"
         self.INKREMENTAL = "INKR"
+        self.DATATRANSMISSION = "DT"
         self.DELIMITER_FULLMESSAGE = ""
         self.DELIMITER_PARTMESSAGE = ":"
         self.CARRIAGE_RETURN = "\r"
@@ -89,4 +90,7 @@ class scpi_commands():
         else:
             value = '0'
         return (self.UEB + self.DELIMITER_PARTMESSAGE  + self.SYSTEM + self.DELIMITER_PARTMESSAGE  + self.D_ENABLE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setDatatransmission(self):
+        return (self.DATATRANSMISSION + self.CARRIAGE_RETURN)
 
