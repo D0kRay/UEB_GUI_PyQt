@@ -190,6 +190,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBVBridge(self.versorgSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBsettings(True))
 
     def startMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
