@@ -666,7 +666,7 @@ class Ui_MainWindow(object):
         self.terminal_scrollArea.setWidgetResizable(True)
         self.terminal_scrollArea.setObjectName("terminal_scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1120, 520))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 81, 28))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.terminal_textlabel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
         self.terminal_textlabel.setGeometry(QtCore.QRect(0, 0, 1131, 511))
@@ -873,7 +873,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(6)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
