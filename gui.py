@@ -121,7 +121,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if("Connect" in self.connectComPort_Button.text()):
             if(len(comport) != 0):
                 if(self.communication.setComPort(comport)):
-                    print("Comport SET" + comport)
+                    print("Comport SET " + comport)
                     settings = self.communication.readSettings()
                     self.ueb_config_list = self.getUEB_SettingVars(settings)
                     self.setUEB_Config(self.ueb_config_list)
@@ -131,6 +131,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.connectComPort_Button.setText("Connect")
         else:
             self.communication.stopThread()
+            if(self.job.is_alive()):
+                self.job.stop()
+            print("Disconnected")
             self.connectComPort_Button.setText("Connect")
 
     def readUEB_SettingsButtonClicked(self):
