@@ -12,7 +12,6 @@ from pyqtgraph import PlotWidget, plot
 from qt_material import apply_stylesheet
 
 from communication import Communication
-from csv_writer import csv_writer
 from DT_algorithmus import DT_algorithmus
 from scpi_commands import scpi_commands
 from ueb_config import ueb_config
