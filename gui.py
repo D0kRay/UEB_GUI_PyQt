@@ -32,6 +32,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     scpi_commands = scpi_commands
     dt_algorithmus = DT_algorithmus
     csv_datacolumns = list
+    plot_data_upper = list #Datastructure: [0] plot on/off [1] color [2] lineobj [3] x list [4] y list [5] data
+    plot_data_lower = list #Datastructure: [0] plot on/off [1] color [2] lineobj [3] x list [4] y list [5] data
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -41,12 +43,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.job = Job(interval=self.SAFE_INTERVAL_FILE, execute=self.getDataFromThread, name="DataSafeThread")
         self.savePath = ""
         self.csv_datacolumns = []
+        self.plot_data_upper = []
+        self.plot_data_lower = []
         self.fileheaderCreated = False
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
         self.setupUi(self)
         self.RDCRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
         self.EncoderRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
+        self.plotWidget_UEB_status_lower.setBackground('w')
+        self.plotWidget_UEB_status_upper.setBackground('w')
 
         self.saveunder_Button.clicked.connect(self.saveFileDialog)
         self.refreshComPort_Button.clicked.connect(self.refreshComPortComboBox)
@@ -61,9 +67,33 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window = self
         window.setWindowIcon(QIcon("UEB_icon.png"))
         window.setWindowTitle("UEB")
-        window.plotWidget_UEB_status_upper.plot(self.hour, self.temperature)
         window.show()
 
+    def plotOnUEBStatusPlots(self):
+        if(len(self.plot_data_upper)):
+            for i in range(0, len(self.plot_data_upper)):
+                if((self.plot_data_upper[i])[0]):
+                    if(len(self.plot_data_upper[i]) < 4):
+                        x = (self.plot_data_upper[i])[3]
+                        y = (self.plot_data_upper[i])[4]
+                        line_obj = self.plotWidget_UEB_status_upper.plot(x, y)
+                        self.plot_data_upper.insert(2, line_obj)
+                    else:
+                        (self.plot_data_upper[i])[3] = ((self.plot_data_upper[i])[3])[1:]
+                        (self.plot_data_upper[i])[4] = ((self.plot_data_upper[i])[4])[1:]
+                        self.plot_data_upper[2].setData(self.hour, self.temperature)
+        elif(len(self.plot_data_lower)):
+            for i in range(0, len(self.plot_data_lower)):
+                if((self.plot_data_lower[i])[0]):
+                    if(len(self.plot_data_lower[i]) < 4):
+                        x = (self.plot_data_lower[i])[3]
+                        y = (self.plot_data_lower[i])[4]
+                        line_obj = self.plotWidget_UEB_status_lower.plot(x, y)
+                        self.plot_data_lower.insert(2, line_obj)
+                    else:
+                        (self.plot_data_lower[i])[3] = ((self.plot_data_lower[i])[3])[1:]
+                        (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
+                        self.plot_data_lower[2].setData(self.hour, self.temperature)
 
     def saveFileDialog(self):
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","All Files (*);;Text Files (*.csv)")
@@ -215,18 +245,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
         for i in range(0, len(transmittedIDs)):
             self.csv_datacolumns.append(self.dt_algorithmus.getDataPacket(transmittedIDs[i]))
-
-        
-        for j in range(0, len(self.csv_datacolumns[0])):
+        biggestColumn = 0
+        for i in range(0, len(self.csv_datacolumns)):
+            if(len(self.csv_datacolumns[i]) > biggestColumn):
+                biggestColumn = len(self.csv_datacolumns[i])
+        for j in range(0, biggestColumn):
             rowData = []
             for i in range(0, len(self.csv_datacolumns)):
-                    rowData.append(((self.csv_datacolumns[i])[j])[9])
-
+                if(len(self.csv_datacolumns[i]) > j):
+                    rowData.append(bytearray.fromhex(((self.csv_datacolumns[i])[j])[9]).decode(errors='ignore'))
+                else:
+                    rowData.append("")
             if(self.savePath):
                 if(not self.fileheaderCreated):
                     self.writeFileHeader(transmittedIDs)          
                 self.writeRow(rowData)
-
+        
         self.csv_datacolumns.clear()
             
     
