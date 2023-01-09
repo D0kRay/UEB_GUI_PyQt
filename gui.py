@@ -1,4 +1,6 @@
 import pyqtgraph as pg
+import threading, time
+import csv, os
 
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QFileDialog, QPushButton
@@ -9,22 +11,30 @@ from ui_MainWindow import Ui_MainWindow
 from ueb_config import ueb_config
 from communication import Communication
 from scpi_commands import scpi_commands
+from csv_writer import csv_writer
+from DT_algorithmus import DT_algorithmus
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+
+    SAFE_INTERVAL_FILE = 0.2  #seconds
 
     hour = [1,2,3,4,5,6,7,8,9,10]
     temperature = [30,32,34,32,33,31,29,32,35,45]
     savePath = ""
 
-    communication = Communication()
+    communication = Communication
     ueb_config = ueb_config()
     ueb_config_list = list
     scpi_commands = scpi_commands
+    dt_algorithmus = DT_algorithmus
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.scpi_commands = scpi_commands()
+        self.communication = Communication()
+        self.dt_algorithmus = DT_algorithmus()
+        self.job = Job(interval=self.SAFE_INTERVAL_FILE, execute=self.getDataFromThread, name="DataSafeThread")
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
         self.setupUi(self)
@@ -62,7 +72,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.comPort_comboBox.setCurrentText("Comport")
 
     def exitButtonClicked(self):
-        self.communication.stop_event()
+        if("Disconnect" in self.connectComPort_Button.text()):
+            self.communication.stopThread()
+        self.job.stop()
         self.close()
         
     def stopButtonClicked(self):
@@ -83,23 +95,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     self.connectComPort_Button.setText("Connect")
         else:
-            self.communication.stop_event()
+            self.communication.stopThread()
             self.connectComPort_Button.setText("Connect")
 
     def readUEB_SettingsButtonClicked(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            self.communication.stop_event()
+            self.communication.stopThread()
             settings = self.communication.readSettings()
             self.ueb_config_list = self.getUEB_SettingVars(settings)
             self.setUEB_Config(self.ueb_config_list)
             self.setUEB_Config_Tab()
 
     def writeUEB_SettingsButtonClicked(self):
-        self.communication.stop_event()
+        self.communication.stopThread()
         self.sendUEBConfigTab()
 
     def getUEB_SettingVars(self, settingsstring):
-        self.communication.stop_event()
+        self.communication.stopThread()
         parameters = settingsstring.split(";")
         for i in range(len(parameters)):
             temp = parameters[i].split("=")
@@ -152,8 +164,100 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def startMotor(self):
         self.communication.writeCommand("DT\r")
         self.communication.readSerialRead()
+        # self.createFile(self.savePath, ['self.header', 'Test', 'Test2', 'Test4'])
+        # self.getDataFromThread()
+        # time.sleep(0.5)
+        if(not self.job.is_alive()):
+            self.job = Job(interval=self.SAFE_INTERVAL_FILE, execute=self.getDataFromThread, name="DataSafeThread")
+            self.job.start()
 
     def stopMotor(self):
         self.communication.writeCommand("DT\r")
         self.communication.readSerialRead()
+
+    # def createFileHeader(self):
+
+
+    def writeDataRow(self):
+        self.writeRow(['tet', 'dd', 'dheh', 'hkhe'])
+        
+
+    def createFile(self, path, header):
+        self.filepath = path
+        self.header = header
+        if(not os.path.exists(self.filepath)):
+            with open(self.filepath, 'x', encoding='UTF8', newline='') as f:
+                self.writer = csv.writer(f)
+                self.writer.writerow(header)
+
+
+    def writeRow(self, data):
+        with open(self.filepath, 'a', encoding='UTF8', newline='') as f:
+            self.writer = csv.writer(f)
+            self.writer.writerow(data)
+
+    def getDataFromThread(self):
+        data_array = self.communication.thread_data_queue
+        laenge = data_array.qsize()
+        # split = [data_array[i] for i in range (0, len(data_array))]
+        # for i in range (0, comm.thread_data_queue.qsize())
+        # print((data_array.get()).hex())
+        self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
+    
+class Job(threading.Thread):
+    def __init__(self, interval, execute, name, *args, **kwargs):
+        threading.Thread.__init__(self)
+        self.daemon = False
+        self.stopped = threading.Event()
+        self.interval = interval
+        self.execute = execute
+        self.args = args
+        self.kwargs = kwargs
+        self.name = name
+        
+    def stop(self):
+                self.stopped.set()
+                self.join()
+    def run(self):
+            while not self.stopped.wait(self.interval):
+                self.execute(*self.args, **self.kwargs)
+        
+        
+        
+        
+        
+##
+# import threading, time, signal
+
+# from datetime import timedelta
+
+# WAIT_TIME_SECONDS = 1
+
+# class ProgramKilled(Exception):
+#     pass
+
+# def foo():
+#     print time.ctime()
+    
+# def signal_handler(signum, frame):
+#     raise ProgramKilled
+    
+
+            
+# if __name__ == "__main__":
+#     signal.signal(signal.SIGTERM, signal_handler)
+#     signal.signal(signal.SIGINT, signal_handler)
+    
+    
+#     while True:
+#           try:
+#               time.sleep(1)
+#           except ProgramKilled:
+#               print "Program killed: running cleanup code"
+#               job.stop()
+#               break
+# 
+# 
+# )
+
 

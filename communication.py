@@ -8,6 +8,7 @@ from serial import Serial
 from scpi_commands import scpi_commands
 from threading import Thread
 from threading import Event
+from queue import Queue
 
 
 class Communication:
@@ -16,12 +17,14 @@ class Communication:
     t = threading
     scpi_commands = scpi_commands
     stop_event = Event
+    thread_data_queue = Queue
     
     def __init__(self):
         self.thread_run = False
         self.ser = Serial(None, 256000, timeout = 0)
         self.scpi_commands = scpi_commands()
-        self.stop_event = Event()
+        self.stop_event = Event()     
+        self.thread_data_queue = Queue(maxsize=0)
     
         
     def getComPorts(self):
@@ -48,37 +51,35 @@ class Communication:
             self.ser.close()
 
         return connected
-        # self.writeCommmand(scpi_commands.UEBREADY)
-        # self.readSerialRead()
+
 
     def readSerialRead(self):
         if(not self.thread_run):
-            # self.stop_event = Event()
-            self.t = threading.Thread(target=self.threadreadSerial, name="SerialThread", args=(self.stop_event,), daemon=True) #TODO doppeltes Komma?
+            self.stop_event.clear()
+            self.t = threading.Thread(target=self.threadreadSerial, name="SerialThread", args=(self.ser, self.stop_event, self.thread_data_queue), daemon=True) 
             self.thread_run = True
             self.t.start()
-            # self.start = time.time()
             print(time.time())
             
 
-    def threadreadSerial(self, event):
-        while not event.is_set():
-            if(self.ser.is_open):
-                data = self.ser.read(self.ser.in_waiting)
-                # data = self.ser.readline()
-                # if(not data == b''):
-                    # print(data)
-                    # print(time.time())
-                    # print("Starttime:" + str(self.start))
+    def threadreadSerial(self, serialobj, eventobj, queue):
+        while not eventobj.is_set():
+            if(serialobj.is_open and serialobj.in_waiting > 0):
+                buffer = (serialobj.read(serialobj.in_waiting))
+                queue.put(buffer)
+                # print(buffer)
+                # serialobj.flushInput()
         print('Thread stopped')
 
     def stopThread(self):
-        self.stop_event.set()
-        self.t.join()
+        if(self.thread_run):
+            self.stop_event.set()
+            self.t.join()
+            self.thread_run = False
                     
     def writeCommand(self, command):
-        # command = command + scpi_commands.CARRIAGE_RETURN
         bytestring = command.encode('ascii')
+        self.ser.flushInput()
         self.ser.write(bytestring)
 
     def readSettings(self):
@@ -87,6 +88,8 @@ class Communication:
         data = self.ser.readline()
         data_decoded = data.decode('ascii')
         return data_decoded
+
+    
 
 
    
