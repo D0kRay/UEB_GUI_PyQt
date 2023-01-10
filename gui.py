@@ -64,8 +64,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.einstLesen_pushButton_UEB.clicked.connect(self.readUEB_SettingsButtonClicked)
         self.einst_Schreiben_pushButton_UEB.clicked.connect(self.writeUEB_SettingsButtonClicked)
         self.startButton_UEB_status.clicked.connect(self.startMotor)
-        self.saveTransmissionparameter_pushButton.connect(self.safeParameterToJSON)
-        self.loadTransmissionparameter_pushButton.connect(self.loadParameterFromJSON)
+        self.saveTransmissionparameter_pushButton.clicked.connect(self.safeParameterToJSON)
+        self.loadTransmissionparameter_pushButton.clicked.connect(self.loadParameterFromJSON)
 
 
     def showGUI(self):
@@ -259,8 +259,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
     def safeParameterToJSON(self):
-        parametercolumns = self.generateParameterColumns()
-        jsonString = json.dumps(parametercolumns)
+        self.generateParameterColumns()
+        jsonString = json.dumps(self.parametercolumns)
         jsonFile = open("parameter.json", 'w')
         jsonFile.write(jsonString)
         jsonFile.close()
