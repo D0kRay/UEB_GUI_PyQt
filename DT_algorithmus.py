@@ -10,6 +10,13 @@ class DT_algorithmus():
     TRANSMISSION_COMPLETE = "80"
     ID_STATUS_PACKET = "00"
     STATUS_PACKET_IDENTIFIER = "StatusPacket"
+    STATUSFLAG_BYTE_LIST_NR = 0
+    GUIID_BYTE_LIST_NR = 2
+    # CONTROLLERID_BYTE_LIST_NR = 4
+    COUNT_BYTE_LIST_NR = 4
+    MAXPACKAGE_BYTE_LIST_NR = 6
+    DATA_BYTE_LIST_NR = 8
+
     message_buffer = list
     transmitted_data_info = list
     data_list = list
@@ -47,10 +54,10 @@ class DT_algorithmus():
 
             
     def disassembleOnePacket(self, inpacket):
-        if(self.ID_STATUS_PACKET in inpacket[2:4]):
+        if(self.ID_STATUS_PACKET in inpacket[self.GUIID_BYTE_LIST_NR:(self.GUIID_BYTE_LIST_NR+2)]):
             outPacket = ["StatusPacket", inpacket]
         else:
-            outPacket = ["StatusFlag", inpacket[:2], "ID", inpacket[2:4], "Count", inpacket[4:6], "MaxPackage", inpacket[6:8], "Data", inpacket[8:]]
+            outPacket = ["StatusFlag", inpacket[self.STATUSFLAG_BYTE_LIST_NR:(self.STATUSFLAG_BYTE_LIST_NR+2)], "GUI_ID", inpacket[self.GUIID_BYTE_LIST_NR:(self.GUIID_BYTE_LIST_NR+2)], "Count", inpacket[self.COUNT_BYTE_LIST_NR:(self.COUNT_BYTE_LIST_NR+2)], "MaxPackage", inpacket[self.MAXPACKAGE_BYTE_LIST_NR:(self.MAXPACKAGE_BYTE_LIST_NR+2)], "Data", inpacket[self.DATA_BYTE_LIST_NR:]]
             # outPacket = ["StatusFlag", inpacket[:2], "ID", inpacket[2:4], "Count", inpacket[4:6], "MaxPackage", inpacket[6:8], "Data", self.disassembleDataBasedOnDataType(inpacket[8:], inpacket[2:4])]
 
         return outPacket
@@ -88,3 +95,26 @@ class DT_algorithmus():
 
     def setDataTypes(self, idDatatypeList):
         self.id_datatype_list = idDatatypeList
+
+    def isTransmissionComplete(self, id):
+        transmission_complete = False
+        dataPacket = []
+        statusPacket = []
+        for i in range(0, len(self.data_list)):
+            packet = self.data_list[i]
+            if(not self.STATUS_PACKET_IDENTIFIER in packet[0]):
+                if(id in packet[3]):
+                    dataPacket.append(packet)
+            elif(self.STATUS_PACKET_IDENTIFIER in packet[0]):
+                statusPacket.append(packet)
+
+        dataPacket.sort(key=lambda x: int(x[5], base=16))
+
+        if((len(dataPacket)-1) == int((dataPacket[0])[7], base=16)):
+            transmission_complete = True
+            for i in range((len(self.data_list)-1), 0, -1):
+                if(not self.STATUS_PACKET_IDENTIFIER in (self.data_list[i])[0]):
+                    if((self.data_list[i])[3] == id):
+                        self.data_list.pop(i)
+
+        return transmission_complete

@@ -41,6 +41,7 @@ class scpi_commands():
         self.RDC = "RDC"
         self.INKREMENTAL = "INKR"
         self.DATATRANSMISSION = "DT"
+        self.COMPLETE = "COMPLETE"
         self.DELIMITER_FULLMESSAGE = ""
         self.DELIMITER_PARTMESSAGE = ":"
         self.CARRIAGE_RETURN = "\r"
@@ -92,5 +93,9 @@ class scpi_commands():
         return (self.UEB + self.DELIMITER_PARTMESSAGE  + self.SYSTEM + self.DELIMITER_PARTMESSAGE  + self.D_ENABLE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
 
     def setDatatransmission(self):
-        return (self.DATATRANSMISSION + self.CARRIAGE_RETURN)
+        return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.CONFIG + self.CARRIAGE_RETURN)
+
+    def setDatatransmissionComplete(self, id):
+        return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.COMPLETE + self.DELIMITER_PARTMESSAGE + str(id) + self.CARRIAGE_RETURN)
+
 

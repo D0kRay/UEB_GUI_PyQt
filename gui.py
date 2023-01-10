@@ -75,6 +75,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window.show()
 
     def plotOnUEBStatusPlots(self):
+        # TODO Plots aus liste laden und aktualisieren
         if(len(self.plot_data_upper)):
             for i in range(0, len(self.plot_data_upper)):
                 if((self.plot_data_upper[i])[0]):
@@ -217,7 +218,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def stopMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            self.communication.writeCommand("DT\r")
+            self.communication.writeCommand("DT:CONFIG\r")
             self.communication.readSerialRead()
 
     def writeFileHeader(self, ids):
@@ -292,9 +293,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # laenge = data_array.qsize()
         self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
+        
         for i in range(0, len(transmittedIDs)):
             data = self.dt_algorithmus.getDataPacket(transmittedIDs[i])
             self.csv_datacolumns.append(data)
+            if(self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
+                self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(transmittedIDs[i]))
             if(i >= len(self.separated_id_list)):
                 self.separated_id_list.append(data)
             else:

@@ -66,6 +66,7 @@ class Communication:
         while not eventobj.is_set():
             if(serialobj.is_open and serialobj.in_waiting > 0):
                 buffer = (serialobj.read(serialobj.in_waiting))
+                # serialobj.flushInput()
                 queue.put(buffer)
         print('Thread stopped')
 
