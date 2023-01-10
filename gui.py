@@ -2,6 +2,7 @@ import csv
 import os
 import threading
 import time
+import json
 
 import pyqtgraph as pg
 from PyQt6 import QtWidgets, uic
@@ -34,6 +35,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     csv_datacolumns = list
     plot_data_upper = list #Datastructure: [0] plot on/off [1] color [2] lineobj [3] x list [4] y list [5] data
     plot_data_lower = list #Datastructure: [0] plot on/off [1] color [2] lineobj [3] x list [4] y list [5] data
+    separated_id_list = list
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -45,6 +47,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.csv_datacolumns = []
         self.plot_data_upper = []
         self.plot_data_lower = []
+        self.separated_id_list = []
         self.fileheaderCreated = False
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
@@ -61,6 +64,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.einstLesen_pushButton_UEB.clicked.connect(self.readUEB_SettingsButtonClicked)
         self.einst_Schreiben_pushButton_UEB.clicked.connect(self.writeUEB_SettingsButtonClicked)
         self.startButton_UEB_status.clicked.connect(self.startMotor)
+        self.saveTransmissionparameter_pushButton.connect(self.safeParameterToJSON)
+        self.loadTransmissionparameter_pushButton.connect(self.loadParameterFromJSON)
 
 
     def showGUI(self):
@@ -183,7 +188,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.leftturn_radioButton_UEB.setChecked(True)
             self.rightturn_radioButton_UEB.setChecked(False)
-        # self.pwmFrq_SpinBox_UEB
 
     def sendUEBConfigTab(self):
         self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.rightturn_radioButton_UEB.isChecked()))
@@ -228,7 +232,48 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.parametercolumns = [self.hex0.text(), self.csv0.text(), self.hex1.text(), self.csv1.text(), self.hex2.text(), self.csv2.text(), 
         self.hex3.text(), self.csv3.text(), self.hex4.text(), self.csv4.text(), self.hex5.text(), self.csv5.text(), self.hex6.text(), self.csv6.text(), 
         self.hex7.text(), self.csv7.text(), self.hex8.text(), self.csv8.text(), self.hex9.text(), self.csv9.text(), self.hex10.text(), self.csv10.text()]
-        
+
+    def setParameterColumns(self, parametercolumns):
+        self.hex0.setText(parametercolumns[0])
+        self.csv0.setText(parametercolumns[1])
+        self.hex1.setText(parametercolumns[2])
+        self.csv1.setText(parametercolumns[3])
+        self.hex2.setText(parametercolumns[4])
+        self.csv2.setText(parametercolumns[5]) 
+        self.hex3.setText(parametercolumns[6])
+        self.csv3.setText(parametercolumns[7])
+        self.hex4.setText(parametercolumns[8])
+        self.csv4.setText(parametercolumns[9])
+        self.hex5.setText(parametercolumns[10])
+        self.csv5.setText(parametercolumns[11])
+        self.hex6.setText(parametercolumns[12])
+        self.csv6.setText(parametercolumns[13]) 
+        self.hex7.setText(parametercolumns[14])
+        self.csv7.setText(parametercolumns[15])
+        self.hex8.setText(parametercolumns[16])
+        self.csv8.setText(parametercolumns[17])
+        self.hex9.setText(parametercolumns[18])
+        self.csv9.setText(parametercolumns[19])
+        self.hex10.setText(parametercolumns[20])
+        self.csv10.setText(parametercolumns[21])
+
+
+    def safeParameterToJSON(self):
+        parametercolumns = self.generateParameterColumns()
+        jsonString = json.dumps(parametercolumns)
+        jsonFile = open("parameter.json", 'w')
+        jsonFile.write(jsonString)
+        jsonFile.close()
+
+    def loadParameterFromJSON(self):
+        jsonFile = open("parameter.json", 'r')
+        jsonString = jsonFile.read()
+        filecontent = json.loads(jsonString)
+        self.setParameterColumns(filecontent)
+        self.generateParameterColumns()
+        jsonFile.close()
+
+
 
     def createFile(self):
         if(not os.path.exists(self.savePath)):
@@ -248,7 +293,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
         for i in range(0, len(transmittedIDs)):
-            self.csv_datacolumns.append(self.dt_algorithmus.getDataPacket(transmittedIDs[i]))
+            data = self.dt_algorithmus.getDataPacket(transmittedIDs[i])
+            self.csv_datacolumns.append(data)
+            if(i >= len(self.separated_id_list)):
+                self.separated_id_list.append(data)
+            else:
+                self.separated_id_list[i].extend(data)
         biggestColumn = 0
         for i in range(0, len(self.csv_datacolumns)):
             if(len(self.csv_datacolumns[i]) > biggestColumn):

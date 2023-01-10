@@ -14,11 +14,13 @@ class DT_algorithmus():
     transmitted_data_info = list
     data_list = list
     id_datatype_list = list
+    sorted_transmission_data = list
 
     def __init__(self):
         self.data_list = []
         self.message_buffer = []
         self.id_datatype_list = []
+        self.sorted_transmission_data = []
 
     def processQueue(self, queue):
         if(not queue.empty()):
