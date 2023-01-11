@@ -8,7 +8,7 @@ import pyqtgraph as pg
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
-                             QPushButton)
+                             QPushButton, QSpinBox, QLineEdit)
 from pyqtgraph import PlotWidget, plot
 from qt_material import apply_stylesheet
 
@@ -17,11 +17,12 @@ from DT_algorithmus import DT_algorithmus
 from scpi_commands import scpi_commands
 from ueb_config import ueb_config
 from ui_MainWindow import Ui_MainWindow
+from parameter import parameter_transmission
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    SAFE_INTERVAL_FILE = 0.2  #seconds
+    SAFE_INTERVAL_FILE = 0.1  #seconds
 
     hour = [1,2,3,4,5,6,7,8,9,10]
     temperature = [30,32,34,32,33,31,29,32,35,45]
@@ -36,6 +37,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     plot_data_upper = list #Datastructure: [0] plot on/off [1] color [2] lineobj [3] x list [4] y list [5] data
     plot_data_lower = list #Datastructure: [0] plot on/off [1] color [2] lineobj [3] x list [4] y list [5] data
     separated_id_list = list
+    parameter_list = list
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -48,6 +50,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plot_data_upper = []
         self.plot_data_lower = []
         self.separated_id_list = []
+        self.parameter_list = []
         self.fileheaderCreated = False
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
@@ -108,7 +111,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             print(fileName)
 
         
-    def refreshComPortComboBox(self):
+    def refreshComPortComboBox(self):   
         self.comPort_comboBox.clear()
         self.comPort_comboBox.addItems(self.communication.getComPorts())
 
@@ -206,7 +209,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def startMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            self.generateParameterColumns()
+            self.generateParameterList()
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.saveFileDialog()
             if(self.savePath):
@@ -227,45 +230,140 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def writeFileHeader(self, ids):
         self.fileheaderCreated = True
+        self.generateParameterList(self)
         header = []
         for i in range(0, len(ids)):
-            if(ids[i] in self.parametercolumns):
-                header.append(self.parametercolumns[self.parametercolumns.index(ids[i]) + 1])
+            for j in range(0, len(self.parameter_list)):
+                if ids[i] in self.parameter_list[j].row:
+                    header.append(self.parameter_list[j].CSV_text)
+        # for i in range(0, len(ids)):
+        #     if(ids[i] in self.parameterlist):
+        #         header.append(self.parameterlist[self.parameterlist.index(ids[i]) + 1])
         self.writeRow(header)
 
-    def generateParameterColumns(self):
-        self.parametercolumns = [self.hex0.text(), self.csv0.text(), self.hex1.text(), self.csv1.text(), self.hex2.text(), self.csv2.text(), 
-        self.hex3.text(), self.csv3.text(), self.hex4.text(), self.csv4.text(), self.hex5.text(), self.csv5.text(), self.hex6.text(), self.csv6.text(), 
-        self.hex7.text(), self.csv7.text(), self.hex8.text(), self.csv8.text(), self.hex9.text(), self.csv9.text(), self.hex10.text(), self.csv10.text()]
+    def generateParameterList(self):
+        for i in range(0, self.scrollArea_gridLayout_Transmission.count()):
+            item = self.scrollArea_gridLayout_Transmission.itemAt(i).widget()
+            if isinstance(item, QSpinBox):
+                row = 0
+                row = ''.join(filter(str.isdigit, item.objectName()))
+                if(len(self.parameter_list)):
+                    for j in range(0, len(self.parameter_list)):
+                        if row in self.parameter_list[j].row:
+                            self.parameter_list[j].GUI_id = item.text()
+                            break
+                        elif(j == (len(self.parameter_list)-1)):
+                            parameter = parameter_transmission()
+                            parameter.GUI_id = item.text()
+                            parameter.row = row
+                            self.parameter_list.append(parameter)
+                else:
+                    parameter = parameter_transmission()
+                    parameter.GUI_id = item.text()
+                    parameter.row = row
+                    self.parameter_list.append(parameter)
+            elif(isinstance(item, QLineEdit)):
+                if(item.objectName()[:3] == "csv"):
+                    row = 0
+                    row = ''.join(filter(str.isdigit, item.objectName()))
+                    if(len(self.parameter_list)):
+                        for j in range(0, len(self.parameter_list)):
+                            if row in self.parameter_list[j].row:
+                                self.parameter_list[j].CSV_text = item.text()
+                                break
+                            elif(j == (len(self.parameter_list)-1)):
+                                parameter = parameter_transmission()
+                                parameter.CSV_text = item.text()
+                                parameter.row = row
+                                self.parameter_list.append(parameter)
+                    else:
+                        parameter = parameter_transmission()
+                        parameter.CSV_text = item.text()
+                        parameter.row = row
+                        self.parameter_list.append(parameter)
+                elif(item.objectName()[:10] == "dataformat"):
+                    row = 0
+                    row = ''.join(filter(str.isdigit, item.objectName()))
+                    if(len(self.parameter_list)):
+                        for j in range(0, len(self.parameter_list)):
+                            if row in self.parameter_list[j].row:
+                                self.parameter_list[j].DataFormat = item.text()
+                                break
+                            elif(j == (len(self.parameter_list)-1)):
+                                parameter = parameter_transmission()
+                                parameter.DataFormat = item.text()
+                                parameter.row = row
+                                self.parameter_list.append(parameter)
+                    else:
+                        parameter = parameter_transmission()
+                        parameter.DataFormat = item.text()
+                        parameter.row = row
+                        self.parameter_list.append(parameter)
+
+
+        # self.parameterlist = []
+        # # widgets auf seite Parameter
+        # self.parameterlist = [self.id0.text(), self.csv0.text(), self.id1.text(), self.csv1.text(), self.id2.text(), self.csv2.text(), 
+        # self.id3.text(), self.csv3.text(), self.id4.text(), self.csv4.text(), self.id5.text(), self.csv5.text(), self.id6.text(), self.csv6.text(), 
+        # self.id7.text(), self.csv7.text(), self.id8.text(), self.csv8.text(), self.id9.text(), self.csv9.text(), self.id10.text(), self.csv10.text()]
 
     def setParameterColumns(self, parametercolumns):
-        self.hex0.setText(parametercolumns[0])
-        self.csv0.setText(parametercolumns[1])
-        self.hex1.setText(parametercolumns[2])
-        self.csv1.setText(parametercolumns[3])
-        self.hex2.setText(parametercolumns[4])
-        self.csv2.setText(parametercolumns[5]) 
-        self.hex3.setText(parametercolumns[6])
-        self.csv3.setText(parametercolumns[7])
-        self.hex4.setText(parametercolumns[8])
-        self.csv4.setText(parametercolumns[9])
-        self.hex5.setText(parametercolumns[10])
-        self.csv5.setText(parametercolumns[11])
-        self.hex6.setText(parametercolumns[12])
-        self.csv6.setText(parametercolumns[13]) 
-        self.hex7.setText(parametercolumns[14])
-        self.csv7.setText(parametercolumns[15])
-        self.hex8.setText(parametercolumns[16])
-        self.csv8.setText(parametercolumns[17])
-        self.hex9.setText(parametercolumns[18])
-        self.csv9.setText(parametercolumns[19])
-        self.hex10.setText(parametercolumns[20])
-        self.csv10.setText(parametercolumns[21])
+
+        for i in range(0, self.scrollArea_gridLayout_Transmission.count()):
+            item = self.scrollArea_gridLayout_Transmission.itemAt(i).widget()
+            if isinstance(item, QSpinBox):
+                row = 0
+                row = ''.join(filter(str.isdigit, item.objectName()))
+                if(len(parametercolumns)):
+                    for j in range(0, len(parametercolumns)):
+                        if row in parametercolumns[j].row:
+                            item.setValue(int(parametercolumns[j].GUI_id))
+                            break
+            elif(isinstance(item, QLineEdit)):
+                if(item.objectName()[:3] == "csv"):
+                    row = 0
+                    row = ''.join(filter(str.isdigit, item.objectName()))
+                    if(len(parametercolumns)):
+                        for j in range(0, len(parametercolumns)):
+                            if row in parametercolumns[j].row:
+                                item.setText(parametercolumns[j].CSV_text)
+                                break
+                elif(item.objectName()[:10] == "dataformat"):
+                    row = 0
+                    row = ''.join(filter(str.isdigit, item.objectName()))
+                    if(len(parametercolumns)):
+                        for j in range(0, len(parametercolumns)):
+                            if row in parametercolumns[j].row:
+                                item.setText(parametercolumns[j].DataFormat)
+                                break
+
+        # self.id0.setText(parametercolumns[0])
+        # self.csv0.setText(parametercolumns[1])
+        # self.id1.setText(parametercolumns[2])
+        # self.csv1.setText(parametercolumns[3])
+        # self.id2.setText(parametercolumns[4])
+        # self.csv2.setText(parametercolumns[5]) 
+        # self.id3.setText(parametercolumns[6])
+        # self.csv3.setText(parametercolumns[7])
+        # self.id4.setText(parametercolumns[8])
+        # self.csv4.setText(parametercolumns[9])
+        # self.id5.setText(parametercolumns[10])
+        # self.csv5.setText(parametercolumns[11])
+        # self.id6.setText(parametercolumns[12])
+        # self.csv6.setText(parametercolumns[13]) 
+        # self.id7.setText(parametercolumns[14])
+        # self.csv7.setText(parametercolumns[15])
+        # self.id8.setText(parametercolumns[16])
+        # self.csv8.setText(parametercolumns[17])
+        # self.id9.setText(parametercolumns[18])
+        # self.csv9.setText(parametercolumns[19])
+        # self.id10.setText(parametercolumns[20])
+        # self.csv10.setText(parametercolumns[21])
 
 
     def safeParameterToJSON(self):
-        self.generateParameterColumns()
-        jsonString = json.dumps(self.parametercolumns)
+        self.generateParameterList()
+        jsonString = json.dumps([ob.__dict__ for ob in self.parameter_list])
         jsonFile = open("parameter.json", 'w')
         jsonFile.write(jsonString)
         jsonFile.close()
@@ -274,8 +372,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         jsonFile = open("parameter.json", 'r')
         jsonString = jsonFile.read()
         filecontent = json.loads(jsonString)
-        self.setParameterColumns(filecontent)
-        self.generateParameterColumns()
+        paramlist = []
+        for i in range(0, len(filecontent)):
+            parameter = parameter_transmission()
+            parameter.CSV_text = filecontent[i]['CSV_text']
+            parameter.DataFormat = filecontent[i]['DataFormat']
+            parameter.DT_id = filecontent[i]['DT_id']
+            parameter.GUI_id = filecontent[i]['GUI_id']
+            parameter.row = filecontent[i]['row']
+            paramlist.append(parameter)
+        self.setParameterColumns(paramlist)
+        self.generateParameterList()
         jsonFile.close()
 
 
