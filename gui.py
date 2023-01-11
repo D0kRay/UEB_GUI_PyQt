@@ -129,10 +129,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if(self.communication.setComPort(comport)):
                     print("Comport SET " + comport)
                     settings = self.communication.readSettings()
-                    self.ueb_config_list = self.getUEB_SettingVars(settings)
-                    self.setUEB_Config(self.ueb_config_list)
-                    self.setUEB_Config_Tab()
-                    self.connectComPort_Button.setText("Disconnect")
+                    if(settings):
+                        self.ueb_config_list = self.getUEB_SettingVars(settings)
+                        self.setUEB_Config(self.ueb_config_list)
+                        self.setUEB_Config_Tab()
+                        self.connectComPort_Button.setText("Disconnect")
+                    else:
+                        print("Falscher COM Port oder Fehlerhafte Uebertragung.")
+                        self.communication.closeComPort()
                 else:
                     self.connectComPort_Button.setText("Connect")
         else:
@@ -155,7 +159,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.sendUEBConfigTab()
 
     def getUEB_SettingVars(self, settingsstring):
-        self.communication.stopThread()
+        # self.communication.stopThread()
         parameters = settingsstring.split(";")
         for i in range(len(parameters)):
             temp = parameters[i].split("=")
