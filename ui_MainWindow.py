@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'c:\Users\Pascal\KIRCPA02_OneDrive\OneDrive - thu.de\Master\Semester_2\Masterprojekt\GUI_PyQt\ui_mainwindow.ui'
+# Form implementation generated from reading ui file 'c:\Users\pasik\Documents\UEB_GUI_PyQt\UEB_GUI_PyQt\ui_mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.0
 #
@@ -144,7 +144,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 172, 515))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 81, 28))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.gridLayoutWidget_12 = QtWidgets.QWidget(self.scrollAreaWidgetContents_3)
         self.gridLayoutWidget_12.setGeometry(QtCore.QRect(0, 0, 181, 511))
@@ -265,17 +265,17 @@ class Ui_MainWindow(object):
         self.label_35 = QtWidgets.QLabel(self.gridLayoutWidget_3)
         self.label_35.setObjectName("label_35")
         self.gridLayout_3.addWidget(self.label_35, 10, 1, 1, 1)
-        self.saveSettings_pushButton = QtWidgets.QPushButton(self.gridLayoutWidget_3)
-        self.saveSettings_pushButton.setObjectName("saveSettings_pushButton")
-        self.gridLayout_3.addWidget(self.saveSettings_pushButton, 20, 0, 1, 2)
-        self.pushButton = QtWidgets.QPushButton(self.gridLayoutWidget_3)
+        self.saveUEBSettings_pushButton = QtWidgets.QPushButton(self.gridLayoutWidget_3)
+        self.saveUEBSettings_pushButton.setObjectName("saveUEBSettings_pushButton")
+        self.gridLayout_3.addWidget(self.saveUEBSettings_pushButton, 20, 0, 1, 2)
+        self.loadUEBSettings_pushButton = QtWidgets.QPushButton(self.gridLayoutWidget_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy)
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout_3.addWidget(self.pushButton, 20, 2, 1, 1)
+        sizePolicy.setHeightForWidth(self.loadUEBSettings_pushButton.sizePolicy().hasHeightForWidth())
+        self.loadUEBSettings_pushButton.setSizePolicy(sizePolicy)
+        self.loadUEBSettings_pushButton.setObjectName("loadUEBSettings_pushButton")
+        self.gridLayout_3.addWidget(self.loadUEBSettings_pushButton, 20, 2, 1, 1)
         self.einst_Schreiben_pushButton_UEB = QtWidgets.QPushButton(self.gridLayoutWidget_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -810,7 +810,7 @@ class Ui_MainWindow(object):
         self.terminal_scrollArea.setWidgetResizable(True)
         self.terminal_scrollArea.setObjectName("terminal_scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1120, 520))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 81, 28))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.terminal_textlabel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
         self.terminal_textlabel.setGeometry(QtCore.QRect(0, 0, 1131, 511))
@@ -837,7 +837,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollArea_child_Transmission = QtWidgets.QWidget()
-        self.scrollArea_child_Transmission.setGeometry(QtCore.QRect(0, 0, 1101, 517))
+        self.scrollArea_child_Transmission.setGeometry(QtCore.QRect(0, 0, 405, 331))
         self.scrollArea_child_Transmission.setObjectName("scrollArea_child_Transmission")
         self.scrollArea_gridLayout_Transmission = QtWidgets.QGridLayout(self.scrollArea_child_Transmission)
         self.scrollArea_gridLayout_Transmission.setObjectName("scrollArea_gridLayout_Transmission")
@@ -1059,7 +1059,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addItem(spacerItem3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1199, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1199, 30))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -1100,8 +1100,8 @@ class Ui_MainWindow(object):
         self.label_33.setText(_translate("MainWindow", "Softstartdauer (s)"))
         self.label_30.setText(_translate("MainWindow", "nicht benutzt"))
         self.label_35.setText(_translate("MainWindow", "Ausgangsspannung (V)"))
-        self.saveSettings_pushButton.setText(_translate("MainWindow", "Einstellungen in Datei speichern"))
-        self.pushButton.setText(_translate("MainWindow", "Einstellungen aus \n"
+        self.saveUEBSettings_pushButton.setText(_translate("MainWindow", "Einstellungen in Datei speichern"))
+        self.loadUEBSettings_pushButton.setText(_translate("MainWindow", "Einstellungen aus \n"
 "Datei laden"))
         self.einst_Schreiben_pushButton_UEB.setText(_translate("MainWindow", "Einstellungen \n"
 "schreiben"))

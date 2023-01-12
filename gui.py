@@ -30,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     savePath = ""
 
     communication = Communication
-    ueb_config = ueb_config()
+    ueb_config = ueb_config
     ueb_config_list = list
     scpi_commands = scpi_commands
     dt_algorithmus = DT_algorithmus
@@ -52,6 +52,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plot_data_lower = []
         self.separated_id_list = []
         self.parameter_list = []
+        self.ueb_config = ueb_config()
         self.fileheaderCreated = False
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
@@ -63,7 +64,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotWidget_UEB_status_lower.setBackground('w')
         self.plotWidget_UEB_status_upper.setBackground('w')
 
-        self.saveunder_Button.clicked.connect(self.saveFileDialog)
+        self.saveunder_Button.clicked.connect(self.savePathDialog)
         self.refreshComPort_Button.clicked.connect(self.refreshComPortComboBox)
         self.exit_Button.clicked.connect(self.exitButtonClicked)
         self.connectComPort_Button.clicked.connect(self.connectButtonClicked)
@@ -73,6 +74,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.saveTransmissionparameter_pushButton.clicked.connect(self.safeParameterToJSON)
         self.loadTransmissionparameter_pushButton.clicked.connect(self.loadParameterFromJSON)
         self.user_id_parameter_pushButton.clicked.connect(self.openUserIDDialog)
+        self.saveUEBSettings_pushButton.clicked.connect(self.safeUEBToJSON)
+        self.loadUEBSettings_pushButton.clicked.connect(self.loadUEBFromJSON)
 
 
     def showGUI(self):
@@ -108,11 +111,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
                         self.plot_data_lower[2].setData(self.hour, self.temperature)
 
-    def saveFileDialog(self):
-        fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","All Files (*);;Text Files (*.csv)")
-        if fileName:
-            self.savePath = fileName
-            print(fileName)
+    def savePathDialog(self):
+        Path = QFileDialog.getExistingDirectory(self,"Speichern unter:","")
+        if Path:
+            self.savePath = Path
+            print(Path)
 
         
     def refreshComPortComboBox(self):   
@@ -215,17 +218,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if ("Disconnect" in self.connectComPort_Button.text()):
             self.generateParameterList()
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
-                self.saveFileDialog()
+                self.savePathDialog()
             if(self.savePath):
                 self.createFile()
-            id = []
+            
             self.dt_algorithmus = DT_algorithmus()
             self.communication.readSerialRead()
             self.startDataProcessThread()
             for i in range(0, len(self.parameter_list)):
                 if(not int(self.parameter_list[i].GUI_id) == 0):
                     self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
-            # self.communication.writeCommand(self.scpi_commands.setDatatransmission())
             
 
     def startDataProcessThread(self):
@@ -235,25 +237,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def stopMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            self.communication.writeCommand("DT:CONFIG\r")
-            self.communication.readSerialRead()
+            print("Motor stop")
+            # self.communication.writeCommand("DT:CONFIG\r")
+            # self.communication.readSerialRead()
 
-    def writeFileHeader(self, ids):
-        self.fileheaderCreated = True
-        self.generateParameterList(self)
-        header = []
-        for i in range(0, len(ids)):
-            for j in range(0, len(self.parameter_list)):
-                if ids[i] in self.parameter_list[j].row:
-                    header.append(self.parameter_list[j].CSV_text)
-        # for i in range(0, len(ids)):
-        #     if(ids[i] in self.parameterlist):
-        #         header.append(self.parameterlist[self.parameterlist.index(ids[i]) + 1])
-        self.writeRow(header)
+    
 
     def openUserIDDialog(self):
         dialog = ParameterDialog(self)
         dialog.exec()
+
+    def getCSVTextFromID(self, id):
+        csv_text = 'n.v.'
+        for i in range(0, len(self.parameter_list)):
+            if(id in self.parameter_list[i].GUI_id):
+                csv_text = self.parameter_list[i].GUI_id
+        return csv_text
 
     def generateParameterList(self):
         for i in range(0, self.scrollArea_gridLayout_Transmission.count()):
@@ -378,12 +377,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def safeParameterToJSON(self):
         self.generateParameterList()
         jsonString = json.dumps([ob.__dict__ for ob in self.parameter_list])
-        jsonFile = open("parameter.json", 'w')
+        fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
+        jsonFile = open(fileName, 'w')
         jsonFile.write(jsonString)
         jsonFile.close()
 
     def loadParameterFromJSON(self):
-        jsonFile = open("parameter.json", 'r')
+        fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
+        jsonFile = open(fileName, 'r')
         jsonString = jsonFile.read()
         filecontent = json.loads(jsonString)
         paramlist = []
@@ -399,17 +400,64 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.generateParameterList()
         jsonFile.close()
 
-    def createFile(self):
+    def safeUEBToJSON(self):
+        # self.generateParameterList()
+        fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
+        if(fileName):
+            jsonString = json.dumps(vars(self.ueb_config))
+            jsonFile = open(fileName, 'w')
+            jsonFile.write(jsonString)
+            jsonFile.close()
+
+    def loadUEBFromJSON(self):
+        fileName, _ = QFileDialog.getOpenFileName(self,"Speichern unter:","","Text Files (*.json)")
+        if(fileName):
+            jsonFile = open(fileName, 'r')
+            jsonString = jsonFile.read()
+            filecontent = json.loads(jsonString)
+            self.ueb_config = ueb_config()
+            # self.ueb_config.status = filecontent['status']
+            self.ueb_config.frequency = filecontent['frequency']
+            self.ueb_config.v_Bridge = filecontent['v_Bridge']
+            self.ueb_config.v_Reference = filecontent['v_Reference']
+            self.ueb_config.softstartDuration = filecontent['softstartDuration']
+            self.ueb_config.overCurrentThreshold = filecontent['overCurrentThreshold']
+            self.ueb_config.pwmFrequency = filecontent['pwmFrequency']
+            self.ueb_config.rotationDirection = filecontent['rotationDirection']
+            self.ueb_config.thridHarmonic = filecontent['thridHarmonic']
+            self.ueb_config.enableSoftstarter = filecontent['enableSoftstarter']
+            self.setUEB_Config_Tab()
+            jsonFile.close()
+
+    def createFile(self, filename):
         if(not os.path.exists(self.savePath)):
-            with open(self.savePath, 'x', encoding='UTF8', newline='') as f:
+            filename = filename + '.csv'
+            with open((self.savePath + filename), 'x', encoding='UTF8', newline='') as f:
                 self.writer = csv.writer(f)
                 # self.writer.writerow(header)
+        return filename
+
+    def writeHeader(self, ids):
+        self.fileheaderCreated = True
+        self.generateParameterList(self)
+        header = []
+        for i in range(0, len(ids)):
+            for j in range(0, len(self.parameter_list)):
+                if ids[i] in self.parameter_list[j].row:
+                    header.append(self.parameter_list[j].CSV_text)
+        self.writeRow(header)
 
 
-    def writeRow(self, data):
-        with open(self.savePath, 'a', encoding='UTF8', newline='') as f:
+    def writeRow(self, data, filename):
+        # filename = filename + '.csv'
+        with open(filename, 'a', encoding='UTF8', newline='') as f:
             self.writer = csv.writer(f)
             self.writer.writerow(data)
+
+    def writeCompleteCSV(self, data, filename):
+        with open(filename, 'a', encoding='UTF8', newline='') as f:
+            self.writer = csv.writer(f)
+            self.writer.writerows(data)
 
     def getDataFromThread(self):
         # data_array = self.communication.thread_data_queue
@@ -423,6 +471,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # transmissionComplete = self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])
             if((not len(data)) == 0 and self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
                 self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(transmittedIDs[i])))
+                self.createFile(self.getCSVTextFromID(transmittedIDs[i]))
+                complete_data = self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i])
+                for j in range(0, len(complete_data)):
+                    complete_data[i] = complete_data[i].Data
+                self.writeHeader(transmittedIDs[i])
+                self.writeCompleteCSV(complete_data)
             # if(i >= len(self.separated_id_list)):
                 # self.separated_id_list.append(data)
             # else:

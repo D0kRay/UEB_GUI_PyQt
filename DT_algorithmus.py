@@ -4,8 +4,6 @@
 #define MaxPackage_OS 3
 #define Data_OS 4
 from data_content import data_content
-from communication import Communication
-from scpi_commands import scpi_commands
 
 class DT_algorithmus():
 

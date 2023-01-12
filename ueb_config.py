@@ -1,4 +1,6 @@
-class ueb_config():
+import json
+
+class ueb_config:
 
     # frequency = 10
     # v_Bridge = 20
@@ -21,5 +23,9 @@ class ueb_config():
         self.rotationDirection = 1
         self.thridHarmonic = False
         self.enableSoftstarter = False
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
 
 
