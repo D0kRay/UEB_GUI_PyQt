@@ -10,6 +10,12 @@
     <height>699</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -24,7 +30,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="UEB_Status_tab">
      <attribute name="title">
@@ -247,6 +253,105 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="gridLayoutWidget_11">
+      <property name="geometry">
+       <rect>
+        <x>930</x>
+        <y>0</y>
+        <width>201</width>
+        <height>541</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_66">
+         <property name="text">
+          <string>Übertragene IDs</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QScrollArea" name="scrollArea_3">
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_3">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>172</width>
+            <height>515</height>
+           </rect>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget_12">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>181</width>
+             <height>511</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="recorded_id_layout">
+            <item row="3" column="0">
+             <widget class="QLabel" name="recorded_label_4">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="recorded_label_2">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="recorded_label_5">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="recorded_label_1">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="recorded_label_3">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="recorded_label_6">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
     <widget class="QWidget" name="UEB_Settings_tab">
      <attribute name="title">
@@ -257,7 +362,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>403</width>
+        <width>434</width>
         <height>541</height>
        </rect>
       </property>
@@ -265,6 +370,68 @@
        <property name="leftMargin">
         <number>10</number>
        </property>
+       <item row="15" column="1">
+        <widget class="QLabel" name="label_31">
+         <property name="text">
+          <string>PWM Frequenz (Hz)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="18" column="1">
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Linkslauf</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QDoubleSpinBox" name="versorgSp_SpinBox_UEB"/>
+       </item>
+       <item row="11" column="1">
+        <widget class="QLabel" name="label_34">
+         <property name="text">
+          <string>Softstart</string>
+         </property>
+        </widget>
+       </item>
+       <item row="16" column="0">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_16"/>
+       </item>
+       <item row="11" column="0">
+        <widget class="QCheckBox" name="softstart_checkBox_UEB">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLabel" name="label_37">
+         <property name="text">
+          <string>Frequenz (Hz)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="18" column="0">
+        <widget class="QRadioButton" name="leftturn_radioButton_UEB">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="1">
+        <widget class="QLabel" name="label_32">
+         <property name="text">
+          <string>Dritte Harmonische</string>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="0">
+        <widget class="QDoubleSpinBox" name="pwmFrq_SpinBox_UEB">
+         <property name="maximum">
+          <double>99999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0" colspan="3">
         <widget class="QLabel" name="label_38">
          <property name="sizePolicy">
@@ -278,38 +445,31 @@
          </property>
         </widget>
        </item>
-       <item row="11" column="0">
-        <widget class="QCheckBox" name="softstart_checkBox_UEB">
+       <item row="9" column="1">
+        <widget class="QLabel" name="label_36">
+         <property name="text">
+          <string>Versorgungsspannung (V)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="19" column="0">
+        <widget class="QPushButton" name="einstLesen_pushButton_UEB">
+         <property name="text">
+          <string>Einstellungen lesen</string>
+         </property>
+        </widget>
+       </item>
+       <item row="14" column="0">
+        <widget class="QCheckBox" name="dritteHarm_checkBox_UEB">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
-       <item row="19" column="2">
-        <widget class="QPushButton" name="einst_Schreiben_pushButton_UEB">
+       <item row="17" column="1">
+        <widget class="QLabel" name="label_27">
          <property name="text">
-          <string>Einstellungen schreiben</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="label_37">
-         <property name="text">
-          <string>Frequenz (Hz)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="0">
-        <widget class="QDoubleSpinBox" name="softstartD_SpinBox_UEB">
-         <property name="maximum">
-          <double>9999.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <widget class="QLabel" name="label_34">
-         <property name="text">
-          <string>Softstart</string>
+          <string>Rechtslauf</string>
          </property>
         </widget>
        </item>
@@ -323,47 +483,6 @@
        <item row="10" column="0">
         <widget class="QDoubleSpinBox" name="ausgangSp_SpinBox_UEB"/>
        </item>
-       <item row="13" column="1">
-        <widget class="QLabel" name="label_33">
-         <property name="text">
-          <string>Softstartdauer (s)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="16" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_16"/>
-       </item>
-       <item row="10" column="1">
-        <widget class="QLabel" name="label_35">
-         <property name="text">
-          <string>Ausgangsspannung (V)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QDoubleSpinBox" name="versorgSp_SpinBox_UEB"/>
-       </item>
-       <item row="9" column="1">
-        <widget class="QLabel" name="label_36">
-         <property name="text">
-          <string>Versorgungsspannung (V)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="0">
-        <widget class="QDoubleSpinBox" name="pwmFrq_SpinBox_UEB">
-         <property name="maximum">
-          <double>99999.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="0">
-        <widget class="QCheckBox" name="dritteHarm_checkBox_UEB">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
        <item row="8" column="0">
         <widget class="QDoubleSpinBox" name="frequenz_SpinBox_UEB">
          <property name="maximum">
@@ -371,24 +490,17 @@
          </property>
         </widget>
        </item>
-       <item row="14" column="1">
-        <widget class="QLabel" name="label_32">
+       <item row="13" column="1">
+        <widget class="QLabel" name="label_33">
          <property name="text">
-          <string>Dritte Harmonische</string>
+          <string>Softstartdauer (s)</string>
          </property>
         </widget>
        </item>
-       <item row="19" column="0">
-        <widget class="QPushButton" name="einstLesen_pushButton_UEB">
-         <property name="text">
-          <string>Einstellungen lesen</string>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="1">
-        <widget class="QLabel" name="label_31">
-         <property name="text">
-          <string>PWM Frequenz (Hz)</string>
+       <item row="13" column="0">
+        <widget class="QDoubleSpinBox" name="softstartD_SpinBox_UEB">
+         <property name="maximum">
+          <double>9999.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -399,24 +511,45 @@
          </property>
         </widget>
        </item>
-       <item row="18" column="0">
-        <widget class="QRadioButton" name="leftturn_radioButton_UEB">
+       <item row="10" column="1">
+        <widget class="QLabel" name="label_35">
          <property name="text">
-          <string/>
+          <string>Ausgangsspannung (V)</string>
          </property>
         </widget>
        </item>
-       <item row="17" column="1">
-        <widget class="QLabel" name="label_27">
+       <item row="20" column="0" colspan="2">
+        <widget class="QPushButton" name="saveSettings_pushButton">
          <property name="text">
-          <string>Rechtslauf</string>
+          <string>Einstellungen in Datei speichern</string>
          </property>
         </widget>
        </item>
-       <item row="18" column="1">
-        <widget class="QLabel" name="label_28">
+       <item row="20" column="2">
+        <widget class="QPushButton" name="pushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
-          <string>Linkslauf</string>
+          <string>Einstellungen aus 
+Datei laden</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <widget class="QPushButton" name="einst_Schreiben_pushButton_UEB">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Einstellungen 
+schreiben</string>
          </property>
         </widget>
        </item>
@@ -425,13 +558,184 @@
      <widget class="QWidget" name="gridLayoutWidget_4">
       <property name="geometry">
        <rect>
-        <x>400</x>
+        <x>440</x>
         <y>0</y>
-        <width>351</width>
+        <width>521</width>
         <height>541</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_4"/>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="1" column="0" colspan="2">
+        <widget class="QScrollArea" name="scrollArea_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOn</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>500</width>
+            <height>485</height>
+           </rect>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget_10">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>541</width>
+             <height>481</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <item row="6" column="1">
+             <widget class="QLabel" name="ID_229_label">
+              <property name="text">
+               <string>n.v.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="ID_224_label">
+              <property name="text">
+               <string>1024 byte Array</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="QLabel" name="ID_231_label">
+              <property name="text">
+               <string>n.v.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLabel" name="ID_226_label">
+              <property name="text">
+               <string>n.v.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QCheckBox" name="ID228_checkBox">
+              <property name="text">
+               <string>ID 228</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QCheckBox" name="ID229_checkBox">
+              <property name="text">
+               <string>ID 229</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLabel" name="ID_227_label">
+              <property name="text">
+               <string>n.v.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QCheckBox" name="ID226_checkBox">
+              <property name="text">
+               <string>ID 226</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLabel" name="ID_228_label">
+              <property name="text">
+               <string>n.v.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="ID225_checkBox">
+              <property name="text">
+               <string>ID 225</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="ID224_checkBox">
+              <property name="text">
+               <string>ID 224</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QCheckBox" name="ID227_checkBox">
+              <property name="text">
+               <string>ID 227</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QLabel" name="ID_230_label">
+              <property name="text">
+               <string>n.v.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QCheckBox" name="ID231_checkBox">
+              <property name="text">
+               <string>ID 231</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="ID_225_label">
+              <property name="text">
+               <string>n.v.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QCheckBox" name="ID230_checkBox">
+              <property name="text">
+               <string>ID 230</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_65">
+         <property name="text">
+          <string>Standard UEB Übertragungsparameter</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QPushButton" name="user_id_parameter_pushButton">
+         <property name="text">
+          <string>Eigene Messparameter hinzufügen</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="Resolver_tab">
@@ -1422,21 +1726,7 @@ DOS mismatch threshold</string>
        <property name="leftMargin">
         <number>10</number>
        </property>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="loadTransmissionparameter_pushButton">
-         <property name="text">
-          <string>Einstellungen laden</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="saveTransmissionparameter_pushButton">
-         <property name="text">
-          <string>Einstellungen speichern</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2" colspan="2">
+       <item row="2" column="3" colspan="2">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -1449,7 +1739,7 @@ DOS mismatch threshold</string>
          </property>
         </spacer>
        </item>
-       <item row="1" column="0" colspan="4">
+       <item row="1" column="0" colspan="5">
         <widget class="QScrollArea" name="scrollArea">
          <property name="verticalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -1728,6 +2018,20 @@ DOS mismatch threshold</string>
            </item>
           </layout>
          </widget>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="loadTransmissionparameter_pushButton">
+         <property name="text">
+          <string>Einstellungen laden</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="saveTransmissionparameter_pushButton">
+         <property name="text">
+          <string>Einstellungen speichern</string>
+         </property>
         </widget>
        </item>
       </layout>

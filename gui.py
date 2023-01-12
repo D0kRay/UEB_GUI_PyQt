@@ -8,15 +8,16 @@ import pyqtgraph as pg
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
-                             QPushButton, QSpinBox, QLineEdit)
+                             QPushButton, QSpinBox, QLineEdit, QDialog)
 from pyqtgraph import PlotWidget, plot
-from qt_material import apply_stylesheet
+# from qt_material import apply_stylesheet
 
 from communication import Communication
 from DT_algorithmus import DT_algorithmus
 from scpi_commands import scpi_commands
 from ueb_config import ueb_config
 from ui_MainWindow import Ui_MainWindow
+from ui_parameter_dialog import Ui_NewParameterDialog
 from parameter import parameter_transmission
 
 
@@ -55,6 +56,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
         self.setupUi(self)
+        # self.dialog = QDialog(self)
+        # Ui_NewParameterDialog.setupUi(self.dialog)
         self.RDCRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
         self.EncoderRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
         self.plotWidget_UEB_status_lower.setBackground('w')
@@ -69,6 +72,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.startButton_UEB_status.clicked.connect(self.startMotor)
         self.saveTransmissionparameter_pushButton.clicked.connect(self.safeParameterToJSON)
         self.loadTransmissionparameter_pushButton.clicked.connect(self.loadParameterFromJSON)
+        self.user_id_parameter_pushButton.clicked.connect(self.openUserIDDialog)
 
 
     def showGUI(self):
@@ -246,6 +250,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #     if(ids[i] in self.parameterlist):
         #         header.append(self.parameterlist[self.parameterlist.index(ids[i]) + 1])
         self.writeRow(header)
+
+    def openUserIDDialog(self):
+        dialog = ParameterDialog(self)
+        dialog.exec()
 
     def generateParameterList(self):
         for i in range(0, self.scrollArea_gridLayout_Transmission.count()):
@@ -457,3 +465,10 @@ class Job(threading.Thread):
                 self.execute(*self.args, **self.kwargs)
 
 
+class ParameterDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.ui = Ui_NewParameterDialog()
+        self.ui.setupUi(self)
+        self.ui.Abort_pushButton.clicked.connect(self.close)
