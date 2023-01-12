@@ -214,7 +214,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.saveFileDialog()
             if(self.savePath):
                 self.createFile()
-            self.communication.writeCommand(self.scpi_commands.setDatatransmission())
+            id = []
+            for i in range(0, len(self.parameter_list)):
+                if(not self.parameter_list[i].GUI_id == 0):
+                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            # self.communication.writeCommand(self.scpi_commands.setDatatransmission())
             self.communication.readSerialRead()
             self.startDataProcessThread()
 
@@ -384,8 +388,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setParameterColumns(paramlist)
         self.generateParameterList()
         jsonFile.close()
-
-
 
     def createFile(self):
         if(not os.path.exists(self.savePath)):

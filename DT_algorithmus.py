@@ -30,7 +30,8 @@ class DT_algorithmus():
 
     def processQueue(self, queue):
         if(not queue.empty()):
-            singleTransmission = (queue.get()).hex()
+            # singleTransmission = (queue.get()).hex()
+            singleTransmission = queue.get()
             splitedTransLength = [singleTransmission[i:i+self.PACKET_SIZE] for i in range(0, len(singleTransmission), self.PACKET_SIZE)]
             parityCheck = len(singleTransmission) % 2
             if(not parityCheck == 0):
