@@ -215,12 +215,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if(self.savePath):
                 self.createFile()
             id = []
-            for i in range(0, len(self.parameter_list)):
-                if(not self.parameter_list[i].GUI_id == 0):
-                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
-            # self.communication.writeCommand(self.scpi_commands.setDatatransmission())
+            self.dt_algorithmus = DT_algorithmus()
             self.communication.readSerialRead()
             self.startDataProcessThread()
+            for i in range(0, len(self.parameter_list)):
+                if(not int(self.parameter_list[i].GUI_id) == 0):
+                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            # self.communication.writeCommand(self.scpi_commands.setDatatransmission())
+            
 
     def startDataProcessThread(self):
         if(not self.job.is_alive()):
@@ -408,29 +410,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
         
         for i in range(0, len(transmittedIDs)):
-            data = self.dt_algorithmus.getDataPacket(transmittedIDs[i])
-            self.csv_datacolumns.append(data)
-            if(self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
-                self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(transmittedIDs[i]))
-            if(i >= len(self.separated_id_list)):
-                self.separated_id_list.append(data)
-            else:
-                self.separated_id_list[i].extend(data)
-        biggestColumn = 0
-        for i in range(0, len(self.csv_datacolumns)):
-            if(len(self.csv_datacolumns[i]) > biggestColumn):
-                biggestColumn = len(self.csv_datacolumns[i])
-        for j in range(0, biggestColumn):
-            rowData = []
-            for i in range(0, len(self.csv_datacolumns)):
-                if(len(self.csv_datacolumns[i]) > j):
-                    rowData.append(bytearray.fromhex(((self.csv_datacolumns[i])[j])[9]).decode(errors='ignore'))
-                else:
-                    rowData.append("")
-            if(self.savePath):
-                if(not self.fileheaderCreated):
-                    self.writeFileHeader(transmittedIDs)          
-                self.writeRow(rowData)
+            data = self.dt_algorithmus.getPendingDataPacket(transmittedIDs[i])
+            # self.csv_datacolumns.append(data)
+            # transmissionComplete = self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])
+            if((not len(data)) == 0 and self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
+                self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(transmittedIDs[i])))
+            # if(i >= len(self.separated_id_list)):
+                # self.separated_id_list.append(data)
+            # else:
+            #     self.separated_id_list[i].extend(data)
+        # biggestColumn = 0
+        # for i in range(0, len(self.csv_datacolumns)):
+        #     if(len(self.csv_datacolumns[i]) > biggestColumn):
+        #         biggestColumn = len(self.csv_datacolumns[i])
+        # for j in range(0, biggestColumn):
+        #     rowData = []
+        #     for i in range(0, len(self.csv_datacolumns)):
+        #         if(len(self.csv_datacolumns[i]) > j):
+        #             rowData.append(bytearray.fromhex(((self.csv_datacolumns[i])[j])[9]).decode(errors='ignore'))
+        #         else:
+        #             rowData.append("")
+        #     if(self.savePath):
+        #         if(not self.fileheaderCreated):
+        #             self.writeFileHeader(transmittedIDs)          
+        #         self.writeRow(rowData)
         
         self.csv_datacolumns.clear()
             

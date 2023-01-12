@@ -74,7 +74,7 @@ class Communication:
             try:
                 if(serialobj.is_open and serialobj.in_waiting > 0):
                     buffer = (serialobj.read(serialobj.in_waiting))
-                    # serialobj.flushInput()
+                    serialobj.flushInput()
                     queue.put(buffer)
             except:
                 print("Uebertragungsfehler **SerialThread**")

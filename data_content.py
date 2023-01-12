@@ -7,6 +7,7 @@ class data_content:
     Count = int
     StatusPacket = bool
     Data = list
+    DataFetched = bool
 
     def __init__(self):
         self.GUI_id = -1
@@ -16,5 +17,6 @@ class data_content:
         self.Count = -1
         self.StatusPacket = False
         self.Data = []
+        self.DataFetched = False
 
     

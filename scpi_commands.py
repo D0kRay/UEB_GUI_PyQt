@@ -97,7 +97,7 @@ class scpi_commands():
         return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.CONFIG + self.CARRIAGE_RETURN)
 
     def setDatatransmissionComplete(self, id):
-        return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.COMPLETE + self.DELIMITER_PARTMESSAGE + str(id) + self.CARRIAGE_RETURN)
+        return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.COMPLETE + self.DELIMITER_PARTMESSAGE + id[2:] + self.CARRIAGE_RETURN)
 
     def setDatatransmissionInit(self, id):
         return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.INIT + self.DELIMITER_PARTMESSAGE + str(id) + self.CARRIAGE_RETURN)
