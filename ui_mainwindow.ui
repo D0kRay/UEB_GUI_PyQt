@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="UEB_Status_tab">
      <attribute name="title">
@@ -289,8 +289,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>81</width>
-            <height>28</height>
+            <width>172</width>
+            <height>515</height>
            </rect>
           </property>
           <widget class="QWidget" name="gridLayoutWidget_12">
@@ -780,7 +780,7 @@ schreiben</string>
           </font>
          </property>
          <property name="text">
-          <string>Einstellungen übernehmen</string>
+          <string>Einstellungen schreiben</string>
          </property>
         </widget>
        </item>
@@ -940,13 +940,6 @@ schreiben</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="pushButton_9">
-         <property name="text">
-          <string>Vorlage laden</string>
-         </property>
-        </widget>
-       </item>
        <item row="7" column="0">
         <widget class="QDoubleSpinBox" name="LOTHigh_doubleSpinBox_Resolver">
          <property name="decimals">
@@ -983,9 +976,6 @@ schreiben</string>
        </item>
        <item row="13" column="0">
         <widget class="QComboBox" name="EncoderRes_comboBox_Resolver"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QComboBox" name="template_comboBox_Resolver"/>
        </item>
        <item row="10" column="0">
         <widget class="QRadioButton" name="PhaseLock360_radioButton_Resolver">
@@ -1042,6 +1032,13 @@ schreiben</string>
          </property>
          <property name="margin">
           <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButton_9">
+         <property name="text">
+          <string>Vorlage laden</string>
          </property>
         </widget>
        </item>
@@ -1683,8 +1680,8 @@ DOS mismatch threshold</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>81</width>
-            <height>28</height>
+            <width>1120</width>
+            <height>520</height>
            </rect>
           </property>
           <widget class="QLabel" name="terminal_textlabel">
@@ -1752,8 +1749,8 @@ DOS mismatch threshold</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>405</width>
-            <height>331</height>
+            <width>1101</width>
+            <height>517</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="scrollArea_gridLayout_Transmission">

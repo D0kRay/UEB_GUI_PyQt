@@ -214,6 +214,41 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBsettings(True))
 
+    def setResolver_Config(self, ueb_config_list):
+        self.ueb_config.status = ueb_config_list[0]
+        self.ueb_config.v_Reference = ueb_config_list[1]
+        self.ueb_config.v_Bridge = ueb_config_list[2]
+        self.ueb_config.frequency = ueb_config_list[3]
+        self.ueb_config.rotationDirection = ueb_config_list[4]
+        self.ueb_config.thridHarmonic = ueb_config_list[5]
+        self.ueb_config.enableSoftstarter = ueb_config_list[6]
+        self.ueb_config.softstartDuration = ueb_config_list[7]
+        self.ueb_config.overCurrentThreshold = ueb_config_list[7]
+
+    def setResolver_Config_Tab(self):
+        self.frequenz_SpinBox_UEB.setValue(float(self.ueb_config.frequency))
+        self.versorgSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Reference))
+        self.ausgangSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Bridge))
+        self.softstart_checkBox_UEB.setChecked(bool(int(self.ueb_config.enableSoftstarter)))
+        self.softstartD_SpinBox_UEB.setValue(float(self.ueb_config.softstartDuration))
+        self.dritteHarm_checkBox_UEB.setChecked(bool(int(self.ueb_config.thridHarmonic)))
+        if(bool(int(self.ueb_config.rotationDirection))):
+            self.rightturn_radioButton_UEB.setChecked(True)
+            self.leftturn_radioButton_UEB.setChecked(False)
+        else:
+            self.leftturn_radioButton_UEB.setChecked(True)
+            self.rightturn_radioButton_UEB.setChecked(False)
+
+    def sendResolverConfigTab(self):
+        self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.rightturn_radioButton_UEB.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setUEBThridHarmonic(self.dritteHarm_checkBox_UEB.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setUEBSoftstartEnable(self.softstart_checkBox_UEB.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setUEBSoftstartDuration(self.softstartD_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBVBridge(self.versorgSp_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
+        self.communication.writeCommand(self.scpi_commands.setUEBsettings(True))
+
     def startMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
             self.generateParameterList()
