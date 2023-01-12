@@ -2,11 +2,11 @@ import json
 
 class parameter_transmission:
 
-    GUI_id = int
-    DT_id = int
-    CSV_text = str
-    DataFormat = str
-    row = int
+    # GUI_id = int
+    # DT_id = int
+    # CSV_text = str
+    # DataFormat = str
+    # row = int
 
     def __init__(self):
         self.GUI_id = -1

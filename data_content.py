@@ -1,13 +1,13 @@
 class data_content:
 
-    GUI_id = int
-    DT_id = int
-    Status_Byte = bytearray
-    MaxPackages = int
-    Count = int
-    StatusPacket = bool
-    Data = list
-    DataFetched = bool
+    # GUI_id = int
+    # DT_id = int
+    # Status_Byte = bytearray
+    # MaxPackages = int
+    # Count = int
+    # StatusPacket = bool
+    # Data = list
+    # DataFetched = bool
 
     def __init__(self):
         self.GUI_id = -1
