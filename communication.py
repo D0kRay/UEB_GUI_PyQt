@@ -45,7 +45,7 @@ class Communication:
         if(not self.ser.is_open):
             try:
                 self.ser = Serial(port, 256000, timeout = 0, parity = serial.PARITY_NONE, rtscts = 1)
-                self.ser.set_buffer_size(rx_size=12800, tx_size=12800)
+                self.ser.set_buffer_size(rx_size=128000, tx_size=128000)
                 connected = True
                 print("COM Port " + port + " geoeffnet")
             except:
@@ -66,7 +66,7 @@ class Communication:
             self.t = threading.Thread(target=self.threadreadSerial, name="SerialThread", args=(self.ser, self.stop_event, self.thread_data_queue), daemon=True) 
             self.thread_run = True
             self.t.start()
-            print(time.time())
+            # print(time.time())
             
 
     def threadreadSerial(self, serialobj, eventobj, queue):

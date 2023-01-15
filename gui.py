@@ -1,14 +1,15 @@
 import csv
 import os
-import threading
 import time
 import json
+import threading
 
 import pyqtgraph as pg
-from PyQt6 import QtWidgets, uic
+from PyQt6 import QtWidgets, uic, QtCore
+from PyQt6.QtCore import QObject, QThread
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import (QApplication, QFileDialog, QLabel, QMainWindow,
-                             QPushButton, QSpinBox, QLineEdit, QDialog)
+from PyQt6.QtWidgets import (QSizePolicy, QFileDialog, QLabel, QHBoxLayout,
+                             QVBoxLayout, QDialog)
 from pyqtgraph import PlotWidget, plot
 # from qt_material import apply_stylesheet
 
@@ -17,20 +18,75 @@ from DT_algorithmus import DT_algorithmus
 from scpi_commands import scpi_commands
 from ueb_config import ueb_config
 from ui_MainWindow import Ui_MainWindow
-from ui_parameter_dialog import Ui_NewParameterDialog
-from parameter import parameter_transmission
+from ui_parameter_dialog import Ui_TransmissionParameterDialog
+from parameter import Parameter
+from resolver_config import ResolverConfig
+from gui_data import GuiData
+from transmission_dialog import TransmissionDialog
+
+class RefreshThread(QThread):
+    
+    data_string = QtCore.pyqtSignal()
+    data_list = QtCore.pyqtSignal()
+
+
+    def __init__(self, dt_algorithmus, parent=None):
+        QThread.__init__(self, parent)
+        # QtCore.QThread.__init__(self)
+        self.dt_algorithmus = dt_algorithmus
+        self.datastring = ''
+
+    def run(self):
+
+        self.checkDTAlgorithmusQueue()
+        # time.sleep(0.1)
+        ##andere Funktionen
+        
+
+    def checkDTAlgorithmusQueue(self):
+            while not self.dt_algorithmus.dt_data_queue.empty():
+                queue_element = self.dt_algorithmus.dt_data_queue.get()
+                # self.processQueueElement(queue_element)
+                self.data_string.emit(str(queue_element))
+
+##TODO Datenrückgabe an GUI
+
+
+        # self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
+        # transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
+        
+        # for i in range(0, len(transmittedIDs)):
+        #     data = self.dt_algorithmus.getPendingDataPacket(transmittedIDs[i])
+        #     # self.csv_datacolumns.append(data)
+        #     # transmissionComplete = self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])
+        #     if((not len(data)) == 0 and self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
+        #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(transmittedIDs[i])))
+        #         filename = self.createTextFile(self.getCSVTextFromID(transmittedIDs[i]))
+        #         complete_data = self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i])
+        #         datastring_terminal = ''
+        #         for j in range(0, len(complete_data)):
+        #             datastring_terminal = datastring_terminal + complete_data[i].Data
+        #             # label = QLabel(text=complete_data[i].Data)
+        #             # self.TerminalScroll_UEBTransmissionScrollAreaLayout.addWidget(label)
+        #             # complete_data[i] = str(complete_data[i].Data)
+        #         # self.terminal_textlabel.setText(self.terminal_textlabel.text() + datastring_terminal)
+        #         # self.writeHeader(transmittedIDs[i])
+        #         self.writeTextRow(str(transmittedIDs[i]), filename)
+        #         self.writeTextRow(datastring_terminal, filename)
+        #         print('ID: ' + str(transmittedIDs[i]) + ' saved')
+
+    # def processQueueElement(self, queueItem):
+    #         self.
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    SAFE_INTERVAL_FILE = 0.1  #seconds
-
-    hour = [1,2,3,4,5,6,7,8,9,10]
-    temperature = [30,32,34,32,33,31,29,32,35,45]
     savePath = ""
+    REFRESH_INTERVAL = 0.1
 
     communication = Communication
     ueb_config = ueb_config
+    resolver_config = ResolverConfig
     ueb_config_list = list
     scpi_commands = scpi_commands
     dt_algorithmus = DT_algorithmus
@@ -39,24 +95,43 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     plot_data_lower = list #Datastructure: [0] plot on/off [1] color [2] lineobj [3] x list [4] y list [5] data
     separated_id_list = list
     parameter_list = list
+    data_list = list
+    transmission_dialog = TransmissionDialog
+    refreshThread = RefreshThread
+    thread = QThread
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.scpi_commands = scpi_commands()
         self.communication = Communication()
         self.dt_algorithmus = DT_algorithmus()
-        self.job = Job(interval=self.SAFE_INTERVAL_FILE, execute=self.getDataFromThread, name="DataSafeThread")
-        self.savePath = ""
+        self.job = Job(interval=self.REFRESH_INTERVAL, execute=self.processData, name="DataSafeThread")
+        # self.refresh_thread = Thread()
+        self.savePath = ''
+        self.parameterFilepath = ''
         self.csv_datacolumns = []
         self.plot_data_upper = []
         self.plot_data_lower = []
         self.separated_id_list = []
         self.parameter_list = []
+        self.data_list = []
         self.ueb_config = ueb_config()
+        self.resolver_config = ResolverConfig()
+        # self.thread = QThread()
+        # self.refreshThread = RefreshThread(self.dt_algorithmus)
+        # self.refreshThread.started.connect(self.refreshThread.run)
+        # self.refreshThread.moveToThread(self.thread)
+        # self.thread.started.connect(self.refreshThread.run)
         self.fileheaderCreated = False
+        self.thread_run = False
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
+        self.UEBTransmissionScrollAreaLayout = QVBoxLayout()
+        self.TerminalScroll_verticalLayout = QVBoxLayout()
         self.setupUi(self)
+
+        
+        # self.startRefreshThread()
         # self.dialog = QDialog(self)
         # Ui_NewParameterDialog.setupUi(self.dialog)
         self.RDCRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
@@ -71,11 +146,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.einstLesen_pushButton_UEB.clicked.connect(self.readUEB_SettingsButtonClicked)
         self.einst_Schreiben_pushButton_UEB.clicked.connect(self.writeUEB_SettingsButtonClicked)
         self.startButton_UEB_status.clicked.connect(self.startMotor)
-        self.saveTransmissionparameter_pushButton.clicked.connect(self.safeParameterToJSON)
-        self.loadTransmissionparameter_pushButton.clicked.connect(self.loadParameterFromJSON)
-        self.user_id_parameter_pushButton.clicked.connect(self.openUserIDDialog)
+        self.saveTransmissionParameter_pushButton.clicked.connect(self.safeParameterToJSON)
+        self.loadTransmissionParameter_pushButton.clicked.connect(self.loadParameterFromJSON)
+        self.openParameterDialog_pushButton.clicked.connect(self.showTransmissinoParameterDialog)
         self.saveUEBSettings_pushButton.clicked.connect(self.safeUEBToJSON)
         self.loadUEBSettings_pushButton.clicked.connect(self.loadUEBFromJSON)
+
+
+
+
 
 
     def showGUI(self):
@@ -83,6 +162,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window.setWindowIcon(QIcon("UEB_icon.png"))
         window.setWindowTitle("UEB")
         window.show()
+
+    def startRefreshThread(self):
+        self.refreshThread.data_string.connect(self.refreshTerminal)
+        self.refreshThread.start()        
+        # if(not self.thread_run):
+        #     self.stop_event.clear()
+        #     self.data_processed.connect(self.processDataForGUI)
+        #     self.refresh_thread = Thread(target=self.processData, name="Refresh_Thread", args=(self, self.stop_event), daemon=True) 
+        #     self.thread_run = True
+        #     self.refresh_thread.start()
+
+    def processDataForGUI(self):
+        print('d')
 
     def plotOnUEBStatusPlots(self):
         # TODO Plots aus liste laden und aktualisieren
@@ -110,6 +202,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         (self.plot_data_lower[i])[3] = ((self.plot_data_lower[i])[3])[1:]
                         (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
                         self.plot_data_lower[2].setData(self.hour, self.temperature)
+
+    def refreshTerminal(self, data):
+        sizePolicy = QSizePolicy()
+        sizePolicy.setVerticalPolicy(QSizePolicy.Policy.Fixed)
+        terminalLabel = QLabel()
+        terminalLabel.setText(data)
+        terminalLabel.setMinimumSize(400,20)
+        terminalLabel.setSizePolicy(sizePolicy)
+        self.TerminalScroll_verticalLayout.addWidget(terminalLabel)
+        self.terminal_scrollArea.setLayout(self.TerminalScroll_verticalLayout)
+
 
     def savePathDialog(self):
         Path = QFileDialog.getExistingDirectory(self,"Speichern unter:","")
@@ -213,26 +316,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBsettings(True))
-
+#TODO RESolver Kommandos und view
     def setResolver_Config(self, ueb_config_list):
-        self.ueb_config.status = ueb_config_list[0]
-        self.ueb_config.v_Reference = ueb_config_list[1]
-        self.ueb_config.v_Bridge = ueb_config_list[2]
-        self.ueb_config.frequency = ueb_config_list[3]
-        self.ueb_config.rotationDirection = ueb_config_list[4]
-        self.ueb_config.thridHarmonic = ueb_config_list[5]
-        self.ueb_config.enableSoftstarter = ueb_config_list[6]
-        self.ueb_config.softstartDuration = ueb_config_list[7]
-        self.ueb_config.overCurrentThreshold = ueb_config_list[7]
+        self.resolver_config.status = ueb_config_list[0]
+        self.resolver_config.v_Reference = ueb_config_list[1]
+        self.resolver_config.v_Bridge = ueb_config_list[2]
+        self.resolver_config.frequency = ueb_config_list[3]
+        self.resolver_config.rotationDirection = ueb_config_list[4]
+        self.resolver_config.thridHarmonic = ueb_config_list[5]
+        self.resolver_config.enableSoftstarter = ueb_config_list[6]
+        self.resolver_config.softstartDuration = ueb_config_list[7]
+        self.resolver_config.overCurrentThreshold = ueb_config_list[7]
 
     def setResolver_Config_Tab(self):
-        self.frequenz_SpinBox_UEB.setValue(float(self.ueb_config.frequency))
-        self.versorgSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Reference))
-        self.ausgangSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Bridge))
-        self.softstart_checkBox_UEB.setChecked(bool(int(self.ueb_config.enableSoftstarter)))
-        self.softstartD_SpinBox_UEB.setValue(float(self.ueb_config.softstartDuration))
-        self.dritteHarm_checkBox_UEB.setChecked(bool(int(self.ueb_config.thridHarmonic)))
-        if(bool(int(self.ueb_config.rotationDirection))):
+        self.frequenz_SpinBox_UEB.setValue(float(self.resolver_config.frequency))
+        self.versorgSp_SpinBox_UEB.setValue(float(self.resolver_config.v_Reference))
+        self.ausgangSp_SpinBox_UEB.setValue(float(self.resolver_config.v_Bridge))
+        self.softstart_checkBox_UEB.setChecked(bool(int(self.resolver_config.enableSoftstarter)))
+        self.softstartD_SpinBox_UEB.setValue(float(self.resolver_config.softstartDuration))
+        self.dritteHarm_checkBox_UEB.setChecked(bool(int(self.resolver_config.thridHarmonic)))
+        if(bool(int(self.resolver_config.rotationDirection))):
             self.rightturn_radioButton_UEB.setChecked(True)
             self.leftturn_radioButton_UEB.setChecked(False)
         else:
@@ -251,23 +354,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def startMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            self.generateParameterList()
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
-                self.savePathDialog()
-            if(self.savePath):
-                self.createFile()
-            
-            self.dt_algorithmus = DT_algorithmus()
-            self.communication.readSerialRead()
-            self.startDataProcessThread()
+                self.savePathDialog()          
+            # self.dt_algorithmus = DT_algorithmus()
+            # self.communication.readSerialRead()
+            # self.startDataProcessThread()
+            # time.sleep(3)
             for i in range(0, len(self.parameter_list)):
                 if(not int(self.parameter_list[i].GUI_id) == 0):
                     self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
             
-
     def startDataProcessThread(self):
         if(not self.job.is_alive()):
-            self.job = Job(interval=self.SAFE_INTERVAL_FILE, execute=self.getDataFromThread, name="DataProcessThread")
+            self.job = Job(interval=self.REFRESH_INTERVAL, execute=self.processData, name="DataProcessThread")
             self.job.start()
 
     def stopMotor(self):
@@ -276,141 +375,60 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.communication.writeCommand("DT:CONFIG\r")
             # self.communication.readSerialRead()
 
-    
-
-    def openUserIDDialog(self):
-        dialog = ParameterDialog(self)
-        dialog.exec()
+    def showTransmissinoParameterDialog(self):
+        if(self.parameterFilepath):
+            self.loadParameterFromJSON()
+        dialog = self.transmission_dialog(self.parameter_list)
+        dialog.setWindowTitle("Übertragungseinstellungen")
+        dialog.setWindowIcon(QIcon("UEB_icon.png"))
+        if dialog.exec():
+            self.parameter_list = dialog.getParameterList()
+            self.setUEBTransmissionSettingsWindow()
+        else:
+            print('Dialog closed')
 
     def getCSVTextFromID(self, id):
         csv_text = 'n.v.'
         for i in range(0, len(self.parameter_list)):
-            if(id in self.parameter_list[i].GUI_id):
+            if(str(id) in self.parameter_list[i].GUI_id):
                 csv_text = self.parameter_list[i].GUI_id
         return csv_text
 
-    def generateParameterList(self):
-        for i in range(0, self.scrollArea_gridLayout_Transmission.count()):
-            item = self.scrollArea_gridLayout_Transmission.itemAt(i).widget()
-            if isinstance(item, QSpinBox):
-                row = 0
-                row = ''.join(filter(str.isdigit, item.objectName()))
-                if(len(self.parameter_list)):
-                    for j in range(0, len(self.parameter_list)):
-                        if row in self.parameter_list[j].row:
-                            self.parameter_list[j].GUI_id = item.text()
-                            break
-                        elif(j == (len(self.parameter_list)-1)):
-                            parameter = parameter_transmission()
-                            parameter.GUI_id = item.text()
-                            parameter.row = row
-                            self.parameter_list.append(parameter)
-                else:
-                    parameter = parameter_transmission()
-                    parameter.GUI_id = item.text()
-                    parameter.row = row
-                    self.parameter_list.append(parameter)
-            elif(isinstance(item, QLineEdit)):
-                if(item.objectName()[:3] == "csv"):
-                    row = 0
-                    row = ''.join(filter(str.isdigit, item.objectName()))
-                    if(len(self.parameter_list)):
-                        for j in range(0, len(self.parameter_list)):
-                            if row in self.parameter_list[j].row:
-                                self.parameter_list[j].CSV_text = item.text()
-                                break
-                            elif(j == (len(self.parameter_list)-1)):
-                                parameter = parameter_transmission()
-                                parameter.CSV_text = item.text()
-                                parameter.row = row
-                                self.parameter_list.append(parameter)
-                    else:
-                        parameter = parameter_transmission()
-                        parameter.CSV_text = item.text()
-                        parameter.row = row
-                        self.parameter_list.append(parameter)
-                elif(item.objectName()[:10] == "dataformat"):
-                    row = 0
-                    row = ''.join(filter(str.isdigit, item.objectName()))
-                    if(len(self.parameter_list)):
-                        for j in range(0, len(self.parameter_list)):
-                            if row in self.parameter_list[j].row:
-                                self.parameter_list[j].DataFormat = item.text()
-                                break
-                            elif(j == (len(self.parameter_list)-1)):
-                                parameter = parameter_transmission()
-                                parameter.DataFormat = item.text()
-                                parameter.row = row
-                                self.parameter_list.append(parameter)
-                    else:
-                        parameter = parameter_transmission()
-                        parameter.DataFormat = item.text()
-                        parameter.row = row
-                        self.parameter_list.append(parameter)
+    def setUEBTransmissionSettingsWindow(self):
+        self.clearLayout(self.UEBTransmissionScrollAreaLayout)
+        for i in range(0, len(self.parameter_list)):
+            parameterObj = self.parameter_list[i]
+            idLabel = QLabel()
+            csvLabel = QLabel()
+            datatypeLabel = QLabel()
+            delimiterLabel = QLabel()
+            sizePolicy = QSizePolicy()
+            sizePolicy.setVerticalPolicy(QSizePolicy.Policy.Fixed)
+            idLabel.setText(parameterObj.GUI_id)
+            idLabel.setMinimumSize(40,30)
+            idLabel.setSizePolicy(sizePolicy)
+            csvLabel.setText(parameterObj.CSV_text)
+            datatypeLabel.setText(parameterObj.DataFormat)
+            delimiterLabel.setText(parameterObj.delimiter)
+            rowlayout = QHBoxLayout()
+            rowlayout.addWidget(idLabel)
+            rowlayout.addWidget(csvLabel)
+            rowlayout.addWidget(datatypeLabel)
+            rowlayout.addWidget(delimiterLabel)
+            self.UEBTransmissionScrollAreaLayout.addLayout(rowlayout)
+            self.UEB_SettingsTransmission_scrollArea.setLayout(self.UEBTransmissionScrollAreaLayout)
 
-
-        # self.parameterlist = []
-        # # widgets auf seite Parameter
-        # self.parameterlist = [self.id0.text(), self.csv0.text(), self.id1.text(), self.csv1.text(), self.id2.text(), self.csv2.text(), 
-        # self.id3.text(), self.csv3.text(), self.id4.text(), self.csv4.text(), self.id5.text(), self.csv5.text(), self.id6.text(), self.csv6.text(), 
-        # self.id7.text(), self.csv7.text(), self.id8.text(), self.csv8.text(), self.id9.text(), self.csv9.text(), self.id10.text(), self.csv10.text()]
-
-    def setParameterColumns(self, parametercolumns):
-
-        for i in range(0, self.scrollArea_gridLayout_Transmission.count()):
-            item = self.scrollArea_gridLayout_Transmission.itemAt(i).widget()
-            if isinstance(item, QSpinBox):
-                row = 0
-                row = ''.join(filter(str.isdigit, item.objectName()))
-                if(len(parametercolumns)):
-                    for j in range(0, len(parametercolumns)):
-                        if row in parametercolumns[j].row:
-                            item.setValue(int(parametercolumns[j].GUI_id))
-                            break
-            elif(isinstance(item, QLineEdit)):
-                if(item.objectName()[:3] == "csv"):
-                    row = 0
-                    row = ''.join(filter(str.isdigit, item.objectName()))
-                    if(len(parametercolumns)):
-                        for j in range(0, len(parametercolumns)):
-                            if row in parametercolumns[j].row:
-                                item.setText(parametercolumns[j].CSV_text)
-                                break
-                elif(item.objectName()[:10] == "dataformat"):
-                    row = 0
-                    row = ''.join(filter(str.isdigit, item.objectName()))
-                    if(len(parametercolumns)):
-                        for j in range(0, len(parametercolumns)):
-                            if row in parametercolumns[j].row:
-                                item.setText(parametercolumns[j].DataFormat)
-                                break
-
-        # self.id0.setText(parametercolumns[0])
-        # self.csv0.setText(parametercolumns[1])
-        # self.id1.setText(parametercolumns[2])
-        # self.csv1.setText(parametercolumns[3])
-        # self.id2.setText(parametercolumns[4])
-        # self.csv2.setText(parametercolumns[5]) 
-        # self.id3.setText(parametercolumns[6])
-        # self.csv3.setText(parametercolumns[7])
-        # self.id4.setText(parametercolumns[8])
-        # self.csv4.setText(parametercolumns[9])
-        # self.id5.setText(parametercolumns[10])
-        # self.csv5.setText(parametercolumns[11])
-        # self.id6.setText(parametercolumns[12])
-        # self.csv6.setText(parametercolumns[13]) 
-        # self.id7.setText(parametercolumns[14])
-        # self.csv7.setText(parametercolumns[15])
-        # self.id8.setText(parametercolumns[16])
-        # self.csv8.setText(parametercolumns[17])
-        # self.id9.setText(parametercolumns[18])
-        # self.csv9.setText(parametercolumns[19])
-        # self.id10.setText(parametercolumns[20])
-        # self.csv10.setText(parametercolumns[21])
+    def clearLayout(self, layout):
+        if layout is not None:
+            while layout.count():
+                childlayout = layout.takeAt(0)
+                if childlayout.widget() is not None:
+                    childlayout.widget().deleteLater()
+                elif childlayout.layout() is not None:
+                    self.clearLayout(childlayout.layout())
 
 
     def safeParameterToJSON(self):
-        self.generateParameterList()
         jsonString = json.dumps([ob.__dict__ for ob in self.parameter_list])
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
         jsonFile = open(fileName, 'w')
@@ -418,25 +436,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         jsonFile.close()
 
     def loadParameterFromJSON(self):
-        fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
-        jsonFile = open(fileName, 'r')
-        jsonString = jsonFile.read()
-        filecontent = json.loads(jsonString)
-        paramlist = []
-        for i in range(0, len(filecontent)):
-            parameter = parameter_transmission()
-            parameter.CSV_text = filecontent[i]['CSV_text']
-            parameter.DataFormat = filecontent[i]['DataFormat']
-            parameter.DT_id = filecontent[i]['DT_id']
-            parameter.GUI_id = filecontent[i]['GUI_id']
-            parameter.row = filecontent[i]['row']
-            paramlist.append(parameter)
-        self.setParameterColumns(paramlist)
-        self.generateParameterList()
-        jsonFile.close()
+        if(not self.parameterFilepath):
+            self.parameterFilepath, _ = QFileDialog.getOpenFileName(self,"Speichern unter:","","Text Files (*.json)")
+        if(self.parameterFilepath):
+            jsonFile = open(self.parameterFilepath, 'r')
+            jsonString = jsonFile.read()
+            filecontent = json.loads(jsonString)
+            paramlist = []
+            for i in range(0, len(filecontent)):
+                parameter = Parameter()
+                parameter.CSV_text = filecontent[i]['CSV_text']
+                parameter.DataFormat = filecontent[i]['DataFormat']
+                parameter.DT_id = filecontent[i]['DT_id']
+                parameter.GUI_id = filecontent[i]['GUI_id']
+                parameter.row = filecontent[i]['row']
+                paramlist.append(parameter)
+            self.parameter_list = paramlist
+            jsonFile.close()
+            self.setUEBTransmissionSettingsWindow()
 
     def safeUEBToJSON(self):
-        # self.generateParameterList()
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
         if(fileName):
             jsonString = json.dumps(vars(self.ueb_config))
@@ -451,7 +470,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             jsonString = jsonFile.read()
             filecontent = json.loads(jsonString)
             self.ueb_config = ueb_config()
-            # self.ueb_config.status = filecontent['status']
             self.ueb_config.frequency = filecontent['frequency']
             self.ueb_config.v_Bridge = filecontent['v_Bridge']
             self.ueb_config.v_Reference = filecontent['v_Reference']
@@ -465,16 +483,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             jsonFile.close()
 
     def createFile(self, filename):
-        if(not os.path.exists(self.savePath)):
+        if(os.path.exists(self.savePath)):
             filename = filename + '.csv'
-            with open((self.savePath + filename), 'x', encoding='UTF8', newline='') as f:
+            with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
                 self.writer = csv.writer(f)
-                # self.writer.writerow(header)
+                # self.writer.writerow(filename)
         return filename
+
+    def createTextFile(self, filename):
+        if(os.path.exists(self.savePath)):
+            filename = filename + '.txt'
+            with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
+                f.write('')
+                # self.writer.writerow(filename)
+        return filename
+
+    def writeTextRow(self, data, filename):
+        # filename = filename + '.csv'
+        with open((self.savePath + '/' + filename), 'a', encoding='UTF8') as f:
+            f.write(data + '\n')
 
     def writeHeader(self, ids):
         self.fileheaderCreated = True
-        self.generateParameterList(self)
+        self.generateParameterList()
         header = []
         for i in range(0, len(ids)):
             for j in range(0, len(self.parameter_list)):
@@ -484,19 +515,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
     def writeRow(self, data, filename):
-        # filename = filename + '.csv'
-        with open(filename, 'a', encoding='UTF8', newline='') as f:
+        with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
             self.writer = csv.writer(f)
             self.writer.writerow(data)
 
     def writeCompleteCSV(self, data, filename):
-        with open(filename, 'a', encoding='UTF8', newline='') as f:
+        with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
             self.writer = csv.writer(f)
             self.writer.writerows(data)
 
-    def getDataFromThread(self):
-        # data_array = self.communication.thread_data_queue
-        # laenge = data_array.qsize()
+    def processData(self):
+    # data_array = self.communication.thread_data_queue
+    # laenge = data_array.qsize()
         self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
         
@@ -534,6 +564,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         self.csv_datacolumns.clear()
             
+        
     
 class Job(threading.Thread):
     def __init__(self, interval, execute, name, *args, **kwargs):
@@ -552,12 +583,3 @@ class Job(threading.Thread):
     def run(self):
             while not self.stopped.wait(self.interval):
                 self.execute(*self.args, **self.kwargs)
-
-
-class ParameterDialog(QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.ui = Ui_NewParameterDialog()
-        self.ui.setupUi(self)
-        self.ui.Abort_pushButton.clicked.connect(self.close)

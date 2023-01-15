@@ -1,4 +1,4 @@
-class data_content:
+class DataContent:
 
     # GUI_id = int
     # DT_id = int
@@ -18,5 +18,6 @@ class data_content:
         self.StatusPacket = False
         self.Data = []
         self.DataFetched = False
+        self.UniqueID = -1
 
     

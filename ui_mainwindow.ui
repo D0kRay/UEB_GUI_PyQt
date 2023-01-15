@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="UEB_Status_tab">
      <attribute name="title">
@@ -87,6 +87,11 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
@@ -182,6 +187,11 @@
        </item>
        <item row="10" column="0">
         <widget class="QPushButton" name="stopButton_UEB_status">
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Motor STOP</string>
          </property>
@@ -210,6 +220,11 @@
        </item>
        <item row="9" column="1">
         <widget class="QPushButton" name="measurestartButton_UEB_status">
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
          <property name="text">
           <string>Messung starten</string>
          </property>
@@ -362,13 +377,16 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>434</width>
+        <width>438</width>
         <height>541</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="leftMargin">
         <number>10</number>
+       </property>
+       <property name="spacing">
+        <number>6</number>
        </property>
        <item row="15" column="1">
         <widget class="QLabel" name="label_31">
@@ -440,8 +458,19 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>UEB Parameter</string>
+          <string>UEB Einstellungen</string>
          </property>
         </widget>
        </item>
@@ -449,13 +478,6 @@
         <widget class="QLabel" name="label_36">
          <property name="text">
           <string>Versorgungsspannung (V)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="19" column="0">
-        <widget class="QPushButton" name="einstLesen_pushButton_UEB">
-         <property name="text">
-          <string>Einstellungen lesen</string>
          </property>
         </widget>
        </item>
@@ -518,14 +540,38 @@
          </property>
         </widget>
        </item>
-       <item row="20" column="0" colspan="2">
-        <widget class="QPushButton" name="saveUEBSettings_pushButton">
+       <item row="8" column="2">
+        <widget class="QPushButton" name="einst_Schreiben_pushButton_UEB">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>Einstellungen in Datei speichern</string>
+          <string>Einstellungen auf 
+Controller schreiben</string>
+         </property>
+         <property name="icon">
+          <iconset theme="go-up">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
-       <item row="20" column="2">
+       <item row="20" column="0">
+        <widget class="QPushButton" name="saveUEBSettings_pushButton">
+         <property name="text">
+          <string>Einstellungen in 
+Datei speichern</string>
+         </property>
+        </widget>
+       </item>
+       <item row="20" column="1">
         <widget class="QPushButton" name="loadUEBSettings_pushButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -539,17 +585,16 @@ Datei laden</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="2">
-        <widget class="QPushButton" name="einst_Schreiben_pushButton_UEB">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+       <item row="9" column="2">
+        <widget class="QPushButton" name="einstLesen_pushButton_UEB">
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="text">
-          <string>Einstellungen 
-schreiben</string>
+          <string>Einstellungen von
+Controller lesen</string>
          </property>
         </widget>
        </item>
@@ -560,13 +605,16 @@ schreiben</string>
        <rect>
         <x>440</x>
         <y>0</y>
-        <width>521</width>
+        <width>529</width>
         <height>541</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="1" column="0" colspan="2">
-        <widget class="QScrollArea" name="scrollArea_2">
+       <property name="topMargin">
+        <number>12</number>
+       </property>
+       <item row="1" column="0" colspan="4">
+        <widget class="QScrollArea" name="UEB_SettingsTransmission_scrollArea">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -587,151 +635,46 @@ schreiben</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>500</width>
-            <height>485</height>
+            <width>508</width>
+            <height>458</height>
            </rect>
           </property>
-          <widget class="QWidget" name="gridLayoutWidget_10">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>541</width>
-             <height>481</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_10">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <item row="6" column="1">
-             <widget class="QLabel" name="ID_229_label">
-              <property name="text">
-               <string>n.v.</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="ID_224_label">
-              <property name="text">
-               <string>1024 byte Array</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="1">
-             <widget class="QLabel" name="ID_231_label">
-              <property name="text">
-               <string>n.v.</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="ID_226_label">
-              <property name="text">
-               <string>n.v.</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QCheckBox" name="ID228_checkBox">
-              <property name="text">
-               <string>ID 228</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QCheckBox" name="ID229_checkBox">
-              <property name="text">
-               <string>ID 229</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLabel" name="ID_227_label">
-              <property name="text">
-               <string>n.v.</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QCheckBox" name="ID226_checkBox">
-              <property name="text">
-               <string>ID 226</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLabel" name="ID_228_label">
-              <property name="text">
-               <string>n.v.</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="ID225_checkBox">
-              <property name="text">
-               <string>ID 225</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="ID224_checkBox">
-              <property name="text">
-               <string>ID 224</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QCheckBox" name="ID227_checkBox">
-              <property name="text">
-               <string>ID 227</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QLabel" name="ID_230_label">
-              <property name="text">
-               <string>n.v.</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QCheckBox" name="ID231_checkBox">
-              <property name="text">
-               <string>ID 231</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="ID_225_label">
-              <property name="text">
-               <string>n.v.</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QCheckBox" name="ID230_checkBox">
-              <property name="text">
-               <string>ID 230</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </widget>
        </item>
        <item row="0" column="0" colspan="2">
         <widget class="QLabel" name="label_65">
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>Standard UEB Übertragungsparameter</string>
+          <string>UEB Übertragungseinstellungen</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QPushButton" name="user_id_parameter_pushButton">
+       <item row="2" column="3">
+        <widget class="QPushButton" name="loadTransmissionParameter_pushButton">
          <property name="text">
-          <string>Eigene Messparameter hinzufügen</string>
+          <string>Übertragungseinstellungen 
+aus Datei laden</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="saveTransmissionParameter_pushButton">
+         <property name="text">
+          <string>Übertragungseinstellungen 
+in Datei speichern</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="openParameterDialog_pushButton">
+         <property name="text">
+          <string>Konfigurationsfenster 
+öffnen</string>
          </property>
         </widget>
        </item>
@@ -1525,11 +1468,6 @@ DOS mismatch threshold</string>
       </layout>
      </widget>
     </widget>
-    <widget class="QWidget" name="Encoder_tab">
-     <attribute name="title">
-      <string>Encoder Einstellungen</string>
-     </attribute>
-    </widget>
     <widget class="QWidget" name="ADC_tab">
      <attribute name="title">
       <string>ADC Einstellungen</string>
@@ -1659,11 +1597,14 @@ DOS mismatch threshold</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1141</width>
+        <width>1131</width>
         <height>551</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QScrollArea" name="terminal_scrollArea">
          <property name="verticalScrollBarPolicy">
@@ -1671,6 +1612,9 @@ DOS mismatch threshold</string>
          </property>
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAsNeeded</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
          </property>
          <property name="widgetResizable">
           <bool>true</bool>
@@ -1680,356 +1624,15 @@ DOS mismatch threshold</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1120</width>
+            <width>1101</width>
             <height>520</height>
            </rect>
           </property>
-          <widget class="QLabel" name="terminal_textlabel">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>1131</width>
-             <height>511</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
          </widget>
         </widget>
        </item>
        <item>
         <widget class="QLineEdit" name="terminal_userline"/>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="TransmissionControl_tab">
-     <attribute name="title">
-      <string>Übertragungseinstellungen</string>
-     </attribute>
-     <widget class="QWidget" name="gridLayoutWidget_9">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>10</y>
-        <width>1131</width>
-        <height>551</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_9">
-       <property name="leftMargin">
-        <number>10</number>
-       </property>
-       <item row="2" column="3" colspan="2">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="0" colspan="5">
-        <widget class="QScrollArea" name="scrollArea">
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOn</enum>
-         </property>
-         <property name="widgetResizable">
-          <bool>true</bool>
-         </property>
-         <widget class="QWidget" name="scrollArea_child_Transmission">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>1101</width>
-            <height>517</height>
-           </rect>
-          </property>
-          <layout class="QGridLayout" name="scrollArea_gridLayout_Transmission">
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="csv5"/>
-           </item>
-           <item row="6" column="2">
-            <widget class="QLineEdit" name="dataformat5"/>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLineEdit" name="csv4"/>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLineEdit" name="dataformat0">
-             <property name="text">
-              <string>,</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label_55">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Name in .csv Datei</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QSpinBox" name="id6">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QSpinBox" name="id1">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="1">
-            <widget class="QLineEdit" name="csv9"/>
-           </item>
-           <item row="9" column="2">
-            <widget class="QLineEdit" name="dataformat8"/>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="csv2"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QSpinBox" name="id2">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="csv0">
-             <property name="text">
-              <string>Test</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="csv1"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QSpinBox" name="id0">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-             <property name="displayIntegerBase">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="0">
-            <widget class="QSpinBox" name="id8">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="2">
-            <widget class="QLineEdit" name="dataformat9"/>
-           </item>
-           <item row="11" column="2">
-            <widget class="QLineEdit" name="dataformat10"/>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_56">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Datengröße (uint8_t) oder Trennzeichen</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="csv3"/>
-           </item>
-           <item row="7" column="1">
-            <widget class="QLineEdit" name="csv6"/>
-           </item>
-           <item row="8" column="1">
-            <widget class="QLineEdit" name="csv7"/>
-           </item>
-           <item row="11" column="0">
-            <widget class="QSpinBox" name="id10">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="2">
-            <widget class="QLineEdit" name="dataformat6"/>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_29">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Funktions ID</string>
-             </property>
-            </widget>
-           </item>
-           <item row="11" column="1">
-            <widget class="QLineEdit" name="csv10"/>
-           </item>
-           <item row="6" column="0">
-            <widget class="QSpinBox" name="id5">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QSpinBox" name="id4">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QLineEdit" name="dataformat1"/>
-           </item>
-           <item row="5" column="2">
-            <widget class="QLineEdit" name="dataformat4"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QSpinBox" name="id3">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="2">
-            <widget class="QLineEdit" name="dataformat3"/>
-           </item>
-           <item row="9" column="1">
-            <widget class="QLineEdit" name="csv8"/>
-           </item>
-           <item row="8" column="0">
-            <widget class="QSpinBox" name="id7">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QLineEdit" name="dataformat2"/>
-           </item>
-           <item row="10" column="0">
-            <widget class="QSpinBox" name="id9">
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="2">
-            <widget class="QLineEdit" name="dataformat7"/>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QPushButton" name="loadTransmissionparameter_pushButton">
-         <property name="text">
-          <string>Einstellungen laden</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="saveTransmissionparameter_pushButton">
-         <property name="text">
-          <string>Einstellungen speichern</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

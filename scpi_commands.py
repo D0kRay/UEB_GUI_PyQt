@@ -1,4 +1,4 @@
-class scpi_commands():
+class scpi_commands:
 
     def __init__(self):
         self.UEBREADY = "?"
