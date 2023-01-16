@@ -44,6 +44,7 @@ class DT_algorithmus():
         self.dt_thread = Thread()
         self.scpi_commands = scpi_commands()
         self.dt_data_queue = Queue(maxsize=0)
+        self.id_list = []
         # self.communication = communication
         self.unique_id = 0
         # self.startDTthread()
@@ -65,6 +66,8 @@ class DT_algorithmus():
             #         splitedTransLength.pop(i)
             for i in range(0, len(splitedTransLength)):
                 packet = self.disassembleOnePacket(splitedTransLength[i])
+                self.id_list.append([packet.GUI_id, packet.Count])
+
 
         
 
@@ -77,7 +80,7 @@ class DT_algorithmus():
             if(len(self.sorted_transmission_data)):
                 for i in range(0, len(self.sorted_transmission_data)):
                     if(self.sorted_transmission_data[i][0].GUI_id == int(inpacket[self.GUIID_BYTE_LIST_NR:(self.GUIID_BYTE_LIST_NR+2)], 16)):
-                        if(self.sorted_transmission_data[i][0].StatusByte == -10):
+                        if(self.sorted_transmission_data[i][0].Status_Byte == -10):
                             unique_id_transmission = self.sorted_transmission_data[i][0].UniqueID
                             self.sorted_transmission_data[i].pop(0)
                         else:
@@ -103,7 +106,7 @@ class DT_algorithmus():
             if(len(self.sorted_transmission_data)):
                 for i in range(0, len(self.sorted_transmission_data)):
                     if(self.sorted_transmission_data[i][0].GUI_id == int(inpacket[self.GUIID_BYTE_LIST_NR:(self.GUIID_BYTE_LIST_NR+2)],16)):
-                        if(self.sorted_transmission_data[i][0].StatusByte == -10):
+                        if(self.sorted_transmission_data[i][0].Status_Byte == -10):
                             unique_id_transmission = self.sorted_transmission_data[i][0].UniqueID
                             self.sorted_transmission_data[i].pop(0)
                         else:

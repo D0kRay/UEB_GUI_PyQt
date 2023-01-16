@@ -1,3 +1,4 @@
+import platform
 import sys
 import threading
 import time
@@ -43,9 +44,14 @@ class Communication:
     def setComPort(self, port):
         connected = False
         if(not self.ser.is_open):
+            operating_system = ''
+            operating_system = platform.system()
             try:
+                if(operating_system == 'Darwin'):
+                    port = '/dev/' + port
                 self.ser = Serial(port, 256000, timeout = 0, parity = serial.PARITY_NONE, rtscts = 1)
-                self.ser.set_buffer_size(rx_size=128000, tx_size=128000)
+                if(not operating_system == 'Darwin'):
+                    self.ser.set_buffer_size(rx_size=128000, tx_size=128000)
                 connected = True
                 print("COM Port " + port + " geoeffnet")
             except:

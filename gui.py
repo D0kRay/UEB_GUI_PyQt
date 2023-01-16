@@ -357,9 +357,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
             # self.dt_algorithmus = DT_algorithmus()
-            # self.communication.readSerialRead()
-            # self.startDataProcessThread()
-            # time.sleep(3)
+            self.communication.readSerialRead()
+            self.startDataProcessThread()
+            time.sleep(3)
             for i in range(0, len(self.parameter_list)):
                 if(not int(self.parameter_list[i].GUI_id) == 0):
                     self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
@@ -483,23 +483,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             jsonFile.close()
 
     def createFile(self, filename):
-        if(os.path.exists(self.savePath)):
-            filename = filename + '.csv'
-            with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
-                self.writer = csv.writer(f)
-                # self.writer.writerow(filename)
+        if(not os.path.exists(self.savePath) or not self.savePath):
+            self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
+        filename = filename + '.csv'
+        with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
+            self.writer = csv.writer(f)
+            # self.writer.writerow(filename)
         return filename
 
     def createTextFile(self, filename):
-        if(os.path.exists(self.savePath)):
-            filename = filename + '.txt'
-            with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
-                f.write('')
-                # self.writer.writerow(filename)
+        if(not os.path.exists(self.savePath) or not self.savePath):
+            self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
+        filename = filename + '.txt'
+        with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
+            f.write('')
+            # self.writer.writerow(filename)
         return filename
 
     def writeTextRow(self, data, filename):
         # filename = filename + '.csv'
+        filename = filename + '.txt'
         with open((self.savePath + '/' + filename), 'a', encoding='UTF8') as f:
             f.write(data + '\n')
 
@@ -536,12 +539,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # transmissionComplete = self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])
             if((not len(data)) == 0 and self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
                 self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(transmittedIDs[i])))
-                self.createFile(self.getCSVTextFromID(transmittedIDs[i]))
+                # self.createTextFile(self.getCSVTextFromID(transmittedIDs[i]))
                 complete_data = self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i])
+                datastring = ''
                 for j in range(0, len(complete_data)):
-                    complete_data[i] = complete_data[i].Data
-                self.writeHeader(transmittedIDs[i])
-                self.writeCompleteCSV(complete_data)
+                    datastring = datastring + complete_data[j].Data
+                # self.writeHeader(transmittedIDs[i])
+                self.createTextFile(str(transmittedIDs[i]))
+                # self.writeTextRow(transmittedIDs[i], transmittedIDs[i])
+                self.writeTextRow(datastring, str(transmittedIDs[i]))
+
+                # self.writeCompleteCSV(complete_data)
             # if(i >= len(self.separated_id_list)):
                 # self.separated_id_list.append(data)
             # else:
