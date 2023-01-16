@@ -616,7 +616,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.createTextFile(str(transmittedIDs[i]))
                 # self.writeTextRow(transmittedIDs[i], transmittedIDs[i])
                 self.writeTextRow(datastring, str(transmittedIDs[i]))
-                print("ID: " + str(transmittedIDs[i]) + "erfolgreich übertragen")
+                print("ID: " + str(transmittedIDs[i]) + " erfolgreich übertragen")
 
                 # textlabel = QLabel()
                 # sizePolicy = QSizePolicy()
