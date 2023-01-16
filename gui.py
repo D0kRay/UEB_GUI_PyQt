@@ -406,15 +406,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             waitdialog = QMessageBox(self)
             waitdialog.setWindowTitle("Messung starten?")
             waitdialog.setText("Messung starten?")
-            waitdialog.exec()
-            time.sleep(3)
-            # waitdialog.done(0)
-            # waitdialog.close()
-            for i in range(0, len(self.parameter_list)):
-                if(not int(self.parameter_list[i].GUI_id) == 0):
-                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
-            # waitdialog.close()
-            print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
+            waitdialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            waitdialog.setIcon(QMessageBox.question)
+            button = waitdialog.exec()
+            if button == QMessageBox.Yes:
+                time.sleep(3)
+                # waitdialog.done(0)
+                # waitdialog.close()
+                for i in range(0, len(self.parameter_list)):
+                    if(not int(self.parameter_list[i].GUI_id) == 0):
+                        self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+                # waitdialog.close()
+                print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
+                print("Messung gestartet!")
             
     def startDataProcessThread(self):
         if(not self.job.is_alive()):
@@ -612,6 +616,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.createTextFile(str(transmittedIDs[i]))
                 # self.writeTextRow(transmittedIDs[i], transmittedIDs[i])
                 self.writeTextRow(datastring, str(transmittedIDs[i]))
+                print("ID: " + str(transmittedIDs[i]) + "erfolgreich übertragen")
 
                 # textlabel = QLabel()
                 # sizePolicy = QSizePolicy()
