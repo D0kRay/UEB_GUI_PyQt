@@ -9,7 +9,7 @@ from PyQt6 import QtWidgets, uic, QtCore
 from PyQt6.QtCore import QObject, QThread, QThreadPool
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (QSizePolicy, QFileDialog, QLabel, QHBoxLayout,
-                             QVBoxLayout, QMessageBox)
+                             QVBoxLayout, QMessageBox, QDialog)
 from pyqtgraph import PlotWidget, plot
 # from qt_material import apply_stylesheet
 
@@ -403,13 +403,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.communication.readSerialRead()
             self.startDataProcessThread()
             # closeWaitMessageBox = False
-            waitdialog = QMessageBox(self)
-            waitdialog.setWindowTitle("Messung starten?")
-            waitdialog.setText("Messung starten?")
-            waitdialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            waitdialog.setIcon(QMessageBox.question)
-            button = waitdialog.exec()
-            if button == QMessageBox.Yes:
+            button = QMessageBox.question(self, "Messung starten?", "Messung starten?")
+            # waitdialog.setWindowTitle("Messung starten?")
+            # waitdialog.setText("Messung starten?")
+            # waitdialog.setStandardButtons(QMessageBox.accept | QMessageBox.)
+            # waitdialog.setIcon(QMessageBox.question)
+            # button = waitdialog.exec()
+            if button == QMessageBox.StandardButton.Yes:
                 time.sleep(3)
                 # waitdialog.done(0)
                 # waitdialog.close()
