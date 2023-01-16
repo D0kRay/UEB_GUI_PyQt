@@ -6,10 +6,10 @@ import threading
 
 import pyqtgraph as pg
 from PyQt6 import QtWidgets, uic, QtCore
-from PyQt6.QtCore import QObject, QThread
+from PyQt6.QtCore import QObject, QThread, QThreadPool
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (QSizePolicy, QFileDialog, QLabel, QHBoxLayout,
-                             QVBoxLayout, QDialog)
+                             QVBoxLayout, QMessageBox)
 from pyqtgraph import PlotWidget, plot
 # from qt_material import apply_stylesheet
 
@@ -24,30 +24,32 @@ from resolver_config import ResolverConfig
 from gui_data import GuiData
 from transmission_dialog import TransmissionDialog
 
-class RefreshThread(QThread):
+# class RefreshThread(QThread):
+
+
     
-    data_string = QtCore.pyqtSignal()
-    data_list = QtCore.pyqtSignal()
+#     data_string = QtCore.pyqtSignal()
+#     data_list = QtCore.pyqtSignal()
 
 
-    def __init__(self, dt_algorithmus, parent=None):
-        QThread.__init__(self, parent)
-        # QtCore.QThread.__init__(self)
-        self.dt_algorithmus = dt_algorithmus
-        self.datastring = ''
+#     def __init__(self, dt_algorithmus, parent=None):
+#         QThread.__init__(self, parent)
+#         # QtCore.QThread.__init__(self)
+#         self.dt_algorithmus = dt_algorithmus
+#         self.datastring = ''
 
-    def run(self):
+#     def run(self):
 
-        self.checkDTAlgorithmusQueue()
-        # time.sleep(0.1)
-        ##andere Funktionen
+#         self.checkDTAlgorithmusQueue()
+#         # time.sleep(0.1)
+#         ##andere Funktionen
         
 
-    def checkDTAlgorithmusQueue(self):
-            while not self.dt_algorithmus.dt_data_queue.empty():
-                queue_element = self.dt_algorithmus.dt_data_queue.get()
-                # self.processQueueElement(queue_element)
-                self.data_string.emit(str(queue_element))
+#     def checkDTAlgorithmusQueue(self):
+#             while not self.dt_algorithmus.dt_data_queue.empty():
+#                 queue_element = self.dt_algorithmus.dt_data_queue.get()
+#                 # self.processQueueElement(queue_element)
+#                 self.data_string.emit(str(queue_element))
 
 ##TODO Datenrückgabe an GUI
 
@@ -81,6 +83,8 @@ class RefreshThread(QThread):
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
+    UEB_GUI_VERSION = 1.1
+
     savePath = ""
     REFRESH_INTERVAL = 0.1
 
@@ -97,8 +101,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     parameter_list = list
     data_list = list
     transmission_dialog = TransmissionDialog
-    refreshThread = RefreshThread
-    thread = QThread
+    # refreshThread = RefreshThread
+    # thread = QThread
+
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -114,6 +119,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plot_data_lower = []
         self.separated_id_list = []
         self.parameter_list = []
+        self.predefined_parameter_list = []
         self.data_list = []
         self.ueb_config = ueb_config()
         self.resolver_config = ResolverConfig()
@@ -128,7 +134,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
         self.UEBTransmissionScrollAreaLayout = QVBoxLayout()
         self.TerminalScroll_verticalLayout = QVBoxLayout()
+
         self.setupUi(self)
+        self.terminal_scrollArea.setLayout(self.TerminalScroll_verticalLayout)
 
         
         # self.startRefreshThread()
@@ -151,7 +159,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.openParameterDialog_pushButton.clicked.connect(self.showTransmissinoParameterDialog)
         self.saveUEBSettings_pushButton.clicked.connect(self.safeUEBToJSON)
         self.loadUEBSettings_pushButton.clicked.connect(self.loadUEBFromJSON)
+        self.startMeasureUEBSettings_pushButton.clicked.connect(self.startMeasure)
 
+        ##Release V1.1
+        ##Felder in UEB Einstellungen werden teils der Bedienbarkeit wegen ausgeblendet.
+        if(self.UEB_GUI_VERSION == 1.1):
+            self.tabWidget.setTabVisible(0, False)
+            self.tabWidget.setTabVisible(2, False)
+            self.tabWidget.setTabVisible(3, False)
+            self.UEB_SettingsTransmission_scrollArea.setVisible(False)
+            self.loadTransmissionParameter_pushButton.setVisible(False)
+            self.openParameterDialog_pushButton.setVisible(False)
+            self.saveTransmissionParameter_pushButton.setVisible(False)
+            self.UEB_Transmissionsettings_label.setVisible(False)
+            try:
+                self.parameterFilepath = os.getcwd() + '/predefined_parameter.json'
+                self.loadParameterFromJSON()
+            except:
+                print("predefined_parameter.json nicht gefunden!")
+                print("Nur ID 224 kann übertragen werden!")
+                parameter = Parameter()
+                parameter.GUI_id = 224
+                parameter.CSV_text = "224"
+                self.parameter_list.append(parameter)
+        ##
 
 
 
@@ -163,15 +194,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window.setWindowTitle("UEB")
         window.show()
 
-    def startRefreshThread(self):
-        self.refreshThread.data_string.connect(self.refreshTerminal)
-        self.refreshThread.start()        
-        # if(not self.thread_run):
-        #     self.stop_event.clear()
-        #     self.data_processed.connect(self.processDataForGUI)
-        #     self.refresh_thread = Thread(target=self.processData, name="Refresh_Thread", args=(self, self.stop_event), daemon=True) 
-        #     self.thread_run = True
-        #     self.refresh_thread.start()
+    # def startRefreshThread(self):
+    #     self.refreshThread.data_string.connect(self.refreshTerminal)
+    #     self.refreshThread.start()        
+    #     # if(not self.thread_run):
+    #     #     self.stop_event.clear()
+    #     #     self.data_processed.connect(self.processDataForGUI)
+    #     #     self.refresh_thread = Thread(target=self.processData, name="Refresh_Thread", args=(self, self.stop_event), daemon=True) 
+    #     #     self.thread_run = True
+    #     #     self.refresh_thread.start()
 
     def processDataForGUI(self):
         print('d')
@@ -363,6 +394,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             for i in range(0, len(self.parameter_list)):
                 if(not int(self.parameter_list[i].GUI_id) == 0):
                     self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+
+    def startMeasure(self):
+        if ("Disconnect" in self.connectComPort_Button.text()):
+            if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
+                self.savePathDialog()          
+            # self.dt_algorithmus = DT_algorithmus()
+            self.communication.readSerialRead()
+            self.startDataProcessThread()
+            # closeWaitMessageBox = False
+            waitdialog = QMessageBox(self)
+            waitdialog.setWindowTitle("Messung starten?")
+            waitdialog.setText("Messung starten?")
+            waitdialog.exec()
+            time.sleep(3)
+            # waitdialog.done(0)
+            # waitdialog.close()
+            for i in range(0, len(self.parameter_list)):
+                if(not int(self.parameter_list[i].GUI_id) == 0):
+                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            # waitdialog.close()
+            print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
             
     def startDataProcessThread(self):
         if(not self.job.is_alive()):
@@ -453,6 +505,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 paramlist.append(parameter)
             self.parameter_list = paramlist
             jsonFile.close()
+
+            # for i in range(224, 250):
+            #     parameter = Parameter()
+            #     parameter.CSV_text = str(i)
+            #     parameter.DataFormat = ''
+            #     parameter.DT_id = ''
+            #     parameter.GUI_id = str(i)
+            #     parameter.row = ''
+            #     self.parameter_list.append(parameter)
+    
             self.setUEBTransmissionSettingsWindow()
 
     def safeUEBToJSON(self):
@@ -542,13 +604,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 # self.createTextFile(self.getCSVTextFromID(transmittedIDs[i]))
                 complete_data = self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i])
                 datastring = ''
+                terminalstring = ''
                 for j in range(0, len(complete_data)):
                     datastring = datastring + complete_data[j].Data
+                    terminalstring = terminalstring + complete_data[j].Data + '\n'
                 # self.writeHeader(transmittedIDs[i])
                 self.createTextFile(str(transmittedIDs[i]))
                 # self.writeTextRow(transmittedIDs[i], transmittedIDs[i])
                 self.writeTextRow(datastring, str(transmittedIDs[i]))
 
+                # textlabel = QLabel()
+                # sizePolicy = QSizePolicy()
+                # sizePolicy.setVerticalPolicy(QSizePolicy.Policy.Fixed)
+                # textlabel.setText(terminalstring)
+                # textlabel.setMinimumSize(200,15)
+                # textlabel.setSizePolicy(sizePolicy)
+                # self.TerminalScroll_verticalLayout.addWidget(textlabel)
+                # self.terminal_scrollArea.setLayout(self.TerminalScroll_verticalLayout)
                 # self.writeCompleteCSV(complete_data)
             # if(i >= len(self.separated_id_list)):
                 # self.separated_id_list.append(data)

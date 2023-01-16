@@ -377,7 +377,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>438</width>
+        <width>521</width>
         <height>541</height>
        </rect>
       </property>
@@ -598,14 +598,26 @@ Controller lesen</string>
          </property>
         </widget>
        </item>
+       <item row="20" column="2">
+        <widget class="QPushButton" name="startMeasureUEBSettings_pushButton">
+         <property name="font">
+          <font>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Messung starten</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="gridLayoutWidget_4">
       <property name="geometry">
        <rect>
-        <x>440</x>
+        <x>520</x>
         <y>0</y>
-        <width>529</width>
+        <width>611</width>
         <height>541</height>
        </rect>
       </property>
@@ -635,7 +647,7 @@ Controller lesen</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>508</width>
+            <width>590</width>
             <height>458</height>
            </rect>
           </property>
@@ -643,7 +655,7 @@ Controller lesen</string>
         </widget>
        </item>
        <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="label_65">
+        <widget class="QLabel" name="UEB_Transmissionsettings_label">
          <property name="font">
           <font>
            <bold>true</bold>
@@ -1750,7 +1762,7 @@ DOS mismatch threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1199</width>
-     <height>30</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

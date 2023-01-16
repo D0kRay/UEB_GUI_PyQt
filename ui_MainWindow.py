@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'c:\Users\pasik\Documents\UEB_GUI_PyQt\UEB_GUI_PyQt\ui_mainwindow.ui'
+# Form implementation generated from reading ui file 'c:\Users\Pascal\KIRCPA02_OneDrive\OneDrive - thu.de\Master\Semester_2\Masterprojekt\GUI_PyQt\ui_mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.0
 #
@@ -191,7 +191,7 @@ class Ui_MainWindow(object):
         self.UEB_Settings_tab = QtWidgets.QWidget()
         self.UEB_Settings_tab.setObjectName("UEB_Settings_tab")
         self.gridLayoutWidget_3 = QtWidgets.QWidget(self.UEB_Settings_tab)
-        self.gridLayoutWidget_3.setGeometry(QtCore.QRect(0, 0, 438, 541))
+        self.gridLayoutWidget_3.setGeometry(QtCore.QRect(0, 0, 521, 541))
         self.gridLayoutWidget_3.setObjectName("gridLayoutWidget_3")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.gridLayoutWidget_3)
         self.gridLayout_3.setContentsMargins(10, 0, 0, 0)
@@ -306,8 +306,14 @@ class Ui_MainWindow(object):
         self.einstLesen_pushButton_UEB.setFont(font)
         self.einstLesen_pushButton_UEB.setObjectName("einstLesen_pushButton_UEB")
         self.gridLayout_3.addWidget(self.einstLesen_pushButton_UEB, 9, 2, 1, 1)
+        self.startMeasureUEBSettings_pushButton = QtWidgets.QPushButton(self.gridLayoutWidget_3)
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.startMeasureUEBSettings_pushButton.setFont(font)
+        self.startMeasureUEBSettings_pushButton.setObjectName("startMeasureUEBSettings_pushButton")
+        self.gridLayout_3.addWidget(self.startMeasureUEBSettings_pushButton, 20, 2, 1, 1)
         self.gridLayoutWidget_4 = QtWidgets.QWidget(self.UEB_Settings_tab)
-        self.gridLayoutWidget_4.setGeometry(QtCore.QRect(440, 0, 529, 541))
+        self.gridLayoutWidget_4.setGeometry(QtCore.QRect(520, 0, 611, 541))
         self.gridLayoutWidget_4.setObjectName("gridLayoutWidget_4")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.gridLayoutWidget_4)
         self.gridLayout_4.setContentsMargins(0, 12, 0, 0)
@@ -323,16 +329,16 @@ class Ui_MainWindow(object):
         self.UEB_SettingsTransmission_scrollArea.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignTop)
         self.UEB_SettingsTransmission_scrollArea.setObjectName("UEB_SettingsTransmission_scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 508, 458))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 590, 458))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.UEB_SettingsTransmission_scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout_4.addWidget(self.UEB_SettingsTransmission_scrollArea, 1, 0, 1, 4)
-        self.label_65 = QtWidgets.QLabel(self.gridLayoutWidget_4)
+        self.UEB_Transmissionsettings_label = QtWidgets.QLabel(self.gridLayoutWidget_4)
         font = QtGui.QFont()
         font.setBold(True)
-        self.label_65.setFont(font)
-        self.label_65.setObjectName("label_65")
-        self.gridLayout_4.addWidget(self.label_65, 0, 0, 1, 2)
+        self.UEB_Transmissionsettings_label.setFont(font)
+        self.UEB_Transmissionsettings_label.setObjectName("UEB_Transmissionsettings_label")
+        self.gridLayout_4.addWidget(self.UEB_Transmissionsettings_label, 0, 0, 1, 2)
         self.loadTransmissionParameter_pushButton = QtWidgets.QPushButton(self.gridLayoutWidget_4)
         self.loadTransmissionParameter_pushButton.setObjectName("loadTransmissionParameter_pushButton")
         self.gridLayout_4.addWidget(self.loadTransmissionParameter_pushButton, 2, 3, 1, 1)
@@ -842,7 +848,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addItem(spacerItem2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1199, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1199, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -890,7 +896,8 @@ class Ui_MainWindow(object):
 "Datei laden"))
         self.einstLesen_pushButton_UEB.setText(_translate("MainWindow", "Einstellungen von\n"
 "Controller lesen"))
-        self.label_65.setText(_translate("MainWindow", "UEB Übertragungseinstellungen"))
+        self.startMeasureUEBSettings_pushButton.setText(_translate("MainWindow", "Messung starten"))
+        self.UEB_Transmissionsettings_label.setText(_translate("MainWindow", "UEB Übertragungseinstellungen"))
         self.loadTransmissionParameter_pushButton.setText(_translate("MainWindow", "Übertragungseinstellungen \n"
 "aus Datei laden"))
         self.saveTransmissionParameter_pushButton.setText(_translate("MainWindow", "Übertragungseinstellungen \n"
