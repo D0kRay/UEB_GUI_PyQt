@@ -83,7 +83,7 @@ from transmission_dialog import TransmissionDialog
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
-    UEB_GUI_VERSION = 1.2
+    UEB_GUI_VERSION = 1.1
 
     savePath = ""
     REFRESH_INTERVAL = 0.1
