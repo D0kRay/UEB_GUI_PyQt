@@ -141,6 +141,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.terminalTimer.timeout.connect(self.refreshTerminal)
 
         self.setupUi(self)
+        self.tabWidget.setCurrentIndex(1)   #always start at ueb settings
 
         self.terminal_widget = QWidget()
         self.terminal_widget.setLayout(self.TerminalScroll_verticalLayout)
