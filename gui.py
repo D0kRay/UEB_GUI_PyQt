@@ -6,10 +6,10 @@ import threading
 
 import pyqtgraph as pg
 from PyQt6 import QtWidgets, uic, QtCore
-from PyQt6.QtCore import QObject, QThread, QThreadPool
+from PyQt6.QtCore import QObject, QThread, QThreadPool, QTimer
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (QSizePolicy, QFileDialog, QLabel, QHBoxLayout,
-                             QVBoxLayout, QMessageBox)
+                             QVBoxLayout, QWidget)
 from pyqtgraph import PlotWidget, plot
 # from qt_material import apply_stylesheet
 
@@ -23,6 +23,7 @@ from parameter import Parameter
 from resolver_config import ResolverConfig
 from gui_data import GuiData
 from transmission_dialog import TransmissionDialog
+from data_analyser import DataAnalyser
 
 # class RefreshThread(QThread):
 
@@ -110,10 +111,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.scpi_commands = scpi_commands()
         self.communication = Communication()
         self.dt_algorithmus = DT_algorithmus()
+        self.data_analyser = DataAnalyser()
         self.job = Job(interval=self.REFRESH_INTERVAL, execute=self.processData, name="DataSafeThread")
         # self.refresh_thread = Thread()
         self.savePath = ''
         self.parameterFilepath = ''
+        self.terminalString = ''
         self.csv_datacolumns = []
         self.plot_data_upper = []
         self.plot_data_lower = []
@@ -134,9 +137,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
         self.UEBTransmissionScrollAreaLayout = QVBoxLayout()
         self.TerminalScroll_verticalLayout = QVBoxLayout()
+        self.terminalTimer = QTimer()
+        self.terminalTimer.timeout.connect(self.refreshTerminal)
 
         self.setupUi(self)
-        self.terminal_scrollArea.setLayout(self.TerminalScroll_verticalLayout)
+
+        self.terminal_widget = QWidget()
+        self.terminal_widget.setLayout(self.TerminalScroll_verticalLayout)
+        # self.terminal_scrollArea.setWidgetResizable(True)
+
+        self.terminal_scrollArea.setWidget(self.terminal_widget)
 
         
         # self.startRefreshThread()
@@ -234,15 +244,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
                         self.plot_data_lower[2].setData(self.hour, self.temperature)
 
-    def refreshTerminal(self, data):
-        sizePolicy = QSizePolicy()
-        sizePolicy.setVerticalPolicy(QSizePolicy.Policy.Fixed)
-        terminalLabel = QLabel()
-        terminalLabel.setText(data)
-        terminalLabel.setMinimumSize(400,20)
-        terminalLabel.setSizePolicy(sizePolicy)
-        self.TerminalScroll_verticalLayout.addWidget(terminalLabel)
-        self.terminal_scrollArea.setLayout(self.TerminalScroll_verticalLayout)
+    def refreshTerminal(self):
+        if(len(self.terminalString) != 0):
+            sizePolicy = QSizePolicy()
+            sizePolicy.setVerticalPolicy(QSizePolicy.Policy.Fixed)
+            terminalLabel = QLabel()
+            terminalLabel.setText(self.terminalString)
+            terminalLabel.setSizePolicy(sizePolicy)
+            self.TerminalScroll_verticalLayout.addWidget(terminalLabel)
+            self.terminalString = ''
+        
 
 
     def savePathDialog(self):
@@ -250,6 +261,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if Path:
             self.savePath = Path
             print(Path)
+
+    def saveFileDialog(self):
+        filepath = QFileDialog.getSaveFileName(self,"Speichern unter:", "", "Text Files (*.txt)")
+        if filepath:
+            self.savePath = filepath
+            print(filepath)
 
         
     def refreshComPortComboBox(self):   
@@ -270,6 +287,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         comport = self.comPort_comboBox.currentText()
         if("Connect" in self.connectComPort_Button.text()):
             if(len(comport) != 0):
+                self.terminalTimer.start(300)
                 if(self.communication.setComPort(comport)):
                     print("Comport SET " + comport)
                     settings = self.communication.readSettings()
@@ -285,6 +303,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.connectComPort_Button.setText("Connect")
         else:
             self.communication.stopThread()
+            self.terminalTimer.stop()
             if(self.job.is_alive()):
                 self.job.stop()
             print("Disconnected")
@@ -387,43 +406,64 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if ("Disconnect" in self.connectComPort_Button.text()):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
-            # self.dt_algorithmus = DT_algorithmus()
             self.communication.readSerialRead()
             self.startDataProcessThread()
-            time.sleep(3)
-            for i in range(0, len(self.parameter_list)):
-                if(not int(self.parameter_list[i].GUI_id) == 0):
-                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            self.startButton_UEB_status.setEnabled(False)
+
+            if (not self.job.is_alive()):
+                timer = QTimer()
+                timer.timeout.connect(self.sendParameter)
+                timer.setSingleShot(True)
+                timer.start(2000)
+            # time.sleep(3)
+            # for i in range(0, len(self.parameter_list)):
+            #     if(not int(self.parameter_list[i].GUI_id) == 0):
+            #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            self.startButton_UEB_status.setEnabled(True)
 
     def startMeasure(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
-            # self.dt_algorithmus = DT_algorithmus()
             self.communication.readSerialRead()
             self.startDataProcessThread()
+            self.startMeasureUEBSettings_pushButton.setEnabled(False)
             # closeWaitMessageBox = False
-            waitdialog = QMessageBox(self)
-            waitdialog.setWindowTitle("Messung starten?")
-            waitdialog.setText("Messung starten?")
-            waitdialog.exec()
-            time.sleep(3)
-            # waitdialog.done(0)
-            # waitdialog.close()
-            for i in range(0, len(self.parameter_list)):
-                if(not int(self.parameter_list[i].GUI_id) == 0):
-                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
-            # waitdialog.close()
-            print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
+            # waitdialog = QMessageBox(self)
+            # waitdialog.setWindowTitle("Messung starten?")
+            # waitdialog.setText("Messung starten?")
+            # waitdialog.exec()
+            if (not self.job.is_alive()):
+                timer = QTimer()
+                timer.timeout.connect(self.sendParameter)
+                timer.setSingleShot(True)
+                timer.start(2000)
+            
+            # # time.sleep(3)
+            # for i in range(0, len(self.parameter_list)):
+            #     if(not int(self.parameter_list[i].GUI_id) == 0):
+            #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            # # waitdialog.close()
+            # print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
+            self.startMeasureUEBSettings_pushButton.setEnabled(True)
             
     def startDataProcessThread(self):
         if(not self.job.is_alive()):
             self.job = Job(interval=self.REFRESH_INTERVAL, execute=self.processData, name="DataProcessThread")
             self.job.start()
 
+    def sendParameter(self):
+        for i in range(0, len(self.parameter_list)):
+                if(not int(self.parameter_list[i].GUI_id) == 0):
+                    self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            # waitdialog.close()
+        print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
+        
+
     def stopMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
             print("Motor stop")
+            self.terminalTimer.stop()
             # self.communication.writeCommand("DT:CONFIG\r")
             # self.communication.readSerialRead()
 
@@ -544,105 +584,80 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.setUEB_Config_Tab()
             jsonFile.close()
 
-    def createFile(self, filename):
-        if(not os.path.exists(self.savePath) or not self.savePath):
-            self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-        filename = filename + '.csv'
-        with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
-            self.writer = csv.writer(f)
-            # self.writer.writerow(filename)
-        return filename
+    # def createFile(self, filename):
+    #     if(not os.path.exists(self.savePath) or not self.savePath):
+    #         self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
+    #     filename = filename + '.csv'
+    #     with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
+    #         self.writer = csv.writer(f)
+    #         # self.writer.writerow(filename)
+    #     return filename
 
-    def createTextFile(self, filename):
-        if(not os.path.exists(self.savePath) or not self.savePath):
-            self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-        filename = filename + '.txt'
-        with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
-            f.write('')
-            # self.writer.writerow(filename)
-        return filename
+    # def createTextFile(self, filename):
+    #     if(not os.path.exists(self.savePath) or not self.savePath):
+    #         self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
+    #     filename = filename + '.txt'
+    #     with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
+    #         f.write('')
+    #         # self.writer.writerow(filename)
+    #     return filename
 
-    def writeTextRow(self, data, filename):
-        # filename = filename + '.csv'
-        filename = filename + '.txt'
-        with open((self.savePath + '/' + filename), 'a', encoding='UTF8') as f:
-            f.write(data + '\n')
+    # def writeTextRow(self, data, filename):
+    #     # filename = filename + '.csv'
+    #     filename = filename + '.txt'
+    #     with open((self.savePath + '/' + filename), 'a', encoding='UTF8') as f:
+    #         f.write(data + '\n')
 
-    def writeHeader(self, ids):
-        self.fileheaderCreated = True
-        self.generateParameterList()
-        header = []
-        for i in range(0, len(ids)):
-            for j in range(0, len(self.parameter_list)):
-                if ids[i] in self.parameter_list[j].row:
-                    header.append(self.parameter_list[j].CSV_text)
-        self.writeRow(header)
+    # def writeHeader(self, ids):
+    #     self.fileheaderCreated = True
+    #     self.generateParameterList()
+    #     header = []
+    #     for i in range(0, len(ids)):
+    #         for j in range(0, len(self.parameter_list)):
+    #             if ids[i] in self.parameter_list[j].row:
+    #                 header.append(self.parameter_list[j].CSV_text)
+    #     self.writeRow(header)
 
 
-    def writeRow(self, data, filename):
-        with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
-            self.writer = csv.writer(f)
-            self.writer.writerow(data)
+    # def writeRow(self, data, filename):
+    #     with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
+    #         self.writer = csv.writer(f)
+    #         self.writer.writerow(data)
 
-    def writeCompleteCSV(self, data, filename):
-        with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
-            self.writer = csv.writer(f)
-            self.writer.writerows(data)
+    # def writeCompleteCSV(self, data, filename):
+    #     with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
+    #         self.writer = csv.writer(f)
+    #         self.writer.writerows(data)
+
+    def getParameterOfData(self, data):
+        parameter = Parameter()
+        for i in range(0, len(self.parameter_list)):
+            if(str(data[0].GUI_id) in self.parameter_list[i].GUI_id):
+                parameter = self.parameter_list[i]
+                break
+        return parameter
+
 
     def processData(self):
-    # data_array = self.communication.thread_data_queue
-    # laenge = data_array.qsize()
         self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
         
         for i in range(0, len(transmittedIDs)):
             data = self.dt_algorithmus.getPendingDataPacket(transmittedIDs[i])
-            # self.csv_datacolumns.append(data)
-            # transmissionComplete = self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])
             if((not len(data)) == 0 and self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
-                self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(transmittedIDs[i])))
-                # self.createTextFile(self.getCSVTextFromID(transmittedIDs[i]))
+                self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(transmittedIDs[i]))
                 complete_data = self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i])
                 datastring = ''
                 terminalstring = ''
+                data_parameter = Parameter
                 for j in range(0, len(complete_data)):
                     datastring = datastring + complete_data[j].Data
                     terminalstring = terminalstring + complete_data[j].Data + '\n'
-                # self.writeHeader(transmittedIDs[i])
-                self.createTextFile(str(transmittedIDs[i]))
-                # self.writeTextRow(transmittedIDs[i], transmittedIDs[i])
-                self.writeTextRow(datastring, str(transmittedIDs[i]))
+                self.terminalString = self.terminalString + terminalstring
+                data_parameter = self.getParameterOfData(complete_data)
+                self.data_analyser.processData(complete_data, data_parameter, self.savePath)
 
-                # textlabel = QLabel()
-                # sizePolicy = QSizePolicy()
-                # sizePolicy.setVerticalPolicy(QSizePolicy.Policy.Fixed)
-                # textlabel.setText(terminalstring)
-                # textlabel.setMinimumSize(200,15)
-                # textlabel.setSizePolicy(sizePolicy)
-                # self.TerminalScroll_verticalLayout.addWidget(textlabel)
-                # self.terminal_scrollArea.setLayout(self.TerminalScroll_verticalLayout)
-                # self.writeCompleteCSV(complete_data)
-            # if(i >= len(self.separated_id_list)):
-                # self.separated_id_list.append(data)
-            # else:
-            #     self.separated_id_list[i].extend(data)
-        # biggestColumn = 0
-        # for i in range(0, len(self.csv_datacolumns)):
-        #     if(len(self.csv_datacolumns[i]) > biggestColumn):
-        #         biggestColumn = len(self.csv_datacolumns[i])
-        # for j in range(0, biggestColumn):
-        #     rowData = []
-        #     for i in range(0, len(self.csv_datacolumns)):
-        #         if(len(self.csv_datacolumns[i]) > j):
-        #             rowData.append(bytearray.fromhex(((self.csv_datacolumns[i])[j])[9]).decode(errors='ignore'))
-        #         else:
-        #             rowData.append("")
-        #     if(self.savePath):
-        #         if(not self.fileheaderCreated):
-        #             self.writeFileHeader(transmittedIDs)          
-        #         self.writeRow(rowData)
-        
-        self.csv_datacolumns.clear()
+            
             
         
     

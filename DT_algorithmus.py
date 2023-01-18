@@ -45,9 +45,7 @@ class DT_algorithmus():
         self.scpi_commands = scpi_commands()
         self.dt_data_queue = Queue(maxsize=0)
         self.id_list = []
-        # self.communication = communication
         self.unique_id = 0
-        # self.startDTthread()
 
     def processQueue(self, queue):
         if(not queue.empty()):
@@ -146,8 +144,9 @@ class DT_algorithmus():
         dataPacket = []
         for i in range(0, len(self.sorted_transmission_data)):
             if((self.sorted_transmission_data[i])[0].GUI_id == id):
-                dataPacket = self.sorted_transmission_data[i]
-        return dataPacket
+                dataPacket = self.sorted_transmission_data[i].copy()
+                self.sorted_transmission_data.pop(i)
+                return dataPacket
         
     def getPendingDataPacket(self, id):
         dataPacket = []
@@ -197,27 +196,7 @@ class DT_algorithmus():
     def sendTransmissionComplete(self, id):
         self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(id)))
 
-    def startDTthread(self):
-        if(not self.thread_run):
-            self.stop_event.clear()
-            # self.communication.readSerialRead()
-            self.dt_thread = Thread(target=self.DT_thread, name="DT_Thread", args=(self.stop_event, self.dt_data_queue), daemon=True) 
-            self.thread_run = True
-            time.sleep(0.5)
-            self.dt_thread.start()
 
-    def DT_thread(self, stop_event, queue):
-        while not stop_event.is_set():
-            print(".")
-            # self.processQueue(self.communication.thread_data_queue)
-            # transmittedIDs = self.getTransmittedIDs()
-            # for i in range(0, len(transmittedIDs)):
-            #     # data = DT_algoObj.getPendingDataPacket(transmittedIDs[i])
-            #     # self.csv_datacolumns.append(data)
-            #     # transmissionComplete = self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])
-            #     if(self.isTransmissionComplete(transmittedIDs[i])):
-            #         self.sendTransmissionComplete(self, hex(transmittedIDs[i]))
-            #         queue.put(self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i]))
 
 
 
