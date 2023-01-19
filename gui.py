@@ -143,6 +143,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.tabWidget.setCurrentIndex(1)   #always start at ueb settings
         self.refreshComPortComboBox()
+        self.setWindowIcon(QIcon("UEB_icon.png"))
 
         self.terminal_widget = QWidget()
         self.terminal_widget.setLayout(self.TerminalScroll_verticalLayout)
