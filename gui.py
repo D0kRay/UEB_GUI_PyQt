@@ -149,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # self.terminal_scrollArea.setWidgetResizable(True)
 
         self.terminal_scrollArea.setWidget(self.terminal_widget)
-
+        self.terminal_userline.setPlaceholderText("Hier Controllerkommando eingeben")
         
         # self.startRefreshThread()
         # self.dialog = QDialog(self)
