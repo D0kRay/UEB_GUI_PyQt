@@ -142,6 +142,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.setupUi(self)
         self.tabWidget.setCurrentIndex(1)   #always start at ueb settings
+        self.refreshComPortComboBox()
 
         self.terminal_widget = QWidget()
         self.terminal_widget.setLayout(self.TerminalScroll_verticalLayout)
@@ -161,6 +162,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.saveunder_Button.clicked.connect(self.savePathDialog)
         self.refreshComPort_Button.clicked.connect(self.refreshComPortComboBox)
         self.exit_Button.clicked.connect(self.exitButtonClicked)
+        self.stop_Button.clicked.connect(self.stopMotor)
         self.connectComPort_Button.clicked.connect(self.connectButtonClicked)
         self.einstLesen_pushButton_UEB.clicked.connect(self.readUEB_SettingsButtonClicked)
         self.einst_Schreiben_pushButton_UEB.clicked.connect(self.writeUEB_SettingsButtonClicked)
@@ -171,13 +173,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.saveUEBSettings_pushButton.clicked.connect(self.safeUEBToJSON)
         self.loadUEBSettings_pushButton.clicked.connect(self.loadUEBFromJSON)
         self.startMeasureUEBSettings_pushButton.clicked.connect(self.startMeasure)
+        self.terminal_userline.returnPressed.connect(self.transmitTerminalUserInput)
 
         ##Release V1.1
         ##Felder in UEB Einstellungen werden teils der Bedienbarkeit wegen ausgeblendet.
         if(self.UEB_GUI_VERSION == 1.1):
             self.tabWidget.setTabVisible(0, False)
             self.tabWidget.setTabVisible(2, False)
-            self.tabWidget.setTabVisible(3, False)
+            # self.tabWidget.setTabVisible(3, False)
             self.UEB_SettingsTransmission_scrollArea.setVisible(False)
             self.loadTransmissionParameter_pushButton.setVisible(False)
             self.openParameterDialog_pushButton.setVisible(False)
@@ -194,6 +197,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 parameter.CSV_text = "224"
                 self.parameter_list.append(parameter)
         ##
+        if(self.UEB_GUI_VERSION == 1.2):
+            try:
+                self.parameterFilepath = os.getcwd() + '/predefined_parameter.json'
+                self.loadParameterFromJSON()
+            except:
+                print("Vorkonfiguration nicht moeglich, da *predefined_parameter.json* nicht auslesbar")
 
 
 
@@ -254,7 +263,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             terminalLabel.setSizePolicy(sizePolicy)
             self.TerminalScroll_verticalLayout.addWidget(terminalLabel)
             self.terminalString = ''
-        
+
+    def transmitTerminalUserInput(self):
+        if ("Disconnect" in self.connectComPort_Button.text()):
+            userString = ''
+            userString = self.terminal_userline.text() + '\r'
+            if(len(userString) < 1023):
+                self.terminal_userline.clear()
+                self.communication.writeCommand(userString)
+                self.terminalString = "GUI: " + userString
+                self.refreshTerminal()
 
 
     def savePathDialog(self):
@@ -277,6 +295,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def exitButtonClicked(self):
         if("Disconnect" in self.connectComPort_Button.text()):
             self.communication.stopThread()
+            self.communication.closeComPort()
+            self.terminalTimer.stop()
         if(self.job.is_alive()):
             self.job.stop()
         self.close()
@@ -296,6 +316,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ueb_config_list = self.getUEB_SettingVars(settings)
                         self.setUEB_Config(self.ueb_config_list)
                         self.setUEB_Config_Tab()
+                        self.communication.readSerialRead()
+                        self.startDataProcessThread()
                         self.connectComPort_Button.setText("Disconnect")
                     else:
                         print("Falscher COM Port oder Fehlerhafte Uebertragung.")
@@ -305,6 +327,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.communication.stopThread()
             self.terminalTimer.stop()
+            self.communication.closeComPort()
+            self.terminalTimer.stop()
             if(self.job.is_alive()):
                 self.job.stop()
             print("Disconnected")
@@ -312,14 +336,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def readUEB_SettingsButtonClicked(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            self.communication.stopThread()
-            settings = self.communication.readSettings()
-            self.ueb_config_list = self.getUEB_SettingVars(settings)
-            self.setUEB_Config(self.ueb_config_list)
-            self.setUEB_Config_Tab()
+            # self.communication.stopThread()
+            self.communication.writeCommand(self.scpi_commands.getUEBsettings())
+            # settings = self.communication.readSettings()
+            # self.ueb_config_list = self.getUEB_SettingVars(settings)
+            # self.setUEB_Config(self.ueb_config_list)
+            # self.setUEB_Config_Tab()
 
     def writeUEB_SettingsButtonClicked(self):
-        self.communication.stopThread()
+        # self.communication.stopThread()
         self.sendUEBConfigTab()
 
     def getUEB_SettingVars(self, settingsstring):
@@ -404,31 +429,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBsettings(True))
 
     def startMotor(self):
-        if ("Disconnect" in self.connectComPort_Button.text()):
+        if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
             self.communication.readSerialRead()
             self.startDataProcessThread()
-            self.startButton_UEB_status.setEnabled(False)
+            self.startButton_UEB_status.setText("Motor läuft")
+            self.startMeasureUEBSettings_pushButton.setText("Messung läuft")
+
 
             if (not self.job.is_alive()):
                 timer = QTimer()
                 timer.timeout.connect(self.sendParameter)
                 timer.setSingleShot(True)
                 timer.start(2000)
+            else:
+                self.sendParameter()
+            
             # time.sleep(3)
             # for i in range(0, len(self.parameter_list)):
             #     if(not int(self.parameter_list[i].GUI_id) == 0):
             #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
-            self.startButton_UEB_status.setEnabled(True)
 
     def startMeasure(self):
-        if ("Disconnect" in self.connectComPort_Button.text()):
+        if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
             self.communication.readSerialRead()
             self.startDataProcessThread()
-            self.startMeasureUEBSettings_pushButton.setEnabled(False)
+            self.startButton_UEB_status.setText("Motor läuft")
+            self.startMeasureUEBSettings_pushButton.setText("Messung läuft")
             # closeWaitMessageBox = False
             # waitdialog = QMessageBox(self)
             # waitdialog.setWindowTitle("Messung starten?")
@@ -439,6 +469,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 timer.timeout.connect(self.sendParameter)
                 timer.setSingleShot(True)
                 timer.start(2000)
+            else:
+                self.sendParameter()
             
             # # time.sleep(3)
             # for i in range(0, len(self.parameter_list)):
@@ -446,7 +478,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
             # # waitdialog.close()
             # print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
-            self.startMeasureUEBSettings_pushButton.setEnabled(True)
             
     def startDataProcessThread(self):
         if(not self.job.is_alive()):
@@ -455,8 +486,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def sendParameter(self):
         for i in range(0, len(self.parameter_list)):
-                if(not int(self.parameter_list[i].GUI_id) == 0):
+                if(not int(self.parameter_list[i].GUI_id) == 0):                   
                     self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+                    self.terminalString = self.terminalString + self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id) + '\r'
             # waitdialog.close()
         print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
         
@@ -465,6 +497,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if ("Disconnect" in self.connectComPort_Button.text()):
             print("Motor stop")
             self.terminalTimer.stop()
+            self.startButton_UEB_status.setText("Motor starten")
+            self.startMeasureUEBSettings_pushButton.setText("Messung starten")
             # self.communication.writeCommand("DT:CONFIG\r")
             # self.communication.readSerialRead()
 
@@ -480,12 +514,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             print('Dialog closed')
 
-    def getCSVTextFromID(self, id):
-        csv_text = 'n.v.'
-        for i in range(0, len(self.parameter_list)):
-            if(str(id) in self.parameter_list[i].GUI_id):
-                csv_text = self.parameter_list[i].GUI_id
-        return csv_text
+    # def getCSVTextFromID(self, id):
+    #     csv_text = 'n.v.'
+    #     for i in range(0, len(self.parameter_list)):
+    #         if(str(id) in self.parameter_list[i].GUI_id):
+    #             csv_text = self.parameter_list[i].GUI_id
+    #     return csv_text
 
     def setUEBTransmissionSettingsWindow(self):
         self.clearLayout(self.UEBTransmissionScrollAreaLayout)
@@ -649,14 +683,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(transmittedIDs[i]))
                 complete_data = self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i])
                 datastring = ''
-                terminalstring = ''
+                terminalstring = "Controller: ID " + str(transmittedIDs[i]) + '\n'
                 data_parameter = Parameter
                 for j in range(0, len(complete_data)):
                     datastring = datastring + complete_data[j].Data
                     terminalstring = terminalstring + complete_data[j].Data + '\n'
                 self.terminalString = self.terminalString + terminalstring
-                data_parameter = self.getParameterOfData(complete_data)
-                self.data_analyser.processData(complete_data, data_parameter, self.savePath)
+                if(complete_data[0].GUI_id == 255):
+                    self.ueb_config_list = self.getUEB_SettingVars(complete_data[0].Data)
+                    self.setUEB_Config(self.ueb_config_list)
+                    self.setUEB_Config_Tab()
+                else:
+                    data_parameter = self.getParameterOfData(complete_data)
+                    self.data_analyser.processData(complete_data, data_parameter, self.savePath)
+                print("ID " + str(transmittedIDs[i]) + " erfolgreich uebertragen!")
 
             
             
@@ -676,6 +716,7 @@ class Job(threading.Thread):
     def stop(self):
                 self.stopped.set()
                 self.join()
+                print("Dataprocessthread stopped")
     def run(self):
             while not self.stopped.wait(self.interval):
                 self.execute(*self.args, **self.kwargs)

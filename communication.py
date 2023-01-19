@@ -85,7 +85,7 @@ class Communication:
             except:
                 print("Uebertragungsfehler **SerialThread**")
                 eventobj.set()
-        print('Thread stopped')
+        print('Serialthread stopped')
 
     def stopThread(self):
         if(self.thread_run):
@@ -94,9 +94,12 @@ class Communication:
             self.thread_run = False
                     
     def writeCommand(self, command):
-        bytestring = command.encode('ascii')
-        self.ser.flushInput()
-        self.ser.write(bytestring)
+        try:
+            bytestring = command.encode('ascii')
+            self.ser.flushInput()
+            self.ser.write(bytestring)
+        except:
+            print("Eingabe konnte nicht dekodiert werden!")
 
     def readSettings(self):
         self.writeCommand(self.scpi_commands.getUEBsettings())

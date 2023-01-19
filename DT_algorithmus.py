@@ -24,7 +24,9 @@ class DT_algorithmus():
     COUNT_BYTE_LIST_NR = 4
     MAXPACKAGE_BYTE_LIST_NR = 6
     DATA_BYTE_LIST_NR = 8
-
+    IDENTIFIER_UEB_SETTINGS_PARAMETER = "535441543d" # STAT=
+    IDENTIFIER_UEB_ERROR_WRONG_COMMAND = "4572726f72" # Error
+    PREDEFINED_ID_UEB_SETTINGS_PARAMETER = 255
     communication = Communication
     scpi_commands = scpi_commands
     dt_thread = Thread
@@ -51,7 +53,10 @@ class DT_algorithmus():
         if(not queue.empty()):
             singleTransmission = (queue.get()).hex()
             # singleTransmission = queue.get()
-            splitedTransLength = [singleTransmission[i:i+self.PACKET_SIZE] for i in range(0, len(singleTransmission), self.PACKET_SIZE)]
+            if(self.IDENTIFIER_UEB_SETTINGS_PARAMETER in singleTransmission[0:10]):
+                splitedTransLength = [singleTransmission]
+            else:
+                splitedTransLength = [singleTransmission[i:i+self.PACKET_SIZE] for i in range(0, len(singleTransmission), self.PACKET_SIZE)]
             parityCheck = len(singleTransmission) % 2
             if(not parityCheck == 0):
                 print("**********Fehler bei der Uebertragung! Modulo 2 Fehler**********")
@@ -63,8 +68,9 @@ class DT_algorithmus():
             #     for i in range((len(splitedTransLength)-1), messageEndPoint, -1):
             #         splitedTransLength.pop(i)
             for i in range(0, len(splitedTransLength)):
-                packet = self.disassembleOnePacket(splitedTransLength[i])
-                self.id_list.append([packet.GUI_id, packet.Count])
+                self.disassembleOnePacket(splitedTransLength[i])
+                # packet = self.disassembleOnePacket(splitedTransLength[i])
+                # self.id_list.append([packet.GUI_id, packet.Count])
 
 
         
@@ -98,6 +104,32 @@ class DT_algorithmus():
                 packet.StatusPacket = True
                 packet.Data = inpacket
                 self.sorted_transmission_data.append([packet])
+        elif(self.IDENTIFIER_UEB_SETTINGS_PARAMETER in inpacket[0:10]):
+            if(len(self.sorted_transmission_data)):
+                for i in range(0, len(self.sorted_transmission_data)):
+                    if(self.sorted_transmission_data[i][0].GUI_id == self.PREDEFINED_ID_UEB_SETTINGS_PARAMETER):
+                        packet = DataContent()
+                        packet.Status_Byte = self.PREDEFINED_ID_UEB_SETTINGS_PARAMETER
+                        packet.GUI_id = self.PREDEFINED_ID_UEB_SETTINGS_PARAMETER
+                        packet.Count = 1
+                        packet.MaxPackages = 0
+                        packet.UniqueID = -1
+                        packet.Data = bytearray.fromhex(inpacket).decode('ascii')
+                        self.sorted_transmission_data[i].append(packet)
+                        appended_to_sorted_datalist = True
+                    
+            if(not appended_to_sorted_datalist):
+                packet = DataContent()
+                packet.Status_Byte = self.PREDEFINED_ID_UEB_SETTINGS_PARAMETER
+                packet.GUI_id = self.PREDEFINED_ID_UEB_SETTINGS_PARAMETER
+                packet.Count = 1
+                packet.MaxPackages = 0
+                packet.UniqueID = -1
+                packet.Data = bytearray.fromhex(inpacket).decode('ascii')
+                self.sorted_transmission_data.append([packet])
+        elif(self.IDENTIFIER_UEB_ERROR_WRONG_COMMAND in inpacket[0:10]):
+            print("Error: Wrong Command!")
+            # packet = DataContent()
         else:
             # outPacket = ["StatusFlag", inpacket[self.STATUSFLAG_BYTE_LIST_NR:(self.STATUSFLAG_BYTE_LIST_NR+2)], "GUI_ID", inpacket[self.GUIID_BYTE_LIST_NR:(self.GUIID_BYTE_LIST_NR+2)], "Count", inpacket[self.COUNT_BYTE_LIST_NR:(self.COUNT_BYTE_LIST_NR+2)], "MaxPackage", inpacket[self.MAXPACKAGE_BYTE_LIST_NR:(self.MAXPACKAGE_BYTE_LIST_NR+2)], "Data", inpacket[self.DATA_BYTE_LIST_NR:]]
             # outPacket = ["StatusFlag", inpacket[:2], "ID", inpacket[2:4], "Count", inpacket[4:6], "MaxPackage", inpacket[6:8], "Data", self.disassembleDataBasedOnDataType(inpacket[8:], inpacket[2:4])]
@@ -128,10 +160,7 @@ class DT_algorithmus():
                 packet.MaxPackages = int(inpacket[self.MAXPACKAGE_BYTE_LIST_NR:(self.MAXPACKAGE_BYTE_LIST_NR+2)],16)
                 packet.Data = inpacket[self.DATA_BYTE_LIST_NR:]
                 self.sorted_transmission_data.append([packet])
-
-        #TODO Pakete für die Konfiguration noch disassemblen 
-        #Eigene ID für StatusPakete
-        return packet
+        # return packet
 
     def getTransmittedIDs(self):
         id_list = []
