@@ -1,85 +1,31 @@
 import csv
-import os
-import time
 import json
+import os
 import threading
+import time
 
 import pyqtgraph as pg
-from PyQt6 import QtWidgets, uic, QtCore
+from PyQt6 import QtCore, QtWidgets, uic
 from PyQt6.QtCore import QObject, QThread, QThreadPool, QTimer
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import (QSizePolicy, QFileDialog, QLabel, QHBoxLayout,
+from PyQt6.QtWidgets import (QFileDialog, QHBoxLayout, QLabel, QSizePolicy,
                              QVBoxLayout, QWidget)
 from pyqtgraph import PlotWidget, plot
-# from qt_material import apply_stylesheet
 
 from communication import Communication
+from data_analyser import DataAnalyser
 from DT_algorithmus import DT_algorithmus
+from gui_data import GuiData
+from parameter import Parameter
+from resolver_config import ResolverConfig
 from scpi_commands import scpi_commands
+from transmission_dialog import TransmissionDialog
 from ueb_config import ueb_config
 from ui_MainWindow import Ui_MainWindow
 from ui_parameter_dialog import Ui_TransmissionParameterDialog
-from parameter import Parameter
-from resolver_config import ResolverConfig
-from gui_data import GuiData
-from transmission_dialog import TransmissionDialog
-from data_analyser import DataAnalyser
 
-# class RefreshThread(QThread):
+# from qt_material import apply_stylesheet
 
-
-    
-#     data_string = QtCore.pyqtSignal()
-#     data_list = QtCore.pyqtSignal()
-
-
-#     def __init__(self, dt_algorithmus, parent=None):
-#         QThread.__init__(self, parent)
-#         # QtCore.QThread.__init__(self)
-#         self.dt_algorithmus = dt_algorithmus
-#         self.datastring = ''
-
-#     def run(self):
-
-#         self.checkDTAlgorithmusQueue()
-#         # time.sleep(0.1)
-#         ##andere Funktionen
-        
-
-#     def checkDTAlgorithmusQueue(self):
-#             while not self.dt_algorithmus.dt_data_queue.empty():
-#                 queue_element = self.dt_algorithmus.dt_data_queue.get()
-#                 # self.processQueueElement(queue_element)
-#                 self.data_string.emit(str(queue_element))
-
-##TODO Datenrückgabe an GUI
-
-
-        # self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
-        # transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
-        
-        # for i in range(0, len(transmittedIDs)):
-        #     data = self.dt_algorithmus.getPendingDataPacket(transmittedIDs[i])
-        #     # self.csv_datacolumns.append(data)
-        #     # transmissionComplete = self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])
-        #     if((not len(data)) == 0 and self.dt_algorithmus.isTransmissionComplete(transmittedIDs[i])):
-        #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(transmittedIDs[i])))
-        #         filename = self.createTextFile(self.getCSVTextFromID(transmittedIDs[i]))
-        #         complete_data = self.dt_algorithmus.getCompleteDataPacket(transmittedIDs[i])
-        #         datastring_terminal = ''
-        #         for j in range(0, len(complete_data)):
-        #             datastring_terminal = datastring_terminal + complete_data[i].Data
-        #             # label = QLabel(text=complete_data[i].Data)
-        #             # self.TerminalScroll_UEBTransmissionScrollAreaLayout.addWidget(label)
-        #             # complete_data[i] = str(complete_data[i].Data)
-        #         # self.terminal_textlabel.setText(self.terminal_textlabel.text() + datastring_terminal)
-        #         # self.writeHeader(transmittedIDs[i])
-        #         self.writeTextRow(str(transmittedIDs[i]), filename)
-        #         self.writeTextRow(datastring_terminal, filename)
-        #         print('ID: ' + str(transmittedIDs[i]) + ' saved')
-
-    # def processQueueElement(self, queueItem):
-    #         self.
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -88,6 +34,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     savePath = ""
     REFRESH_INTERVAL = 0.1
+    STM32_USB_VID_PID = '1155:22336'
+    UEB_INIT = 0
+    UEB_RUN_THREEPHASE = 1
+    UEB_RUN_DC = 2
+    UEB_RUN_CAL_ADC = 3
+    UEB_RUN_CONTROL = 4
+    UEB_STOP = 5
+    UEB_INIT_FINISH = 6
+
+    GUI_DC = "DC Modus"
+    GUI_CAL_ADC = "Kalibration ADC"
+    GUI_CONTROL = "Regelungsmodus"
+    GUI_THREEPHASE = "Dreiphasenmodus"
+
+#define UEB_INIT 0
+#define UEB_RUN_THREEPHASE 1
+#define UEB_RUN_DC 2
+#define UEB_RUN_CAL_ADC 3
+#define UEB_RUN_CONTROL 4
+#define UEB_STOP 5
+#define UEB_INIT_FINISH 6
 
     communication = Communication
     ueb_config = ueb_config
@@ -102,9 +69,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     parameter_list = list
     data_list = list
     transmission_dialog = TransmissionDialog
-    # refreshThread = RefreshThread
-    # thread = QThread
-
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -113,7 +77,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dt_algorithmus = DT_algorithmus()
         self.data_analyser = DataAnalyser()
         self.job = Job(interval=self.REFRESH_INTERVAL, execute=self.processData, name="DataSafeThread")
-        # self.refresh_thread = Thread()
         self.savePath = ''
         self.parameterFilepath = ''
         self.terminalString = ''
@@ -124,15 +87,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.parameter_list = []
         self.predefined_parameter_list = []
         self.data_list = []
+        self.portlist = []
         self.ueb_config = ueb_config()
         self.resolver_config = ResolverConfig()
-        # self.thread = QThread()
-        # self.refreshThread = RefreshThread(self.dt_algorithmus)
-        # self.refreshThread.started.connect(self.refreshThread.run)
-        # self.refreshThread.moveToThread(self.thread)
-        # self.thread.started.connect(self.refreshThread.run)
         self.fileheaderCreated = False
         self.thread_run = False
+        self.measure_run = True
+        self.measure_started = False
         self.plotWidget_UEB_status_lower = pg.PlotWidget()
         self.plotWidget_UEB_status_upper = pg.PlotWidget()
         self.UEBTransmissionScrollAreaLayout = QVBoxLayout()
@@ -147,15 +108,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.terminal_widget = QWidget()
         self.terminal_widget.setLayout(self.TerminalScroll_verticalLayout)
-        # self.terminal_scrollArea.setWidgetResizable(True)
 
         self.terminal_scrollArea.setWidget(self.terminal_widget)
         self.terminal_userline.setPlaceholderText("Hier Controllerkommando eingeben")
+        self.connection_Indicator_Lamp.setStyleSheet("background-color : red")
 
-        
-        # self.startRefreshThread()
-        # self.dialog = QDialog(self)
-        # Ui_NewParameterDialog.setupUi(self.dialog)
+        self.operation_Mode_comboBox.addItems([self.GUI_DC, self.GUI_THREEPHASE, self.GUI_CONTROL, self.GUI_CAL_ADC])
+        self.operation_Mode_comboBox.setCurrentIndex(0)
         self.RDCRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
         self.EncoderRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
         self.plotWidget_UEB_status_lower.setBackground('w')
@@ -165,6 +124,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.refreshComPort_Button.clicked.connect(self.refreshComPortComboBox)
         self.exit_Button.clicked.connect(self.exitButtonClicked)
         self.stop_Button.clicked.connect(self.stopMotor)
+        self.stopButton_UEB_status.clicked.connect(self.stopMotor)
         self.connectComPort_Button.clicked.connect(self.connectButtonClicked)
         self.einstLesen_pushButton_UEB.clicked.connect(self.readUEB_SettingsButtonClicked)
         self.einst_Schreiben_pushButton_UEB.clicked.connect(self.writeUEB_SettingsButtonClicked)
@@ -182,7 +142,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if(self.UEB_GUI_VERSION == 1.1):
             self.tabWidget.setTabVisible(0, False)
             self.tabWidget.setTabVisible(2, False)
-            # self.tabWidget.setTabVisible(3, False)
             self.UEB_SettingsTransmission_scrollArea.setVisible(False)
             self.loadTransmissionParameter_pushButton.setVisible(False)
             self.openParameterDialog_pushButton.setVisible(False)
@@ -205,26 +164,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.loadParameterFromJSON()
             except:
                 print("Vorkonfiguration nicht moeglich, da *predefined_parameter.json* nicht auslesbar")
-
-
-
-
+        self.parameterFilepath = ''
 
     def showGUI(self):
         window = self
         window.setWindowIcon(QIcon("UEB_icon.png"))
         window.setWindowTitle("UEB")
         window.show()
-
-    # def startRefreshThread(self):
-    #     self.refreshThread.data_string.connect(self.refreshTerminal)
-    #     self.refreshThread.start()        
-    #     # if(not self.thread_run):
-    #     #     self.stop_event.clear()
-    #     #     self.data_processed.connect(self.processDataForGUI)
-    #     #     self.refresh_thread = Thread(target=self.processData, name="Refresh_Thread", args=(self, self.stop_event), daemon=True) 
-    #     #     self.thread_run = True
-    #     #     self.refresh_thread.start()
 
     def processDataForGUI(self):
         print('d')
@@ -265,6 +211,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             terminalLabel.setSizePolicy(sizePolicy)
             self.TerminalScroll_verticalLayout.addWidget(terminalLabel)
             self.terminalString = ''
+        if((not self.measure_run) and self.measure_started):
+            self.startMeasureUEBSettings_pushButton.setText("Messung starten")
+            self.gui_info_dialog_Label.setText("Messung fertig")
+            self.measure_run = False
 
     def transmitTerminalUserInput(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
@@ -275,7 +225,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.communication.writeCommand(userString)
                 self.terminalString = "GUI: " + userString
                 self.refreshTerminal()
-
 
     def savePathDialog(self):
         Path = QFileDialog.getExistingDirectory(self,"Speichern unter:","")
@@ -288,14 +237,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if filepath:
             self.savePath = filepath
             print(filepath)
-
         
     def refreshComPortComboBox(self):   
         self.comPort_comboBox.clear()
-        self.comPort_comboBox.addItems(self.communication.getComPorts())
+        self.portlist = self.communication.getComPorts()
+        for i in range(0, len(self.portlist)):
+            self.comPort_comboBox.addItem(self.portlist[i].name)
 
     def exitButtonClicked(self):
         if("Disconnect" in self.connectComPort_Button.text()):
+            self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             self.communication.stopThread()
             self.communication.closeComPort()
             self.terminalTimer.stop()
@@ -304,28 +255,41 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.close()
         
     def stopButtonClicked(self):
+        self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
         print("STOP")
 
     def connectButtonClicked(self):
         comport = self.comPort_comboBox.currentText()
-        if("Connect" in self.connectComPort_Button.text()):
+        usb_VID_PID = ''
+        for i in range(0, len(self.portlist)):
+            if(comport in self.portlist[i].name):
+                if(self.portlist[i].vid and self.portlist[i].pid):
+                    usb_VID_PID = str(self.portlist[i].vid) + ':' + str(self.portlist[i].pid)
+        if("Connect" in self.connectComPort_Button.text() and (self.STM32_USB_VID_PID in usb_VID_PID)):
             if(len(comport) != 0):
                 self.terminalTimer.start(300)
                 if(self.communication.setComPort(comport)):
                     print("Comport SET " + comport)
                     settings = self.communication.readSettings()
-                    if(settings):
+                    if(len(settings) != 0):
                         self.ueb_config_list = self.getUEB_SettingVars(settings)
                         self.setUEB_Config(self.ueb_config_list)
                         self.setUEB_Config_Tab()
                         self.communication.readSerialRead()
                         self.startDataProcessThread()
                         self.connectComPort_Button.setText("Disconnect")
+                        self.connection_Indicator_Lamp.setStyleSheet("background-color : green")
+                        self.gui_info_dialog_Label.setText("Verbindung aufgebaut")
                     else:
                         print("Falscher COM Port oder Fehlerhafte Uebertragung.")
                         self.communication.closeComPort()
+                        self.connection_Indicator_Lamp.setStyleSheet("background-color : red")
+                        self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")
                 else:
+                    self.communication.closeComPort()
                     self.connectComPort_Button.setText("Connect")
+                    self.connection_Indicator_Lamp.setStyleSheet("background-color : red")
+                    self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")
         else:
             self.communication.stopThread()
             self.terminalTimer.stop()
@@ -335,29 +299,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.job.stop()
             print("Disconnected")
             self.connectComPort_Button.setText("Connect")
+            self.connection_Indicator_Lamp.setStyleSheet("background-color : red")
+            self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")   
 
     def readUEB_SettingsButtonClicked(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
-            # self.communication.stopThread()
             self.communication.writeCommand(self.scpi_commands.getUEBsettings())
-            # settings = self.communication.readSettings()
-            # self.ueb_config_list = self.getUEB_SettingVars(settings)
-            # self.setUEB_Config(self.ueb_config_list)
-            # self.setUEB_Config_Tab()
+            self.gui_info_dialog_Label.setText("Einstellungen von Controller gelesen")
 
     def writeUEB_SettingsButtonClicked(self):
-        # self.communication.stopThread()
         self.sendUEBConfigTab()
+        self.gui_info_dialog_Label.setText("Einstellungen an Controller gesendet")
 
     def getUEB_SettingVars(self, settingsstring):
-        # self.communication.stopThread()
         parameters = settingsstring.split(";")
         for i in range(len(parameters)):
             temp = parameters[i].split("=")
             parameters[i] = temp[1]
         temp = parameters[len(parameters)-1].split("\r")
         parameters[len(parameters)-1] = temp[1]
-
         return parameters
 
     def setUEB_Config(self, ueb_config_list):
@@ -393,7 +353,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBVBridge(self.versorgSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
-        self.communication.writeCommand(self.scpi_commands.setUEBsettings(True))
+        self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_INIT_FINISH))
+
 #TODO RESolver Kommandos und view
     def setResolver_Config(self, ueb_config_list):
         self.resolver_config.status = ueb_config_list[0]
@@ -428,30 +389,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBVBridge(self.versorgSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
         self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
-        self.communication.writeCommand(self.scpi_commands.setUEBsettings(True))
+        self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_INIT_FINISH))
 
     def startMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
-            if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
-                self.savePathDialog()          
             self.communication.readSerialRead()
             self.startDataProcessThread()
             self.startButton_UEB_status.setText("Motor läuft")
-            self.startMeasureUEBSettings_pushButton.setText("Messung läuft")
+            self.gui_info_dialog_Label.setText("Motor gestartet")
+            self.measure_run = True
+            if(self.GUI_THREEPHASE in self.operation_Mode_comboBox.currentText()):
+                self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_THREEPHASE))
+            elif(self.GUI_DC in self.operation_Mode_comboBox.currentText()):
+                self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_DC))
+            elif(self.GUI_CONTROL in self.operation_Mode_comboBox.currentText()):
+                self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_CONTROL))            
+            elif(self.GUI_CAL_ADC in self.operation_Mode_comboBox.currentText()):
+                self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_CAL_ADC))
 
-
-            if (not self.job.is_alive()):
-                timer = QTimer()
-                timer.timeout.connect(self.sendParameter)
-                timer.setSingleShot(True)
-                timer.start(2000)
-            else:
-                self.sendParameter()
-            
-            # time.sleep(3)
-            # for i in range(0, len(self.parameter_list)):
-            #     if(not int(self.parameter_list[i].GUI_id) == 0):
-            #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
+            if(self.measureAtStartup_checkBox_UEB_status.isChecked()):
+                self.startMeasure()
 
     def startMeasure(self):
         if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
@@ -459,13 +416,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.savePathDialog()          
             self.communication.readSerialRead()
             self.startDataProcessThread()
-            self.startButton_UEB_status.setText("Motor läuft")
+            self.measure_run = True
+            self.measure_started = True
             self.startMeasureUEBSettings_pushButton.setText("Messung läuft")
-            # closeWaitMessageBox = False
-            # waitdialog = QMessageBox(self)
-            # waitdialog.setWindowTitle("Messung starten?")
-            # waitdialog.setText("Messung starten?")
-            # waitdialog.exec()
+            self.gui_info_dialog_Label.setText("Messung läuft")
             if (not self.job.is_alive()):
                 timer = QTimer()
                 timer.timeout.connect(self.sendParameter)
@@ -473,14 +427,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 timer.start(2000)
             else:
                 self.sendParameter()
-            
-            # # time.sleep(3)
-            # for i in range(0, len(self.parameter_list)):
-            #     if(not int(self.parameter_list[i].GUI_id) == 0):
-            #         self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
-            # # waitdialog.close()
-            # print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
-            
+     
     def startDataProcessThread(self):
         if(not self.job.is_alive()):
             self.job = Job(interval=self.REFRESH_INTERVAL, execute=self.processData, name="DataProcessThread")
@@ -491,18 +438,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if(not int(self.parameter_list[i].GUI_id) == 0):                   
                     self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
                     self.terminalString = self.terminalString + self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id) + '\r'
-            # waitdialog.close()
         print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
-        
 
     def stopMotor(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
+            self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             print("Motor stop")
             self.terminalTimer.stop()
             self.startButton_UEB_status.setText("Motor starten")
             self.startMeasureUEBSettings_pushButton.setText("Messung starten")
-            # self.communication.writeCommand("DT:CONFIG\r")
-            # self.communication.readSerialRead()
+            self.gui_info_dialog_Label.setText("Motor gestoppt")
+            self.measure_run = False
 
     def showTransmissinoParameterDialog(self):
         if(self.parameterFilepath):
@@ -515,13 +461,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.setUEBTransmissionSettingsWindow()
         else:
             print('Dialog closed')
-
-    # def getCSVTextFromID(self, id):
-    #     csv_text = 'n.v.'
-    #     for i in range(0, len(self.parameter_list)):
-    #         if(str(id) in self.parameter_list[i].GUI_id):
-    #             csv_text = self.parameter_list[i].GUI_id
-    #     return csv_text
 
     def setUEBTransmissionSettingsWindow(self):
         self.clearLayout(self.UEBTransmissionScrollAreaLayout)
@@ -556,13 +495,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 elif childlayout.layout() is not None:
                     self.clearLayout(childlayout.layout())
 
-
     def safeParameterToJSON(self):
         jsonString = json.dumps([ob.__dict__ for ob in self.parameter_list])
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
-        jsonFile = open(fileName, 'w')
-        jsonFile.write(jsonString)
-        jsonFile.close()
+        if(len(fileName) != 0):
+            jsonFile = open(fileName, 'w')
+            jsonFile.write(jsonString)
+            jsonFile.close()
+            self.gui_info_dialog_Label.setText("Einstellungen für Übertragung in Datei gespeichert")
 
     def loadParameterFromJSON(self):
         if(not self.parameterFilepath):
@@ -593,6 +533,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #     self.parameter_list.append(parameter)
     
             self.setUEBTransmissionSettingsWindow()
+            self.gui_info_dialog_Label.setText("Einstellungen für Übertragung aus Datei geladen")
 
     def safeUEBToJSON(self):
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
@@ -601,6 +542,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             jsonFile = open(fileName, 'w')
             jsonFile.write(jsonString)
             jsonFile.close()
+            self.gui_info_dialog_Label.setText("Einstellungen für Controller in Datei gespeichert")
 
     def loadUEBFromJSON(self):
         fileName, _ = QFileDialog.getOpenFileName(self,"Speichern unter:","","Text Files (*.json)")
@@ -620,51 +562,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ueb_config.enableSoftstarter = filecontent['enableSoftstarter']
             self.setUEB_Config_Tab()
             jsonFile.close()
-
-    # def createFile(self, filename):
-    #     if(not os.path.exists(self.savePath) or not self.savePath):
-    #         self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-    #     filename = filename + '.csv'
-    #     with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
-    #         self.writer = csv.writer(f)
-    #         # self.writer.writerow(filename)
-    #     return filename
-
-    # def createTextFile(self, filename):
-    #     if(not os.path.exists(self.savePath) or not self.savePath):
-    #         self.savePath = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop') 
-    #     filename = filename + '.txt'
-    #     with open((self.savePath + '/' + filename), 'w', encoding='UTF8', newline='') as f:
-    #         f.write('')
-    #         # self.writer.writerow(filename)
-    #     return filename
-
-    # def writeTextRow(self, data, filename):
-    #     # filename = filename + '.csv'
-    #     filename = filename + '.txt'
-    #     with open((self.savePath + '/' + filename), 'a', encoding='UTF8') as f:
-    #         f.write(data + '\n')
-
-    # def writeHeader(self, ids):
-    #     self.fileheaderCreated = True
-    #     self.generateParameterList()
-    #     header = []
-    #     for i in range(0, len(ids)):
-    #         for j in range(0, len(self.parameter_list)):
-    #             if ids[i] in self.parameter_list[j].row:
-    #                 header.append(self.parameter_list[j].CSV_text)
-    #     self.writeRow(header)
-
-
-    # def writeRow(self, data, filename):
-    #     with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
-    #         self.writer = csv.writer(f)
-    #         self.writer.writerow(data)
-
-    # def writeCompleteCSV(self, data, filename):
-    #     with open((self.savePath + '/' + filename), 'a', encoding='UTF8', newline='') as f:
-    #         self.writer = csv.writer(f)
-    #         self.writer.writerows(data)
+            self.gui_info_dialog_Label.setText("Einstellungen für Controller aus Datei importiert")
 
     def getParameterOfData(self, data):
         parameter = Parameter()
@@ -674,9 +572,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 break
         return parameter
 
-
     def processData(self):
-        self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
+        self.measure_run = self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
         
         for i in range(0, len(transmittedIDs)):
@@ -701,9 +598,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 print("ID " + str(transmittedIDs[i]) + " erfolgreich uebertragen!")
 
             
-            
-        
-    
 class Job(threading.Thread):
     def __init__(self, interval, execute, name, *args, **kwargs):
         threading.Thread.__init__(self)

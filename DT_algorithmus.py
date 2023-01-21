@@ -50,7 +50,9 @@ class DT_algorithmus():
         self.unique_id = 0
 
     def processQueue(self, queue):
+        queueNotEmpty = False
         if(not queue.empty()):
+            queueNotEmpty = True
             singleTransmission = (queue.get()).hex()
             # singleTransmission = queue.get()
             if(self.IDENTIFIER_UEB_SETTINGS_PARAMETER in singleTransmission[0:10]):
@@ -71,7 +73,8 @@ class DT_algorithmus():
                 self.disassembleOnePacket(splitedTransLength[i])
                 # packet = self.disassembleOnePacket(splitedTransLength[i])
                 # self.id_list.append([packet.GUI_id, packet.Count])
-
+        
+        return queueNotEmpty
 
         
 

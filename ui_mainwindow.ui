@@ -29,11 +29,11 @@
       <x>-4</x>
       <y>39</y>
       <width>1141</width>
-      <height>591</height>
+      <height>571</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="UEB_Status_tab">
      <attribute name="title">
@@ -367,9 +367,6 @@
          </property>
         </widget>
        </item>
-       <item row="16" column="0">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_16"/>
-       </item>
        <item row="11" column="0">
         <widget class="QCheckBox" name="softstart_checkBox_UEB">
          <property name="text">
@@ -484,7 +481,7 @@
        <item row="16" column="1">
         <widget class="QLabel" name="label_30">
          <property name="text">
-          <string>nicht benutzt</string>
+          <string>Betriebsmodus</string>
          </property>
         </widget>
        </item>
@@ -564,6 +561,9 @@ Controller lesen</string>
           <string>Messung starten</string>
          </property>
         </widget>
+       </item>
+       <item row="16" column="0">
+        <widget class="QComboBox" name="operation_Mode_comboBox"/>
        </item>
       </layout>
      </widget>
@@ -664,7 +664,7 @@ in Datei speichern</string>
         <x>0</x>
         <y>0</y>
         <width>461</width>
-        <height>551</height>
+        <height>541</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -966,7 +966,7 @@ in Datei speichern</string>
         <x>459</x>
         <y>0</y>
         <width>681</width>
-        <height>551</height>
+        <height>541</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
@@ -1451,7 +1451,7 @@ DOS mismatch threshold</string>
         <x>0</x>
         <y>0</y>
         <width>1131</width>
-        <height>551</height>
+        <height>541</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -1477,8 +1477,8 @@ DOS mismatch threshold</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1101</width>
-            <height>520</height>
+            <width>81</width>
+            <height>28</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1587,6 +1587,28 @@ DOS mismatch threshold</string>
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="connection_Indicator_Lamp">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>10</width>
+         <height>10</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -1608,6 +1630,25 @@ DOS mismatch threshold</string>
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="gui_info_dialog_Label">
+    <property name="geometry">
+     <rect>
+      <x>718</x>
+      <y>610</y>
+      <width>411</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>Keine Verbindung</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1615,7 +1656,7 @@ DOS mismatch threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1199</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>

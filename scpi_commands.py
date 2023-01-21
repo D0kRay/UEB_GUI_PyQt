@@ -87,11 +87,13 @@ class scpi_commands:
         return (self.UEB + self.DELIMITER_PARTMESSAGE  + self.PARAMETER + self.DELIMITER_PARTMESSAGE  + self.CURRENT + self.DELIMITER_PARTMESSAGE  + self.VALUE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
 
     def setUEBsettings(self, value):
-        if(value):
-            value = '1'
-        else:
-            value = '0'
-        return (self.UEB + self.DELIMITER_PARTMESSAGE  + self.SYSTEM + self.DELIMITER_PARTMESSAGE  + self.D_ENABLE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+        # if(value):
+        #     value = '1'
+        # else:
+        #     value = '0'
+        # return (self.UEB + self.DELIMITER_PARTMESSAGE  + self.SYSTEM + self.DELIMITER_PARTMESSAGE  + self.D_ENABLE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+        return (self.UEB + self.DELIMITER_PARTMESSAGE  + self.SYSTEM + self.DELIMITER_PARTMESSAGE  + self.D_ENABLE + self.DELIMITER_PARTMESSAGE + str(value) + self.CARRIAGE_RETURN)
+
 
     def setDatatransmission(self):
         return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.CONFIG + self.CARRIAGE_RETURN)
