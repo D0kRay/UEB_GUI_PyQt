@@ -38,19 +38,20 @@ class DataAnalyser():
                     splited_data.append(str(int(datastring[i:i+8], 16)))
             elif(self.dataTypes.int8_t in parameter.DataFormat):
                 for i in range(0, len(datastring), 2):
-                    splited_data.append(str(struct.unpack('>b', bytes.fromhex(datastring[i:i+2]))))
+                    splited_data.append(str(struct.unpack('<b', bytes.fromhex(datastring[i:i+2]))))
             elif(self.dataTypes.int16_t in parameter.DataFormat):
                 for i in range(0, len(datastring), 4):
-                    splited_data.append(str(struct.unpack('>h', bytes.fromhex(datastring[i:i+4]))))
+                    splited_data.append(str(struct.unpack('<h', bytes.fromhex(datastring[i:i+4]))))
             elif(self.dataTypes.int32_t in parameter.DataFormat):
                 for i in range(0, len(datastring), 8):
-                    splited_data.append(str(struct.unpack('>i', bytes.fromhex(datastring[i:i+8]))))
+                    splited_data.append(str(struct.unpack('<i', bytes.fromhex(datastring[i:i+8]))))
             elif(self.dataTypes.float in parameter.DataFormat):
                 for i in range(0, len(datastring), 8):
-                    splited_data.append(str(struct.unpack('!f', bytes.fromhex(datastring[i:i+8]))))
+                    splited_data.append(str(struct.unpack('<f', bytes.fromhex(datastring[i:i+8]))))
             elif(self.dataTypes.double in parameter.DataFormat):
-                for i in range(0, len(datastring), 16):
-                    splited_data.append(str(struct.unpack('!d', bytes.fromhex(datastring[i:i+16]))))
+                modulo = len(datastring) % 16
+                for i in range(0, (len(datastring)-modulo), 16):
+                    splited_data.append(str(struct.unpack('<d', bytes.fromhex(datastring[i:i+16]))))
             elif(self.dataTypes.long in parameter.DataFormat):
                 #TODO Long conversion correct?
                 for i in range(0, len(datastring), 16):
