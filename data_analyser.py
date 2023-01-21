@@ -21,10 +21,16 @@ class DataAnalyser():
         for i in range(0, len(data)):
             datastring = datastring + data[i].Data
         if(self.dataTypes.str in parameter.DataFormat or len(parameter.DataFormat) == 0):
-            if(not '' in parameter.delimiter):
-                splited_data = datastring.split(parameter.delimiter)
+            decodedString = ''
+            try:
+                decodedString = bytes.fromhex(datastring).decode('ascii')
+            except:
+                print("Nicht decodierbarer Hex String für ASCII Umwandlung")
+
+            if(len(parameter.delimiter) != 0):
+                splited_data = decodedString.split(parameter.delimiter)
             else:
-                splited_data.append(datastring)
+                splited_data.append(decodedString)
         else: 
             #data must be hex !!!
             if(self.dataTypes.uint8_t in parameter.DataFormat):
@@ -86,4 +92,6 @@ class DataAnalyser():
 
     def writeTextRows(self, data):
         with open(self.filePath, 'a', encoding='UTF8') as f:
-            f.writelines(data)
+            for i in range(0, len(data)):
+                f.write(data[i] + '\n')
+              # f.writelines(data)
