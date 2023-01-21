@@ -215,6 +215,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.startMeasureUEBSettings_pushButton.setText("Messung starten")
             self.gui_info_dialog_Label.setText("Messung fertig")
             self.measure_run = False
+            self.measure_started = False
 
     def transmitTerminalUserInput(self):
         if ("Disconnect" in self.connectComPort_Button.text()):
@@ -291,6 +292,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.connection_Indicator_Lamp.setStyleSheet("background-color : red")
                     self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")
         else:
+            self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             self.communication.stopThread()
             self.terminalTimer.stop()
             self.communication.closeComPort()
