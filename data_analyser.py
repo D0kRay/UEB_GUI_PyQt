@@ -59,26 +59,26 @@ class DataAnalyser():
                 modulo = len(datastring) % 2
                 for i in range(0, (len(datastring)-modulo), 2):
                 # for i in range(0, len(datastring), 2):
-                    splited_data.append(str(struct.unpack('<b', bytes.fromhex(datastring[i:i+2]))))
+                    splited_data.append(str(struct.unpack('<b', bytes.fromhex(datastring[i:i+2]))[0]))
             elif(self.dataTypes.int16_t in parameter.DataFormat):
                 modulo = len(datastring) % 4
                 for i in range(0, (len(datastring)-modulo), 4):
                 # for i in range(0, len(datastring), 4):
-                    splited_data.append(str(struct.unpack('<h', bytes.fromhex(datastring[i:i+4]))))
+                    splited_data.append(str(struct.unpack('<h', bytes.fromhex(datastring[i:i+4]))[0]))
             elif(self.dataTypes.int32_t in parameter.DataFormat):
                 modulo = len(datastring) % 8
                 for i in range(0, (len(datastring)-modulo), 8):
                 # for i in range(0, len(datastring), 8):
-                    splited_data.append(str(struct.unpack('<i', bytes.fromhex(datastring[i:i+8]))))
+                    splited_data.append(str(struct.unpack('<i', bytes.fromhex(datastring[i:i+8]))[0]))
             elif(self.dataTypes.float in parameter.DataFormat):
                 modulo = len(datastring) % 8
                 for i in range(0, (len(datastring)-modulo), 8):
                 # for i in range(0, len(datastring), 8):
-                    splited_data.append(str(struct.unpack('<f', bytes.fromhex(datastring[i:i+8]))))
+                    splited_data.append(str(struct.unpack('<f', bytes.fromhex(datastring[i:i+8]))[0]))
             elif(self.dataTypes.double in parameter.DataFormat):
                 modulo = len(datastring) % 16
                 for i in range(0, (len(datastring)-modulo), 16):
-                    splited_data.append(str(struct.unpack('<d', bytes.fromhex(datastring[i:i+16]))))
+                    splited_data.append(str(struct.unpack('<d', bytes.fromhex(datastring[i:i+16]))[0]))
             elif(self.dataTypes.long in parameter.DataFormat):
                 #TODO Long conversion correct?
                 for i in range(0, len(datastring), 16):

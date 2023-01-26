@@ -185,6 +185,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.setWindowIcon(QIcon("UEB_icon.png"))
         dialog.exec()
 
+    def closeEvent(self, event):
+        if("Verbunden" in self.connectComPort_Button.text()):
+            self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
+            self.communication.stopThread()
+            self.communication.closeComPort()
+            self.terminalTimer.stop()
+        if(self.job.is_alive()):
+            self.job.stop()
+        event.accept()
+
+
     def plotOnUEBStatusPlots(self):
         # TODO Plots aus liste laden und aktualisieren
         if(len(self.plot_data_upper)):
