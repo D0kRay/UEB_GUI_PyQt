@@ -615,6 +615,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 parameter.DataFormat = filecontent[i]['DataFormat']
                 parameter.DT_id = filecontent[i]['DT_id']
                 parameter.GUI_id = filecontent[i]['GUI_id']
+                parameter.delimiter = filecontent[i]['delimiter']
                 parameter.row = filecontent[i]['row']
                 paramlist.append(parameter)
             self.parameter_list = paramlist
