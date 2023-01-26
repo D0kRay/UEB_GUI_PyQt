@@ -41,25 +41,39 @@ class DataAnalyser():
         else: 
             #data must be hex !!!
             if(self.dataTypes.uint8_t in parameter.DataFormat):
-                for i in range(0, len(datastring), 2):
+                modulo = len(datastring) % 2
+                for i in range(0, (len(datastring)-modulo), 2):
+                # for i in range(0, len(datastring), 2):
                     splited_data.append(str(int(datastring[i:i+2], 16)))
             elif(self.dataTypes.uint16_t in parameter.DataFormat):
-                for i in range(0, len(datastring), 4):
+                modulo = len(datastring) % 4
+                for i in range(0, (len(datastring)-modulo), 4):
+                # for i in range(0, len(datastring), 4):
                     splited_data.append(str(int(datastring[i:i+4], 16)))
             elif(self.dataTypes.uint32_t in parameter.DataFormat):
-                for i in range(0, len(datastring), 8):
+                modulo = len(datastring) % 8
+                for i in range(0, (len(datastring)-modulo), 8):
+                # for i in range(0, len(datastring), 8):
                     splited_data.append(str(int(datastring[i:i+8], 16)))
             elif(self.dataTypes.int8_t in parameter.DataFormat):
-                for i in range(0, len(datastring), 2):
+                modulo = len(datastring) % 2
+                for i in range(0, (len(datastring)-modulo), 2):
+                # for i in range(0, len(datastring), 2):
                     splited_data.append(str(struct.unpack('<b', bytes.fromhex(datastring[i:i+2]))))
             elif(self.dataTypes.int16_t in parameter.DataFormat):
-                for i in range(0, len(datastring), 4):
+                modulo = len(datastring) % 4
+                for i in range(0, (len(datastring)-modulo), 4):
+                # for i in range(0, len(datastring), 4):
                     splited_data.append(str(struct.unpack('<h', bytes.fromhex(datastring[i:i+4]))))
             elif(self.dataTypes.int32_t in parameter.DataFormat):
-                for i in range(0, len(datastring), 8):
+                modulo = len(datastring) % 8
+                for i in range(0, (len(datastring)-modulo), 8):
+                # for i in range(0, len(datastring), 8):
                     splited_data.append(str(struct.unpack('<i', bytes.fromhex(datastring[i:i+8]))))
             elif(self.dataTypes.float in parameter.DataFormat):
-                for i in range(0, len(datastring), 8):
+                modulo = len(datastring) % 8
+                for i in range(0, (len(datastring)-modulo), 8):
+                # for i in range(0, len(datastring), 8):
                     splited_data.append(str(struct.unpack('<f', bytes.fromhex(datastring[i:i+8]))))
             elif(self.dataTypes.double in parameter.DataFormat):
                 modulo = len(datastring) % 16
