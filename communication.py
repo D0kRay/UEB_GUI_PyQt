@@ -29,6 +29,11 @@ class Communication:
     
         
     def getComPorts(self):
+        """getComPorts Gibt die aktuellen COM Ports des Rechners zurück
+
+        Returns:
+            List: Liste mit COM Ports
+        """
         self.ports = serial.tools.list_ports.comports()
 
         for port, desc, hwid in sorted(self.ports):
@@ -43,6 +48,14 @@ class Communication:
         # return portlist
 
     def setComPort(self, port):
+        """setComPort Öffnet den übergebenen COM Port des Rechners
+
+        Args:
+            port (String): COM Port 
+
+        Returns:
+            Boolean: True bei erfolgreichem Öffnen
+        """
         connected = False
         if(not self.ser.is_open):
             operating_system = ''
@@ -63,11 +76,15 @@ class Communication:
         return connected
 
     def closeComPort(self):
+        """closeComPort Schließt den aktuell geöffneten COM Port
+        """
         if(self.ser.is_open):
             self.ser.close()
 
 
     def readSerialRead(self):
+        """readSerialRead Startet den COM Port Lese Thread
+        """
         if(not self.thread_run):
             self.stop_event.clear()
             self.t = threading.Thread(target=self.threadreadSerial, name="SerialThread", args=(self.ser, self.stop_event, self.thread_data_queue), daemon=True) 
@@ -77,6 +94,13 @@ class Communication:
             
 
     def threadreadSerial(self, serialobj, eventobj, queue):
+        """threadreadSerial Threadmethode der seriellen Kommunikation (leseseitig)
+
+        Args:
+            serialobj (Serial): Serielle Schnittstelle
+            eventobj (Event): Eventobjekt zum stoppen des Threads
+            queue (Queue): Queue in die die Daten der Seriellen Schnittstelle gespeichert werden
+        """
         while not eventobj.is_set():
             try:
                 if(serialobj.is_open and serialobj.in_waiting > 0):
@@ -89,12 +113,19 @@ class Communication:
         print('Serialthread stopped')
 
     def stopThread(self):
+        """stopThread Stoppt den seriellen Lesethread
+        """
         if(self.thread_run):
             self.stop_event.set()
             self.t.join()
             self.thread_run = False
                     
     def writeCommand(self, command):
+        """writeCommand Schickt das übergebene Kommando an den Controller
+
+        Args:
+            command (String): Kommando
+        """
         try:
             bytestring = command.encode('ascii')
             self.ser.flushInput()
@@ -103,6 +134,11 @@ class Communication:
             print("Eingabe konnte nicht dekodiert werden!")
 
     def readSettings(self):
+        """readSettings Liest die Einstellungen des Controllers aus 
+
+        Returns:
+            String: Erhaltener Datenstring (empty String bei fehlerhafter Übertragung)
+        """
         self.writeCommand(self.scpi_commands.getUEBsettings())
         time.sleep(0.2)
         data = self.ser.readline()

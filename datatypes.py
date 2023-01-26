@@ -13,6 +13,11 @@ class DataTypes:
         self.str = "String"
         
     def getDataTypesAsList(self):
+        """getDataTypesAsList Gibt eine Liste mit allen STM32 Datentypen zurück
+
+        Returns:
+            List: Liste mit Datentypen in Stringform
+        """
         return [self.uint8_t, self.uint16_t, self.uint32_t, self.int8_t, self.int16_t, self.int32_t, self.float, self.double, self.long, self.str]
         
     #TODO umformatierungsmethoden

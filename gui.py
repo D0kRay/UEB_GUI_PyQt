@@ -167,42 +167,43 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.parameterFilepath = ''
 
     def showGUI(self):
+        """showGUI Darstellen der GUI
+        """
         window = self
         window.setWindowIcon(QIcon("UEB_icon.png"))
         window.setWindowTitle("UEB")
         window.show()
 
-    def processDataForGUI(self):
-        print('d')
-
-    def plotOnUEBStatusPlots(self):
-        # TODO Plots aus liste laden und aktualisieren
-        if(len(self.plot_data_upper)):
-            for i in range(0, len(self.plot_data_upper)):
-                if((self.plot_data_upper[i])[0]):
-                    if(len(self.plot_data_upper[i]) < 4):
-                        x = (self.plot_data_upper[i])[3]
-                        y = (self.plot_data_upper[i])[4]
-                        line_obj = self.plotWidget_UEB_status_upper.plot(x, y)
-                        self.plot_data_upper.insert(2, line_obj)
-                    else:
-                        (self.plot_data_upper[i])[3] = ((self.plot_data_upper[i])[3])[1:]
-                        (self.plot_data_upper[i])[4] = ((self.plot_data_upper[i])[4])[1:]
-                        self.plot_data_upper[2].setData(self.hour, self.temperature)
-        elif(len(self.plot_data_lower)):
-            for i in range(0, len(self.plot_data_lower)):
-                if((self.plot_data_lower[i])[0]):
-                    if(len(self.plot_data_lower[i]) < 4):
-                        x = (self.plot_data_lower[i])[3]
-                        y = (self.plot_data_lower[i])[4]
-                        line_obj = self.plotWidget_UEB_status_lower.plot(x, y)
-                        self.plot_data_lower.insert(2, line_obj)
-                    else:
-                        (self.plot_data_lower[i])[3] = ((self.plot_data_lower[i])[3])[1:]
-                        (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
-                        self.plot_data_lower[2].setData(self.hour, self.temperature)
+        # Darstellen von Messdaten auf der GUI Oberfläche (XY-Diagramme)
+    # def plotOnUEBStatusPlots(self):
+    #     if(len(self.plot_data_upper)):
+    #         for i in range(0, len(self.plot_data_upper)):
+    #             if((self.plot_data_upper[i])[0]):
+    #                 if(len(self.plot_data_upper[i]) < 4):
+    #                     x = (self.plot_data_upper[i])[3]
+    #                     y = (self.plot_data_upper[i])[4]
+    #                     line_obj = self.plotWidget_UEB_status_upper.plot(x, y)
+    #                     self.plot_data_upper.insert(2, line_obj)
+    #                 else:
+    #                     (self.plot_data_upper[i])[3] = ((self.plot_data_upper[i])[3])[1:]
+    #                     (self.plot_data_upper[i])[4] = ((self.plot_data_upper[i])[4])[1:]
+    #                     self.plot_data_upper[2].setData(self.hour, self.temperature)
+    #     elif(len(self.plot_data_lower)):
+    #         for i in range(0, len(self.plot_data_lower)):
+    #             if((self.plot_data_lower[i])[0]):
+    #                 if(len(self.plot_data_lower[i]) < 4):
+    #                     x = (self.plot_data_lower[i])[3]
+    #                     y = (self.plot_data_lower[i])[4]
+    #                     line_obj = self.plotWidget_UEB_status_lower.plot(x, y)
+    #                     self.plot_data_lower.insert(2, line_obj)
+    #                 else:
+    #                     (self.plot_data_lower[i])[3] = ((self.plot_data_lower[i])[3])[1:]
+    #                     (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
+    #                     self.plot_data_lower[2].setData(self.hour, self.temperature)
 
     def refreshTerminal(self):
+        """refreshTerminal Aktualisiert das Terminalfenster anhand des self.Terminalstring
+        """
         if(len(self.terminalString) != 0):
             sizePolicy = QSizePolicy()
             sizePolicy.setVerticalPolicy(QSizePolicy.Policy.Fixed)
@@ -217,7 +218,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.measure_run = False
             self.measure_started = False
 
+    
     def transmitTerminalUserInput(self):
+        """transmitTerminalUserInput Übertragen der Nutzereingabe auf der Terminalseite
+        """
         if ("Disconnect" in self.connectComPort_Button.text()):
             userString = ''
             userString = self.terminal_userline.text() + '\r'
@@ -228,24 +232,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.refreshTerminal()
 
     def savePathDialog(self):
+        """savePathDialog Dialogfenster für die Auswahl des Speicherordners anzeigen
+        """
         Path = QFileDialog.getExistingDirectory(self,"Speichern unter:","")
         if Path:
             self.savePath = Path
             print(Path)
 
     def saveFileDialog(self):
+        """saveFileDialog Dialogfenster für die Auswahl der Datei, in welche Daten geschrieben werden sollen
+        """
         filepath = QFileDialog.getSaveFileName(self,"Speichern unter:", "", "Text Files (*.txt)")
         if filepath:
             self.savePath = filepath
             print(filepath)
         
-    def refreshComPortComboBox(self):   
+    def refreshComPortComboBox(self):
+        """refreshComPortComboBox Befüllen der COM Port ComboBox
+        """
         self.comPort_comboBox.clear()
         self.portlist = self.communication.getComPorts()
         for i in range(0, len(self.portlist)):
             self.comPort_comboBox.addItem(self.portlist[i].name)
 
     def exitButtonClicked(self):
+        """exitButtonClicked Schließfunktion bei Klick auf den Schließen Button. Es werden alle Threads beendet und die GUI geschlossen
+        """
         if("Disconnect" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             self.communication.stopThread()
@@ -256,10 +268,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.close()
         
     def stopButtonClicked(self):
+        """stopButtonClicked Stoppt den Motor mit dem UEB_STOP Kommando
+        """
         self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
         print("STOP")
 
     def connectButtonClicked(self):
+        """connectButtonClicked Versucht eine Verbindung mit der UEB aufzubauen und überprüft ob es sich um den richtigen USB Port handelt
+           Es werden bei erfolgreicher Verbindung die Einstellungsparameter der UEB geladen und UEB Einstellungen übernommen
+        """
         comport = self.comPort_comboBox.currentText()
         usb_VID_PID = ''
         for i in range(0, len(self.portlist)):
@@ -305,15 +322,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")   
 
     def readUEB_SettingsButtonClicked(self):
+        """readUEB_SettingsButtonClicked Die Parameter der UEBs lesen
+        """
         if ("Disconnect" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.getUEBsettings())
             self.gui_info_dialog_Label.setText("Einstellungen von Controller gelesen")
 
     def writeUEB_SettingsButtonClicked(self):
+        """writeUEB_SettingsButtonClicked Die eingestellten Parameter auf die UEB schreiben
+        """
         self.sendUEBConfigTab()
         self.gui_info_dialog_Label.setText("Einstellungen an Controller gesendet")
 
     def getUEB_SettingVars(self, settingsstring):
+        """getUEB_SettingVars Aufsplitten der übertragenen Parameter in verarbeitbare Datensätze
+
+        Args:
+            settingsstring (String): String aus der Kommunikationsschicht
+
+        Returns:
+            List: Liste mit den Einstellungen des Controllers
+        """
         parameters = settingsstring.split(";")
         for i in range(len(parameters)):
             temp = parameters[i].split("=")
@@ -323,6 +352,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return parameters
 
     def setUEB_Config(self, ueb_config_list):
+        """setUEB_Config Beschreiben des ueb_config Objekts mit den übergebenen Werten 
+
+        Args:
+            ueb_config_list (List): Liste mit Werten
+        """
         self.ueb_config.status = ueb_config_list[0]
         self.ueb_config.v_Reference = ueb_config_list[1]
         self.ueb_config.v_Bridge = ueb_config_list[2]
@@ -333,7 +367,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ueb_config.softstartDuration = ueb_config_list[7]
         self.ueb_config.overCurrentThreshold = ueb_config_list[7]
 
+
     def setUEB_Config_Tab(self):
+        """setUEB_Config_Tab Übernehmen der Controllerparameter in die GUI Oberfläche
+        """
         self.frequenz_SpinBox_UEB.setValue(float(self.ueb_config.frequency))
         self.versorgSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Reference))
         self.ausgangSp_SpinBox_UEB.setValue(float(self.ueb_config.v_Bridge))
@@ -347,7 +384,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.leftturn_radioButton_UEB.setChecked(True)
             self.rightturn_radioButton_UEB.setChecked(False)
 
+
     def sendUEBConfigTab(self):
+        """sendUEBConfigTab Übertragen der GUI Einstellungen auf den Controller
+        """
         self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.rightturn_radioButton_UEB.isChecked()))
         self.communication.writeCommand(self.scpi_commands.setUEBThridHarmonic(self.dritteHarm_checkBox_UEB.isChecked()))
         self.communication.writeCommand(self.scpi_commands.setUEBSoftstartEnable(self.softstart_checkBox_UEB.isChecked()))
@@ -359,6 +399,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 #TODO RESolver Kommandos und view
     def setResolver_Config(self, ueb_config_list):
+        """setResolver_Config tdb
+
+        Args:
+            ueb_config_list (List): Liste mit Controllerparametern
+        """
         self.resolver_config.status = ueb_config_list[0]
         self.resolver_config.v_Reference = ueb_config_list[1]
         self.resolver_config.v_Bridge = ueb_config_list[2]
@@ -370,6 +415,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.resolver_config.overCurrentThreshold = ueb_config_list[7]
 
     def setResolver_Config_Tab(self):
+        """setResolver_Config_Tab tbd
+        """
         self.frequenz_SpinBox_UEB.setValue(float(self.resolver_config.frequency))
         self.versorgSp_SpinBox_UEB.setValue(float(self.resolver_config.v_Reference))
         self.ausgangSp_SpinBox_UEB.setValue(float(self.resolver_config.v_Bridge))
@@ -384,6 +431,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.rightturn_radioButton_UEB.setChecked(False)
 
     def sendResolverConfigTab(self):
+        """sendResolverConfigTab tbd
+        """
         self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.rightturn_radioButton_UEB.isChecked()))
         self.communication.writeCommand(self.scpi_commands.setUEBThridHarmonic(self.dritteHarm_checkBox_UEB.isChecked()))
         self.communication.writeCommand(self.scpi_commands.setUEBSoftstartEnable(self.softstart_checkBox_UEB.isChecked()))
@@ -394,6 +443,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_INIT_FINISH))
 
     def startMotor(self):
+        """startMotor Startet die Thread für die Datenübertragung und den Motor
+        """
         if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             self.communication.readSerialRead()
             self.startDataProcessThread()
@@ -413,6 +464,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.startMeasure()
 
     def startMeasure(self):
+        """startMeasure Startet die Threads für die Datenübertragung und übermittelt die einstellten IDs
+        """
         if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
@@ -431,11 +484,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.sendParameter()
      
     def startDataProcessThread(self):
+        """startDataProcessThread Startmethode für den Thread zur Datenverarbeitung
+        """
         if(not self.job.is_alive()):
             self.job = Job(interval=self.REFRESH_INTERVAL, execute=self.processData, name="DataProcessThread")
             self.job.start()
 
     def sendParameter(self):
+        """sendParameter Übermitteln der eingestellten IDs
+        """
         for i in range(0, len(self.parameter_list)):
                 if(not int(self.parameter_list[i].GUI_id) == 0):                   
                     self.communication.writeCommand(self.scpi_commands.setDatatransmissionInit(self.parameter_list[i].GUI_id))   
@@ -443,6 +500,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         print("Max Threads verfügbar: " + str(QThreadPool.globalInstance().maxThreadCount()))
 
     def stopMotor(self):
+        """stopMotor Stoppt den Motor
+        """
         if ("Disconnect" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             print("Motor stop")
@@ -453,6 +512,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.measure_run = False
 
     def showTransmissinoParameterDialog(self):
+        """showTransmissinoParameterDialog Öffnet den Konfigurationsdialog für die Übertragungs IDs
+        """
         if(self.parameterFilepath):
             self.loadParameterFromJSON()
         dialog = self.transmission_dialog(self.parameter_list)
@@ -465,6 +526,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             print('Dialog closed')
 
     def setUEBTransmissionSettingsWindow(self):
+        """setUEBTransmissionSettingsWindow Beschreibt das IDs ScrollFenster in UEB Einstellungen
+        """
         self.clearLayout(self.UEBTransmissionScrollAreaLayout)
         for i in range(0, len(self.parameter_list)):
             parameterObj = self.parameter_list[i]
@@ -489,6 +552,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.UEB_SettingsTransmission_scrollArea.setLayout(self.UEBTransmissionScrollAreaLayout)
 
     def clearLayout(self, layout):
+        """clearLayout Leert das übergebene Layout
+
+        Args:
+            layout (Layout): Das zu leerende Layout
+        """
         if layout is not None:
             while layout.count():
                 childlayout = layout.takeAt(0)
@@ -498,6 +566,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.clearLayout(childlayout.layout())
 
     def safeParameterToJSON(self):
+        """safeParameterToJSON Speichert die eingestellten Übertragungsparameter in einer JSON Datei
+        """
         jsonString = json.dumps([ob.__dict__ for ob in self.parameter_list])
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
         if(len(fileName) != 0):
@@ -507,6 +577,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.gui_info_dialog_Label.setText("Einstellungen für Übertragung in Datei gespeichert")
 
     def loadParameterFromJSON(self):
+        """loadParameterFromJSON Lädt die Übertragungsparameter aus einer JSON Datei
+        """
         if(not self.parameterFilepath):
             self.parameterFilepath, _ = QFileDialog.getOpenFileName(self,"Speichern unter:","","Text Files (*.json)")
         if(self.parameterFilepath):
@@ -538,6 +610,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.gui_info_dialog_Label.setText("Einstellungen für Übertragung aus Datei geladen")
 
     def safeUEBToJSON(self):
+        """safeUEBToJSON Speichert die Controllerparameter in einer JSON Datei
+        """
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
         if(fileName):
             jsonString = json.dumps(vars(self.ueb_config))
@@ -547,6 +621,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.gui_info_dialog_Label.setText("Einstellungen für Controller in Datei gespeichert")
 
     def loadUEBFromJSON(self):
+        """loadUEBFromJSON Lädt die Controllerparameter aus einer JSON Datei
+        """
         fileName, _ = QFileDialog.getOpenFileName(self,"Speichern unter:","","Text Files (*.json)")
         if(fileName):
             jsonFile = open(fileName, 'r')
@@ -566,7 +642,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             jsonFile.close()
             self.gui_info_dialog_Label.setText("Einstellungen für Controller aus Datei importiert")
 
+
     def getParameterOfData(self, data):
+        """getParameterOfData Gibt die Parameter der übergebenen Daten zurück
+
+        Args:
+            data (DataContent): Daten für die die Parameter gesucht werden sollen
+
+        Returns:
+            Parameter: Parameter Objekt mit den zu den Daten gehörigen Parametern
+        """
         parameter = Parameter()
         for i in range(0, len(self.parameter_list)):
             if(str(data[0].GUI_id) in self.parameter_list[i].GUI_id):
@@ -575,6 +660,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return parameter
 
     def processData(self):
+        """processData Threadmethode zur Datenverarbeitung der GUI
+        """
         self.measure_run = self.dt_algorithmus.processQueue(self.communication.thread_data_queue)
         transmittedIDs = self.dt_algorithmus.getTransmittedIDs()
         
@@ -599,8 +686,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.data_analyser.processData(complete_data, data_parameter, self.savePath)
                 print("ID " + str(transmittedIDs[i]) + " erfolgreich uebertragen!")
 
-            
 class Job(threading.Thread):
+    """Job Interne Klasse zur Steuerung des Datenverarbeitungsthreads
+
+    Args:
+        threading (threading.Thread): Thread
+    """
     def __init__(self, interval, execute, name, *args, **kwargs):
         threading.Thread.__init__(self)
         self.daemon = False

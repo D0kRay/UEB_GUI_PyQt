@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'c:\Users\pasik\Documents\UEB_GUI_PyQt\UEB_GUI_PyQt\ui_mainwindow.ui'
+# Form implementation generated from reading ui file 'c:\Users\Pascal\KIRCPA02_OneDrive\OneDrive - thu.de\Master\Semester_2\Masterprojekt\GUI_PyQt\ui_mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.0
 #

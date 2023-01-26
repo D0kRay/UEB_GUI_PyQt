@@ -50,6 +50,14 @@ class DT_algorithmus():
         self.unique_id = 0
 
     def processQueue(self, queue):
+        """processQueue Verarbeiten der Daten aus der Kommunikationsschicht (Windows COM Port input)
+
+        Args:
+            queue (Queue): Queue der Kommunikationsschicht
+
+        Returns:
+            Boolean: Queue leer (ja/nein)
+        """
         queueNotEmpty = False
         if(not queue.empty()):
             queueNotEmpty = True
@@ -80,6 +88,11 @@ class DT_algorithmus():
 
             
     def disassembleOnePacket(self, inpacket):
+        """disassembleOnePacket Verarbeitung der Rohdaten aus der Queue anhand der Paketstrukturen
+
+        Args:
+            inpacket (Hexstring): Hex String der übertragenen Daten aus der Kommunikationsschicht
+        """
         appended_to_sorted_datalist = False
         unique_id_transmission = -1
         if(self.ID_STATUS_PACKET_HEX in inpacket[self.GUIID_BYTE_LIST_NR:(self.GUIID_BYTE_LIST_NR+2)]):
@@ -166,6 +179,11 @@ class DT_algorithmus():
         # return packet
 
     def getTransmittedIDs(self):
+        """getTransmittedIDs Gibt die übertragenen IDs zurück
+
+        Returns:
+            List: Liste mit übertragenen IDs
+        """
         id_list = []
         for i in range(0, len(self.sorted_transmission_data)):
             if(not self.ID_STATUS_PACKET_DEC == (self.sorted_transmission_data[i][0].GUI_id)):
@@ -173,6 +191,14 @@ class DT_algorithmus():
         return id_list
 
     def getCompleteDataPacket(self, id):
+        """getCompleteDataPacket Gibt das komplette Datenpaket der ID zurück 
+
+        Args:
+            id (Integer): ID der Übertragung
+
+        Returns:
+            List: Liste der übertragenen Datenpakete
+        """
         dataPacket = []
         for i in range(0, len(self.sorted_transmission_data)):
             if((self.sorted_transmission_data[i])[0].GUI_id == id):
@@ -181,6 +207,14 @@ class DT_algorithmus():
                 return dataPacket
         
     def getPendingDataPacket(self, id):
+        """getPendingDataPacket Gibt die Daten einer ID zurück welche neu eingetroffen sind 
+
+        Args:
+            id (Integer): ID der Übertragung
+
+        Returns:
+            List: Liste der neuen Datenpakete
+        """
         dataPacket = []
         for i in range(0, len(self.sorted_transmission_data)):
             if((self.sorted_transmission_data[i])[0].GUI_id == id):
@@ -192,6 +226,14 @@ class DT_algorithmus():
 
     # Gui methode
     def setTransmissionPackets(self, id_list):
+        """setTransmissionPackets Erstellt eine Liste einzigartiger IDs für die spätere Verarbeitung bis v1.4.. noch nicht benutzt
+
+        Args:
+            id_list (List): Liste mit Integer IDs
+
+        Returns:
+            List: Einzigartige IDs für die übergebenen IDs
+        """
         unique_id_list = []
         for i in range(0, len(id_list)):
             data_obj = DataContent()
@@ -205,6 +247,14 @@ class DT_algorithmus():
 
     # Gui methode
     def getPacket(self, unique_id):
+        """getPacket Gibt das Paket der übergebenen Einzigartigen ID zurück bis v1.4.. noch nicht benutzt
+
+        Args:
+            unique_id (Integer): Einzigartige ID
+
+        Returns:
+            List: Datenpaket der einzigartigen ID
+        """
         dataPacket = []
         datastring = ''
         for i in range(0, len(self.sorted_transmission_data)):
@@ -216,9 +266,22 @@ class DT_algorithmus():
                
 
     def setDataTypes(self, idDatatypeList):
+        """setDataTypes Übernimmt die übergebenen Datentypen bis v1.4.. noch nicht benutzt
+
+        Args:
+            idDatatypeList (List): Liste mit Datentypen zu den entsprechenen IDs
+        """
         self.id_datatype_list = idDatatypeList
 
     def isTransmissionComplete(self, id):
+        """isTransmissionComplete Gibt den Übertragungsstatus der übergebenen ID zurück
+
+        Args:
+            id (Integer): ID der Übertragung
+
+        Returns:
+            Boolean: Ist die Übertragung komplett, wird True zurückgegeben
+        """
         transmission_complete = False
         for i in range(0, len(self.sorted_transmission_data)):
             if((self.sorted_transmission_data[i])[0].GUI_id == id and (len(self.sorted_transmission_data[i])-1) == self.sorted_transmission_data[i][0].MaxPackages):
@@ -226,6 +289,11 @@ class DT_algorithmus():
         return transmission_complete
 
     def sendTransmissionComplete(self, id):
+        """sendTransmissionComplete Sendet ein SCPI Kommando über eine erfolgreiche Übertragung an den Controller bis v1.4.. noch nicht benutzt
+
+        Args:
+            id (Integer): ID der Übertragung
+        """
         self.communication.writeCommand(self.scpi_commands.setDatatransmissionComplete(hex(id)))
 
 

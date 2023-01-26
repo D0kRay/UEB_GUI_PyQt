@@ -26,6 +26,8 @@ class TransmissionDialog(QDialog, Ui_TransmissionParameterDialog):
         
 
     def okButtonClicked(self):
+        """okButtonClicked Handler der OK Schaltfläche
+        """
         for i in range(0, len(self.used_parameterlist)):
             self.used_parameterlist[i].CSV_text = self.used_parameterlist[i].CSVLineEdit.text()
             self.used_parameterlist[i].DataFormat = self.used_parameterlist[i].DataTypeComboBox.currentText()
@@ -33,10 +35,14 @@ class TransmissionDialog(QDialog, Ui_TransmissionParameterDialog):
         self.accept()
     
     def cancelButtonClicked(self):
+        """cancelButtonClicked Handler der Abbrechen Schaltfläche
+        """
         self.reject()
             
 
     def fillAvailableScrollBox(self):
+        """fillAvailableScrollBox Ausfüllen der verfügbare ID ScrollBox
+        """
         self.clearLayout(self.availableID_verticalLayout)
         for i in range(0, len(self.available_parameterList)):
             datatypes = self.dataTypesObj.getDataTypesAsList()
@@ -68,6 +74,8 @@ class TransmissionDialog(QDialog, Ui_TransmissionParameterDialog):
 
 
     def fillUsedScrollBox(self):
+        """fillUsedScrollBox Ausfüllen der ausgewählten ID ScrollBox
+        """
         self.used_parameterlist.clear()
         self.clearLayout(self.usedID_verticalLayout)
         for i in range(0, len(self.available_parameterList)):
@@ -95,10 +103,17 @@ class TransmissionDialog(QDialog, Ui_TransmissionParameterDialog):
                 self.used_parameterlist.append(parameterObj)
 
     def createNewParameter(self):
+        """createNewParameter Öffnen des Dialogs für neue Paramter IDs
+        """
         #open extra dialog
         self.fillAvailableScrollBox()
 
     def clearLayout(self, layout):
+        """clearLayout Leeren des übergebenen Layouts
+
+        Args:
+            layout (Layout): Layout welches geleert werden soll
+        """
         if layout is not None:
             while layout.count():
                 childlayout = layout.takeAt(0)
@@ -108,6 +123,11 @@ class TransmissionDialog(QDialog, Ui_TransmissionParameterDialog):
                     self.clearLayout(childlayout.layout())
 
     def getParameterList(self):
+        """getParameterList Gibt die Parameter zurück, welcher der Benutzer ausgewählt hat.  
+
+        Returns:
+            List: Liste mit Parameterobjekten
+        """
         parameterlist = []
         for i in range(0, len(self.used_parameterlist)):
             parameter = Parameter()
