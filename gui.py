@@ -117,6 +117,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.operation_Mode_comboBox.addItems([self.GUI_DC, self.GUI_THREEPHASE, self.GUI_CONTROL, self.GUI_CAL_ADC])
         self.operation_Mode_comboBox.setCurrentIndex(0)
+        self.ueb_config.operationMode = self.operation_Mode_comboBox.currentText()
         self.RDCRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
         self.EncoderRes_comboBox_Resolver.addItems(["10 bit", "12 bit", "14 bit", "16 bit"])
         self.plotWidget_UEB_status_lower.setBackground('w')
@@ -139,6 +140,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.startMeasureUEBSettings_pushButton.clicked.connect(self.startMeasure)
         self.terminal_userline.returnPressed.connect(self.transmitTerminalUserInput)
         self.help_pushButton.clicked.connect(self.helpMe)
+        self.operation_Mode_comboBox.currentTextChanged.connect(self.setUEB_Config_from_UserInput)
 
         ##Release V1.1
         ##Felder in UEB Einstellungen werden teils der Bedienbarkeit wegen ausgeblendet.
@@ -340,8 +342,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def writeUEB_SettingsButtonClicked(self):
         """writeUEB_SettingsButtonClicked Die eingestellten Parameter auf die UEB schreiben
         """
-        self.sendUEBConfigTab()
-        self.gui_info_dialog_Label.setText("Einstellungen an Controller gesendet")
+        if ("Verbunden" in self.connectComPort_Button.text()):
+            self.sendUEBConfigTab()
+            self.gui_info_dialog_Label.setText("Einstellungen an Controller gesendet")
+    
+    def setUEB_Config_from_UserInput(self):
+        self.ueb_config.operationMode = self.operation_Mode_comboBox.currentText()
+        self.ueb_config.frequency = self.frequenz_SpinBox_UEB.value()
+        self.ueb_config.v_Reference = self.versorgSp_SpinBox_UEB.value()
+        self.ueb_config.v_Bridge = self.ausgangSp_SpinBox_UEB.value()
+        self.ueb_config.enableSoftstarter = int(self.softstart_checkBox_UEB.isChecked())
+        self.ueb_config.softstartDuration = self.softstartD_SpinBox_UEB.value()
+        self.ueb_config.thridHarmonic = int(self.dritteHarm_checkBox_UEB.isChecked())
+        self.ueb_config.rotationDirection = int(self.rightturn_radioButton_UEB.isChecked())
 
     def getUEB_SettingVars(self, settingsstring):
         """getUEB_SettingVars Aufsplitten der übertragenen Parameter in verarbeitbare Datensätze
@@ -386,6 +399,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.softstart_checkBox_UEB.setChecked(bool(int(self.ueb_config.enableSoftstarter)))
         self.softstartD_SpinBox_UEB.setValue(float(self.ueb_config.softstartDuration))
         self.dritteHarm_checkBox_UEB.setChecked(bool(int(self.ueb_config.thridHarmonic)))
+        self.operation_Mode_comboBox.setCurrentText(self.ueb_config.operationMode)
         if(bool(int(self.ueb_config.rotationDirection))):
             self.rightturn_radioButton_UEB.setChecked(True)
             self.leftturn_radioButton_UEB.setChecked(False)
@@ -465,7 +479,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             elif(self.GUI_DC in self.operation_Mode_comboBox.currentText()):
                 self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_DC))
             elif(self.GUI_CONTROL in self.operation_Mode_comboBox.currentText()):
-                self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_CONTROL))            
+                self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_CONTROL))  
             elif(self.GUI_CAL_ADC in self.operation_Mode_comboBox.currentText()):
                 self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_RUN_CAL_ADC))
 
@@ -621,6 +635,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def safeUEBToJSON(self):
         """safeUEBToJSON Speichert die Controllerparameter in einer JSON Datei
         """
+        self.setUEB_Config_from_UserInput()
         fileName, _ = QFileDialog.getSaveFileName(self,"Speichern unter:","","Text Files (*.json)")
         if(fileName):
             jsonString = json.dumps(vars(self.ueb_config))
@@ -647,6 +662,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ueb_config.rotationDirection = filecontent['rotationDirection']
             self.ueb_config.thridHarmonic = filecontent['thridHarmonic']
             self.ueb_config.enableSoftstarter = filecontent['enableSoftstarter']
+            self.ueb_config.operationMode = filecontent['operationMode']
             self.setUEB_Config_Tab()
             jsonFile.close()
             self.gui_info_dialog_Label.setText("Einstellungen für Controller aus Datei importiert")

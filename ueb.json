@@ -1,1 +1,1 @@
-{"status": 0, "frequency": 50, "v_Bridge": 20, "v_Reference": 60, "softstartDuration": 1.0, "overCurrentThreshold": 20, "pwmFrequency": 20000, "rotationDirection": 1, "thridHarmonic": false, "enableSoftstarter": false}
+{"status": 0, "frequency": 50.0, "v_Bridge": 20.0, "v_Reference": 60.0, "softstartDuration": 1.0, "overCurrentThreshold": 20, "pwmFrequency": 20000, "rotationDirection": 0, "thridHarmonic": 0, "enableSoftstarter": 0, "operationMode": "Regelungsmodus"}

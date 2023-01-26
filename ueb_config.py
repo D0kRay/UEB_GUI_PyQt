@@ -23,6 +23,7 @@ class ueb_config:
         self.rotationDirection = 1
         self.thridHarmonic = False
         self.enableSoftstarter = False
+        self.operationMode = "Dreiphasenmodus"
 
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, 
