@@ -1477,8 +1477,8 @@ DOS mismatch threshold</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>81</width>
-            <height>28</height>
+            <width>1101</width>
+            <height>510</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1510,7 +1510,7 @@ DOS mismatch threshold</string>
      <item>
       <widget class="QPushButton" name="exit_Button">
        <property name="text">
-        <string>Exit</string>
+        <string>Schließen</string>
        </property>
       </widget>
      </item>
@@ -1575,14 +1575,14 @@ DOS mismatch threshold</string>
      <item>
       <widget class="QPushButton" name="refreshComPort_Button">
        <property name="text">
-        <string>Refresh</string>
+        <string>Aktualisieren</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="connectComPort_Button">
        <property name="text">
-        <string>Connect</string>
+        <string>Verbinden</string>
        </property>
       </widget>
      </item>
@@ -1627,6 +1627,13 @@ DOS mismatch threshold</string>
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="help_pushButton">
+       <property name="text">
+        <string>Hilfe!</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

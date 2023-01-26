@@ -7,9 +7,9 @@ import time
 import pyqtgraph as pg
 from PyQt6 import QtCore, QtWidgets, uic
 from PyQt6.QtCore import QObject, QThread, QThreadPool, QTimer
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QFont
 from PyQt6.QtWidgets import (QFileDialog, QHBoxLayout, QLabel, QSizePolicy,
-                             QVBoxLayout, QWidget)
+                             QVBoxLayout, QWidget, QMessageBox)
 from pyqtgraph import PlotWidget, plot
 
 from communication import Communication
@@ -23,6 +23,7 @@ from transmission_dialog import TransmissionDialog
 from ueb_config import ueb_config
 from ui_MainWindow import Ui_MainWindow
 from ui_parameter_dialog import Ui_TransmissionParameterDialog
+from help_dialog import HelpDialog
 
 # from qt_material import apply_stylesheet
 
@@ -69,6 +70,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     parameter_list = list
     data_list = list
     transmission_dialog = TransmissionDialog
+    help_dialog = HelpDialog
 
     def __init__(self, *args, obj=None, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -136,6 +138,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.loadUEBSettings_pushButton.clicked.connect(self.loadUEBFromJSON)
         self.startMeasureUEBSettings_pushButton.clicked.connect(self.startMeasure)
         self.terminal_userline.returnPressed.connect(self.transmitTerminalUserInput)
+        self.help_pushButton.clicked.connect(self.helpMe)
 
         ##Release V1.1
         ##Felder in UEB Einstellungen werden teils der Bedienbarkeit wegen ausgeblendet.
@@ -174,32 +177,38 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window.setWindowTitle("UEB")
         window.show()
 
-        # Darstellen von Messdaten auf der GUI Oberfläche (XY-Diagramme)
-    # def plotOnUEBStatusPlots(self):
-    #     if(len(self.plot_data_upper)):
-    #         for i in range(0, len(self.plot_data_upper)):
-    #             if((self.plot_data_upper[i])[0]):
-    #                 if(len(self.plot_data_upper[i]) < 4):
-    #                     x = (self.plot_data_upper[i])[3]
-    #                     y = (self.plot_data_upper[i])[4]
-    #                     line_obj = self.plotWidget_UEB_status_upper.plot(x, y)
-    #                     self.plot_data_upper.insert(2, line_obj)
-    #                 else:
-    #                     (self.plot_data_upper[i])[3] = ((self.plot_data_upper[i])[3])[1:]
-    #                     (self.plot_data_upper[i])[4] = ((self.plot_data_upper[i])[4])[1:]
-    #                     self.plot_data_upper[2].setData(self.hour, self.temperature)
-    #     elif(len(self.plot_data_lower)):
-    #         for i in range(0, len(self.plot_data_lower)):
-    #             if((self.plot_data_lower[i])[0]):
-    #                 if(len(self.plot_data_lower[i]) < 4):
-    #                     x = (self.plot_data_lower[i])[3]
-    #                     y = (self.plot_data_lower[i])[4]
-    #                     line_obj = self.plotWidget_UEB_status_lower.plot(x, y)
-    #                     self.plot_data_lower.insert(2, line_obj)
-    #                 else:
-    #                     (self.plot_data_lower[i])[3] = ((self.plot_data_lower[i])[3])[1:]
-    #                     (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
-    #                     self.plot_data_lower[2].setData(self.hour, self.temperature)
+    def helpMe(self):
+        dialog = self.help_dialog()
+        dialog.setWindowTitle("Hilfe!")
+        dialog.setWindowIcon(QIcon("UEB_icon.png"))
+        dialog.exec()
+
+    def plotOnUEBStatusPlots(self):
+        # TODO Plots aus liste laden und aktualisieren
+        if(len(self.plot_data_upper)):
+            for i in range(0, len(self.plot_data_upper)):
+                if((self.plot_data_upper[i])[0]):
+                    if(len(self.plot_data_upper[i]) < 4):
+                        x = (self.plot_data_upper[i])[3]
+                        y = (self.plot_data_upper[i])[4]
+                        line_obj = self.plotWidget_UEB_status_upper.plot(x, y)
+                        self.plot_data_upper.insert(2, line_obj)
+                    else:
+                        (self.plot_data_upper[i])[3] = ((self.plot_data_upper[i])[3])[1:]
+                        (self.plot_data_upper[i])[4] = ((self.plot_data_upper[i])[4])[1:]
+                        self.plot_data_upper[2].setData(self.hour, self.temperature)
+        elif(len(self.plot_data_lower)):
+            for i in range(0, len(self.plot_data_lower)):
+                if((self.plot_data_lower[i])[0]):
+                    if(len(self.plot_data_lower[i]) < 4):
+                        x = (self.plot_data_lower[i])[3]
+                        y = (self.plot_data_lower[i])[4]
+                        line_obj = self.plotWidget_UEB_status_lower.plot(x, y)
+                        self.plot_data_lower.insert(2, line_obj)
+                    else:
+                        (self.plot_data_lower[i])[3] = ((self.plot_data_lower[i])[3])[1:]
+                        (self.plot_data_lower[i])[4] = ((self.plot_data_lower[i])[4])[1:]
+                        self.plot_data_lower[2].setData(self.hour, self.temperature)
 
     def refreshTerminal(self):
         """refreshTerminal Aktualisiert das Terminalfenster anhand des self.Terminalstring
