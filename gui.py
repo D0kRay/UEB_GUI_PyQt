@@ -231,7 +231,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def transmitTerminalUserInput(self):
         """transmitTerminalUserInput Übertragen der Nutzereingabe auf der Terminalseite
         """
-        if ("Disconnect" in self.connectComPort_Button.text()):
+        if ("Verbunden" in self.connectComPort_Button.text()):
             userString = ''
             userString = self.terminal_userline.text() + '\r'
             if(len(userString) < 1023):
@@ -267,7 +267,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def exitButtonClicked(self):
         """exitButtonClicked Schließfunktion bei Klick auf den Schließen Button. Es werden alle Threads beendet und die GUI geschlossen
         """
-        if("Disconnect" in self.connectComPort_Button.text()):
+        if("Verbunden" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             self.communication.stopThread()
             self.communication.closeComPort()
@@ -292,7 +292,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if(comport in self.portlist[i].name):
                 if(self.portlist[i].vid and self.portlist[i].pid):
                     usb_VID_PID = str(self.portlist[i].vid) + ':' + str(self.portlist[i].pid)
-        if("Connect" in self.connectComPort_Button.text() and (self.STM32_USB_VID_PID in usb_VID_PID)):
+        if("Verbinden" in self.connectComPort_Button.text() and (self.STM32_USB_VID_PID in usb_VID_PID)):
             if(len(comport) != 0):
                 self.terminalTimer.start(300)
                 if(self.communication.setComPort(comport)):
@@ -304,7 +304,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.setUEB_Config_Tab()
                         self.communication.readSerialRead()
                         self.startDataProcessThread()
-                        self.connectComPort_Button.setText("Disconnect")
+                        self.connectComPort_Button.setText("Verbunden")
                         self.connection_Indicator_Lamp.setStyleSheet("background-color : green")
                         self.gui_info_dialog_Label.setText("Verbindung aufgebaut")
                     else:
@@ -314,7 +314,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")
                 else:
                     self.communication.closeComPort()
-                    self.connectComPort_Button.setText("Connect")
+                    self.connectComPort_Button.setText("Verbinden")
                     self.connection_Indicator_Lamp.setStyleSheet("background-color : red")
                     self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")
         else:
@@ -326,14 +326,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if(self.job.is_alive()):
                 self.job.stop()
             print("Disconnected")
-            self.connectComPort_Button.setText("Connect")
+            self.connectComPort_Button.setText("Verbinden")
             self.connection_Indicator_Lamp.setStyleSheet("background-color : red")
             self.gui_info_dialog_Label.setText("Falscher COM Port oder keine Verbindung")   
 
     def readUEB_SettingsButtonClicked(self):
         """readUEB_SettingsButtonClicked Die Parameter der UEBs lesen
         """
-        if ("Disconnect" in self.connectComPort_Button.text()):
+        if ("Verbunden" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.getUEBsettings())
             self.gui_info_dialog_Label.setText("Einstellungen von Controller gelesen")
 
@@ -454,7 +454,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def startMotor(self):
         """startMotor Startet die Thread für die Datenübertragung und den Motor
         """
-        if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
+        if ("Verbunden" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             self.communication.readSerialRead()
             self.startDataProcessThread()
             self.startButton_UEB_status.setText("Motor läuft")
@@ -475,7 +475,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def startMeasure(self):
         """startMeasure Startet die Threads für die Datenübertragung und übermittelt die einstellten IDs
         """
-        if ("Disconnect" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
+        if ("Verbunden" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
             self.communication.readSerialRead()
@@ -511,7 +511,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def stopMotor(self):
         """stopMotor Stoppt den Motor
         """
-        if ("Disconnect" in self.connectComPort_Button.text()):
+        if ("Verbunden" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             print("Motor stop")
             self.terminalTimer.stop()
