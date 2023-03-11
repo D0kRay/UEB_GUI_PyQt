@@ -33,7 +33,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="UEB_Status_tab">
      <attribute name="title">
@@ -805,7 +805,7 @@ in Datei speichern</string>
         </widget>
        </item>
        <item row="8" column="0">
-        <widget class="QDoubleSpinBox" name="LOTLow_doubleSpinBox_Resolver_2">
+        <widget class="QDoubleSpinBox" name="LOTLow_doubleSpinBox_Resolver">
          <property name="decimals">
           <number>3</number>
          </property>

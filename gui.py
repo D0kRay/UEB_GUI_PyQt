@@ -186,7 +186,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dialog.exec()
 
     def closeEvent(self, event):
-        if("Verbunden" in self.connectComPort_Button.text()):
+        if("Trennen" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             self.communication.stopThread()
             self.communication.closeComPort()
@@ -244,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def transmitTerminalUserInput(self):
         """transmitTerminalUserInput Übertragen der Nutzereingabe auf der Terminalseite
         """
-        if ("Verbunden" in self.connectComPort_Button.text()):
+        if ("Trennen" in self.connectComPort_Button.text()):
             userString = ''
             userString = self.terminal_userline.text() + '\r'
             if(len(userString) < 1023):
@@ -280,7 +280,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def exitButtonClicked(self):
         """exitButtonClicked Schließfunktion bei Klick auf den Schließen Button. Es werden alle Threads beendet und die GUI geschlossen
         """
-        if("Verbunden" in self.connectComPort_Button.text()):
+        if("Trennen" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             self.communication.stopThread()
             self.communication.closeComPort()
@@ -317,7 +317,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.setUEB_Config_Tab()
                         self.communication.readSerialRead()
                         self.startDataProcessThread()
-                        self.connectComPort_Button.setText("Verbunden")
+                        self.connectComPort_Button.setText("Trennen")
                         self.connection_Indicator_Lamp.setStyleSheet("background-color : green")
                         self.gui_info_dialog_Label.setText("Verbindung aufgebaut")
                     else:
@@ -346,14 +346,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def readUEB_SettingsButtonClicked(self):
         """readUEB_SettingsButtonClicked Die Parameter der UEBs lesen
         """
-        if ("Verbunden" in self.connectComPort_Button.text()):
+        if ("Trennen" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.getUEBsettings())
             self.gui_info_dialog_Label.setText("Einstellungen von Controller gelesen")
 
     def writeUEB_SettingsButtonClicked(self):
         """writeUEB_SettingsButtonClicked Die eingestellten Parameter auf die UEB schreiben
         """
-        if ("Verbunden" in self.connectComPort_Button.text()):
+        if ("Trennen" in self.connectComPort_Button.text()):
             self.sendUEBConfigTab()
             self.gui_info_dialog_Label.setText("Einstellungen an Controller gesendet")
     
@@ -467,19 +467,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def sendResolverConfigTab(self):
         """sendResolverConfigTab tbd
         """
-        self.communication.writeCommand(self.scpi_commands.setUEBRotation(self.rightturn_radioButton_UEB.isChecked()))
-        self.communication.writeCommand(self.scpi_commands.setUEBThridHarmonic(self.dritteHarm_checkBox_UEB.isChecked()))
-        self.communication.writeCommand(self.scpi_commands.setUEBSoftstartEnable(self.softstart_checkBox_UEB.isChecked()))
-        self.communication.writeCommand(self.scpi_commands.setUEBSoftstartDuration(self.softstartD_SpinBox_UEB.value()))
-        self.communication.writeCommand(self.scpi_commands.setUEBVBridge(self.versorgSp_SpinBox_UEB.value()))
-        self.communication.writeCommand(self.scpi_commands.setUEBVout(self.ausgangSp_SpinBox_UEB.value()))
-        self.communication.writeCommand(self.scpi_commands.setUEBFrequency(self.frequenz_SpinBox_UEB.value()))
-        self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_INIT_FINISH))
+        self.communication.writeCommand(self.scpi_commands.setResolverStatus(0xFFFF))
+        self.communication.writeCommand(self.scpi_commands.setResolverLOSThreshold(self.LOS_doubleSpinBox_Resolver.value()))
+        self.communication.writeCommand(self.scpi_commands.setResolverDOSOverrangeThres(self.DOS_doubleSpinBox_Resolver.value()))
+        self.communication.writeCommand(self.scpi_commands.setResolverDOSMismatchThres(self.DOSMismatch_doubleSpinBox_Resolver))
+        self.communication.writeCommand(self.scpi_commands.setResolverDOSResetMin(self.DOSResetMin_lineEdit_Resolver.value()))
+        self.communication.writeCommand(self.scpi_commands.setResolverDOSResetMax(self.DOSResetMax_doubleSpinBox_Resolver.value()))
+        self.communication.writeCommand(self.scpi_commands.setResolverLOTHighThres(self.LOTHigh_doubleSpinBox_Resolver.value()))
+        self.communication.writeCommand(self.scpi_commands.setResolverLOTLowThres(self.LOTLow_doubleSpinBox_Resolver.value()))
+        self.communication.writeCommand(self.scpi_commands.setResolverExcitationFreq(self.Excitation_doubleSpinBox_Resolver.value()))
+        if self.PhaseLock360_radioButton_Resolver.isChecked():
+            self.communication.writeCommand(self.scpi_commands.setResolverPhaseLockRange(0x0))
+        else:
+            self.communication.writeCommand(self.scpi_commands.setResolverPhaseLockRange(0x1))
+    
+        self.communication.writeCommand(self.scpi_commands.setResolverExcitationFreq(self.Excitation_doubleSpinBox_Resolver.value()))
+        self.communication.writeCommand(self.scpi_commands.setResolverHysteresis(self.Hysteresis_checkBox_Resolver.isChecked()))
+        self.communication.writeCommand(self.scpi_commands.setResolverResolution(self.RDCRes_comboBox_Resolver.currentText()))
+
 
     def startMotor(self):
         """startMotor Startet die Thread für die Datenübertragung und den Motor
         """
-        if ("Verbunden" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
+        if ("Trennen" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             self.communication.readSerialRead()
             self.startDataProcessThread()
             self.startButton_UEB_status.setText("Motor läuft")
@@ -500,7 +510,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def startMeasure(self):
         """startMeasure Startet die Threads für die Datenübertragung und übermittelt die einstellten IDs
         """
-        if ("Verbunden" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
+        if ("Trennen" in self.connectComPort_Button.text() and not (len(self.parameter_list) == 0)):
             if(self.measureAtStartup_checkBox_UEB_status.isChecked() and not self.savePath):
                 self.savePathDialog()          
             self.communication.readSerialRead()
@@ -536,7 +546,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def stopMotor(self):
         """stopMotor Stoppt den Motor
         """
-        if ("Verbunden" in self.connectComPort_Button.text()):
+        if ("Trennen" in self.connectComPort_Button.text()):
             self.communication.writeCommand(self.scpi_commands.setUEBsettings(self.UEB_STOP))
             print("Motor stop")
             self.terminalTimer.stop()

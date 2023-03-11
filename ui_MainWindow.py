@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'c:\Users\Pascal\KIRCPA02_OneDrive\OneDrive - thu.de\Master\Semester_2\Masterprojekt\GUI_PyQt\ui_mainwindow.ui'
+# Form implementation generated from reading ui file 'c:\Users\pasik\Documents\UEB_GUI_PyQt\UEB_GUI_PyQt\ui_mainwindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.0
 #
@@ -391,12 +391,12 @@ class Ui_MainWindow(object):
         self.DOSResetMax_doubleSpinBox_Resolver.setSingleStep(0.038)
         self.DOSResetMax_doubleSpinBox_Resolver.setObjectName("DOSResetMax_doubleSpinBox_Resolver")
         self.gridLayout.addWidget(self.DOSResetMax_doubleSpinBox_Resolver, 5, 0, 1, 1)
-        self.LOTLow_doubleSpinBox_Resolver_2 = QtWidgets.QDoubleSpinBox(self.gridLayoutWidget)
-        self.LOTLow_doubleSpinBox_Resolver_2.setDecimals(3)
-        self.LOTLow_doubleSpinBox_Resolver_2.setMaximum(9.017)
-        self.LOTLow_doubleSpinBox_Resolver_2.setSingleStep(0.071)
-        self.LOTLow_doubleSpinBox_Resolver_2.setObjectName("LOTLow_doubleSpinBox_Resolver_2")
-        self.gridLayout.addWidget(self.LOTLow_doubleSpinBox_Resolver_2, 8, 0, 1, 1)
+        self.LOTLow_doubleSpinBox_Resolver = QtWidgets.QDoubleSpinBox(self.gridLayoutWidget)
+        self.LOTLow_doubleSpinBox_Resolver.setDecimals(3)
+        self.LOTLow_doubleSpinBox_Resolver.setMaximum(9.017)
+        self.LOTLow_doubleSpinBox_Resolver.setSingleStep(0.071)
+        self.LOTLow_doubleSpinBox_Resolver.setObjectName("LOTLow_doubleSpinBox_Resolver")
+        self.gridLayout.addWidget(self.LOTLow_doubleSpinBox_Resolver, 8, 0, 1, 1)
         self.Excitation_doubleSpinBox_Resolver = QtWidgets.QDoubleSpinBox(self.gridLayoutWidget)
         self.Excitation_doubleSpinBox_Resolver.setDecimals(3)
         self.Excitation_doubleSpinBox_Resolver.setMinimum(2000.0)
@@ -796,7 +796,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

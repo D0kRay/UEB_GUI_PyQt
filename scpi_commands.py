@@ -202,6 +202,42 @@ class scpi_commands:
         """
         return (self.DATATRANSMISSION + self.DELIMITER_PARTMESSAGE + self.INIT + self.DELIMITER_PARTMESSAGE + str(id) + self.CARRIAGE_RETURN)
 
+    def setResolverStatus(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.STAT + self.DELIMITER_PARTMESSAGE+ self.D_ENABLE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverLOSThreshold(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.LOS + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+    
+    def setResolverDOSOverrangeThres(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.DOS + self.DELIMITER_PARTMESSAGE+ self.OVERRANGE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverDOSMismatchThres(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.DOS + self.DELIMITER_PARTMESSAGE+ self.MISMATCH + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverDOSResetMax(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.DOS + self.DELIMITER_PARTMESSAGE+ self.D_RESET + self.DELIMITER_PARTMESSAGE+ self.MAX + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverDOSResetMin(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.DOS + self.DELIMITER_PARTMESSAGE+ self.D_RESET + self.DELIMITER_PARTMESSAGE+ self.MIN + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverLOTHighThres(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.LOT + self.DELIMITER_PARTMESSAGE+ self.LOW + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverLOTLowThres(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.LOT + self.DELIMITER_PARTMESSAGE+ self.HIGH + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverExcitationFreq(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.EXCITATION + self.DELIMITER_PARTMESSAGE+ self.FREQUENCY + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverPhaseLockRange(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.PHASELOCKRANGE + self.DELIMITER_PARTMESSAGE+ self.D_ENABLE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverHysteresis(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.HYSTERESIS + self.DELIMITER_PARTMESSAGE+ self.D_ENABLE + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+
+    def setResolverResolution(self, value):
+        return (self.PERIPHERAL + self.DELIMITER_PARTMESSAGE  + self.RES + self.DELIMITER_PARTMESSAGE  + self.DEVICE + self.DELIMITER_PARTMESSAGE  + self.CONFIG + self.DELIMITER_PARTMESSAGE+ self.RES + self.DELIMITER_PARTMESSAGE+ self.RDC + self.DELIMITER_PARTMESSAGE + value + self.CARRIAGE_RETURN)
+    
 
 
 
